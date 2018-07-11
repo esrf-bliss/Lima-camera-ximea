@@ -1,0 +1,34 @@
+package:
+  name: lima-mycamera
+  # This is updated from __conda_version__.txt after the build
+  version: 0.0.0
+
+source:
+  path: ..
+
+build:
+  number: 0
+
+requirements:
+  build:
+    - {{ compiler('cxx') }}
+    - python {{ python }}
+    - cmake
+  host:
+    - lima-core
+  run:
+    - lima-core
+
+test:
+  import:
+    - Lima.MyCamera
+  commands:
+    - cmake --version
+    - ctest --version
+    - cpack --version
+
+about:
+  home: https://github.com/esrf-bliss/Lima
+  license: GPL
+  license_file: COPYING
+  summary: a library for the unified control of 2D detectors

@@ -1,0 +1,18 @@
+# Config file for @PROJECT_NAME_LOWER@
+#
+# It defines the following variables:
+#
+# @PROJECT_NAME_UPPER@_INCLUDE_DIRS     - include directory
+# @PROJECT_NAME_UPPER@_LIBRARIES        - all dynamic libraries
+# @PROJECT_NAME_UPPER@_STATIC_LIBRARIES - all static libraries
+
+get_filename_component(PROJECT_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+set(@PROJECT_NAME_UPPER@_INCLUDE_DIRS "${PROJECT_CMAKE_DIR}/../../include")
+
+include("${PROJECT_CMAKE_DIR}/@PROJECT_NAME_UPPER@Targets.cmake")
+
+set(@PROJECT_NAME_UPPER@_STATIC_LIBRARIES @PROJECT_STATIC_LIBRARIES@)
+set(@PROJECT_NAME_UPPER@_LIBRARIES @PROJECT_LIBRARIES@)
+
+list(APPEND @PROJECT_NAME_UPPER@_INCLUDE_DIRS "${PROJECT_CMAKE_DIR}/../../include/rc_genicam_api/genicam")
