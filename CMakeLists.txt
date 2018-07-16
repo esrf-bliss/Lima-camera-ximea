@@ -24,16 +24,16 @@
 
 cmake_minimum_required(VERSION 3.1)
 
-project (mycamera)
+project(mycamera)
 include(cmake/project_version.cmake)
 
-# Check if processlib is being used directly or via add_subdirectory
-set(PROCESSLIB_MASTER_PROJECT OFF)
+# Check if project is being used directly or via add_subdirectory
+set(CAMERA_MASTER_PROJECT OFF)
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-  set(PROCESSLIB_MASTER_PROJECT ON)
+  set(CAMERA_MASTER_PROJECT ON)
 endif()
 
-if (NOT PROCESSLIB_MASTER_PROJECT)
+if (NOT CAMERA_MASTER_PROJECT)
   find_package(Lima REQUIRED)
 endif()
 
@@ -74,6 +74,11 @@ add_library(mycamera SHARED
   src/camera.cpp
   src/interface.cpp)
 
+# Generate export macros
+include(GenerateExportHeader)
+generate_export_header(mycamera)
+
+# Add dependencies
 target_link_libraries(mycamera ${SDK_LIBRARIES})
 target_include_directories(mycamera PUBLIC ${SDK_INCLUDE_DIRS})
 target_include_directories(mycamera PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
@@ -104,3 +109,10 @@ install(
   DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   FILES_MATCHING PATTERN "*.h")
+
+install(
+  FILES ${PROJECT_BINARY_DIR}/somelib_export.h
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+# Generate and install package config file and version
+include(cmake/configure_link_libs.cmake)

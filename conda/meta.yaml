@@ -1,22 +1,24 @@
 package:
   name: lima-mycamera
-  # This is updated from __conda_version__.txt after the build
   version: 0.0.0
 
 source:
   path: ..
 
 build:
-  number: 0
+  number: {{ environ.get('GIT_DESCRIBE_NUMBER', 0) }}
 
 requirements:
   build:
+    - git
+    - cmake
     - {{ compiler('cxx') }}
     - python {{ python }}
-    - cmake
-  host:
+    - sip 4.18*           #For the SIP generator
     - lima-core
   run:
+    - python {{ python }}
+    - sip 4.18*           #For the SIP module
     - lima-core
 
 test:
