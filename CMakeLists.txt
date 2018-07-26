@@ -25,7 +25,25 @@
 cmake_minimum_required(VERSION 3.1)
 
 project(mycamera)
-include(cmake/project_version.cmake)
+
+set(NAME "mycamera") # This is used by LimaTools
+
+# Include additional modules that are used inconditionnaly
+include(GNUInstallDirs)
+include(GenerateExportHeader)
+
+# If conda build, always set lib dir to 'lib'
+if($ENV{CONDA_BUILD})
+  set(CMAKE_INSTALL_LIBDIR "lib")
+endif()
+
+# Set lower / upper case project names
+string(TOUPPER "${PROJECT_NAME}" PROJECT_NAME_UPPER)
+string(TOLOWER "${PROJECT_NAME}" PROJECT_NAME_LOWER)
+
+# Set targets export name (used by lima and dependencies)
+set(TARGETS_EXPORT_NAME "${PROJECT_NAME_LOWER}-targets")
+#set(namespace "${PROJECT_NAME}::")
 
 # Check if project is being used directly or via add_subdirectory
 set(CAMERA_MASTER_PROJECT OFF)
@@ -33,14 +51,21 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   set(CAMERA_MASTER_PROJECT ON)
 endif()
 
-if (NOT CAMERA_MASTER_PROJECT)
+if (CAMERA_MASTER_PROJECT)
   find_package(Lima REQUIRED)
 endif()
 
+# CMake additional macros
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${LIMA_CMAKE_INCLUDE_DIRS} ${CMAKE_MODULE_PATH})
+
+# Set version
+include(project_version)
+
 # Enable python binding code compilation using sip generator
-option(PROCESSLIB_ENABLE_PYTHON "compile python binding code?" LIMA_ENABLE_PYTHON)
+option(CAMERA_ENABLE_PYTHON "compile python binding code?" LIMA_ENABLE_PYTHON)
 
 if (CAMERA_ENABLE_PYTHON)
+  # Find python interpreter and libs
   find_package(PythonInterp)
   find_package(PythonLibs)
   if(${PYTHONINTERP_FOUND})
@@ -49,70 +74,107 @@ if (CAMERA_ENABLE_PYTHON)
       COMMAND ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())"
       OUTPUT_VARIABLE _PYTHON_SITE_PACKAGES_DIR OUTPUT_STRIP_TRAILING_WHITESPACE)
   endif()
-  find_package(SIP)
-  include(SIPMacros)
 
   set(PYTHON_SITE_PACKAGES_DIR ${_PYTHON_SITE_PACKAGES_DIR} CACHE PATH "where should python modules be installed?")
 
-  find_package(NumPy)
-  if(${NUMPY_FOUND})
-    include_directories(${NUMPY_INCLUDE_DIRS})
-    link_directories(${NUMPY_LIBRARIES})
-  else()
-      message(FATAL_ERROR "NumPy not found, cannot build python extensions")
-  endif()
+  find_package(SIP REQUIRED)
+  include(SIPMacros)
   if(WIN32)
     set(SIP_TAGS WIN32_PLATFORM)
   elseif(UNIX)
     set(SIP_TAGS POSIX_PLATFORM)
   endif(WIN32)
   set(SIP_EXTRA_OPTIONS -e -g)
+
+  find_package(NumPy REQUIRED)
 endif()
+
+file(GLOB_RECURSE MYCAMERA_INCS "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
 
 # Library definition
 add_library(mycamera SHARED
   src/camera.cpp
-  src/interface.cpp)
+  src/interface.cpp
+  ${MYCAMERA_INCS}
+)
 
 # Generate export macros
-include(GenerateExportHeader)
 generate_export_header(mycamera)
+
+# Set version and output name
+set_target_properties(mycamera PROPERTIES
+  OUTPUT_NAME "lima${PROJECT_NAME_LOWER}"
+  VERSION "${VERSION}"
+  SOVERSION "${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}")
 
 # Add dependencies
 target_link_libraries(mycamera ${SDK_LIBRARIES})
-target_include_directories(mycamera PUBLIC ${SDK_INCLUDE_DIRS})
-target_include_directories(mycamera PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
+target_include_directories(mycamera PRIVATE ${SDK_INCLUDE_DIRS})
+
+target_include_directories(mycamera
+    PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+    PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"           # For export header
+    PUBLIC "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+)
+
+target_link_libraries(mycamera PUBLIC limacore)
 
 if(WIN32)
-  target_compile_definitions(mycamera PRIVATE LIBMYCAMERA_EXPORTS)
-  set_target_properties(mycamera PROPERTIES PREFIX "lib")
+  target_compile_definitions(mycamera
+    PRIVATE simulator_EXPORTS
+    PUBLIC NOMINMAX)
+  set_target_properties(mycamera PROPERTIES PREFIX "lib" IMPORT_PREFIX "lib")
 endif()
 
 # Binding code for python
-if(PROCESSLIB_ENABLE_PYTHON)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sip/mycamera.sip sip/mycamera.sip)
-  set(SIP_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/sip")
-  add_sip_python_module(mycamera "${CMAKE_CURRENT_BINARY_DIR}/sip/mycamera.sip")
-  target_include_directories(python_module_mycamera PRIVATE ${PYTHON_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/sip)
-  target_link_libraries(python_module_mycamera mycamera)
+if(CAMERA_ENABLE_PYTHON)
+  include(LimaTools)
+  limatools_run_sip_for_camera(mycamera)
 endif()
 
-# Install
-include(GNUInstallDirs)
+# Generate and install package config file and version
+if(CAMERA_MASTER_PROJECT)
+  set (PROJECT_LIBRARIES mycamera)
+  set(SIP_INSTALL_DIR ${CMAKE_INSTALL_DATADIR}/sip/lima)
+  set(CMAKE_INSTALL_DIR ${CMAKE_INSTALL_DATADIR}/cmake/lima)
+  include(package_config)
+endif()
+
+## Installation
+
 install(
   TARGETS mycamera
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  COMPONENT library)
+  EXPORT "${TARGETS_EXPORT_NAME}"
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}   # import library
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}   # .so files are libraries
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}   # .dll files are binaries
+  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}  # this does not actually install anything (but used by downstream projects)
+)
 
 install(
   DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
+  COMPONENT devel
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-  FILES_MATCHING PATTERN "*.h")
+  FILES_MATCHING PATTERN "*.h"
+)
 
 install(
-  FILES ${PROJECT_BINARY_DIR}/somelib_export.h
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/project_version.h
+    ${PROJECT_BINARY_DIR}/simulator_export.h
+  COMPONENT devel
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
 
-# Generate and install package config file and version
-include(cmake/configure_link_libs.cmake)
+if(CAMERA_ENABLE_PYTHON)
+  install(
+    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python/
+    DESTINATION "${PYTHON_SITE_PACKAGES_DIR}/Lima/MyCamera"
+  )
+endif()
+
+## Tests
+if(CAMERA_ENABLE_TESTS)
+    enable_testing()
+    #add_subdirectory(test)
+endif()

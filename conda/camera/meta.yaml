@@ -1,9 +1,11 @@
+{% set version = GIT_DESCRIBE_TAG[1:] %}
+
 package:
-  name: lima-mycamera
-  version: 0.0.0
+  name: lima-camera-mycamera
+  version: {{ version }}
 
 source:
-  path: ..
+  path: ../..
 
 build:
   number: {{ environ.get('GIT_DESCRIBE_NUMBER', 0) }}
@@ -13,16 +15,20 @@ requirements:
     - git
     - cmake
     - {{ compiler('cxx') }}
-    - python {{ python }}
-    - sip 4.18*           #For the SIP generator
     - lima-core
+  host:
+    - python {{ python }}
+    - numpy
+    - sip 4.18*           #For the SIP generator
   run:
     - python {{ python }}
     - sip 4.18*           #For the SIP module
     - lima-core
 
 test:
-  import:
+  requires:
+    - cmake
+  imports:
     - Lima.MyCamera
   commands:
     - cmake --version
