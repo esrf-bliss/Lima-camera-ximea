@@ -45,6 +45,12 @@ string(TOLOWER "${PROJECT_NAME}" PROJECT_NAME_LOWER)
 set(TARGETS_EXPORT_NAME "${PROJECT_NAME_LOWER}-targets")
 #set(namespace "${PROJECT_NAME}::")
 
+# Enable C++11 and later
+if (CAMERA_MASTER_PROJECT)
+  set(CMAKE_CXX_STANDARD 11)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+endif()
+
 # Check if project is being used directly or via add_subdirectory
 set(CAMERA_MASTER_PROJECT OFF)
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
@@ -56,15 +62,17 @@ if (CAMERA_MASTER_PROJECT)
 endif()
 
 # CMake additional macros
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${LIMA_CMAKE_INCLUDE_DIRS} ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${LIMA_CMAKE_INCLUDE_DIRS} ${CMAKE_MODULE_PATH})
 
 # Set version
 include(project_version)
 
 # Enable python binding code compilation using sip generator
-option(CAMERA_ENABLE_PYTHON "compile python binding code?" LIMA_ENABLE_PYTHON)
+if (CAMERA_MASTER_PROJECT)
+  option(LIMA_ENABLE_PYTHON "compile python binding code?" OFF)
+endif()
 
-if (CAMERA_ENABLE_PYTHON)
+if (LIMA_ENABLE_PYTHON)
   # Find python interpreter and libs
   find_package(PythonInterp)
   find_package(PythonLibs)
@@ -89,6 +97,9 @@ if (CAMERA_ENABLE_PYTHON)
   find_package(NumPy REQUIRED)
 endif()
 
+# Find SDK library
+find_package(SDK REQUIRED)
+
 file(GLOB_RECURSE MYCAMERA_INCS "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
 
 # Library definition
@@ -101,16 +112,18 @@ add_library(mycamera SHARED
 # Generate export macros
 generate_export_header(mycamera)
 
+# Add dependencies on SDK
+target_compile_definitions(mycamera PUBLIC ${SDK_DEFINITIONS})
+target_include_directories(mycamera PUBLIC $<BUILD_INTERFACE:${SDK_INCLUDE_DIRS}>)
+target_link_libraries(mycamera PUBLIC ${SDK_LIBRARIES})
+
 # Set version and output name
 set_target_properties(mycamera PROPERTIES
   OUTPUT_NAME "lima${PROJECT_NAME_LOWER}"
-  VERSION "${VERSION}"
+  VERSION "${PROJECT_VERSION}"
   SOVERSION "${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}")
 
 # Add dependencies
-target_link_libraries(mycamera ${SDK_LIBRARIES})
-target_include_directories(mycamera PRIVATE ${SDK_INCLUDE_DIRS})
-
 target_include_directories(mycamera
     PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
     PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"           # For export header
@@ -121,13 +134,13 @@ target_link_libraries(mycamera PUBLIC limacore)
 
 if(WIN32)
   target_compile_definitions(mycamera
-    PRIVATE simulator_EXPORTS
+    PRIVATE mycamera_EXPORTS
     PUBLIC NOMINMAX)
   set_target_properties(mycamera PROPERTIES PREFIX "lib" IMPORT_PREFIX "lib")
 endif()
 
 # Binding code for python
-if(CAMERA_ENABLE_PYTHON)
+if(LIMA_ENABLE_PYTHON)
   include(LimaTools)
   limatools_run_sip_for_camera(mycamera)
 endif()
@@ -161,7 +174,7 @@ install(
 install(
   FILES
     ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/project_version.h
-    ${PROJECT_BINARY_DIR}/simulator_export.h
+    ${PROJECT_BINARY_DIR}/mycamera_export.h
   COMPONENT devel
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
