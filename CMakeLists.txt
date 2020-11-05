@@ -1,32 +1,30 @@
 ###########################################################################
 # This file is part of LImA, a Library for Image Acquisition
 #
-# Copyright (C) : 2009-2017
-# European Synchrotron Radiation Facility
-# CS40220 38043 Grenoble Cedex 9
-# FRANCE
+#  Copyright (C) : 2009-2020
+#  European Synchrotron Radiation Facility
+#  CS40220 38043 Grenoble Cedex 9
+#  FRANCE
 #
-# Contact: lima@esrf.fr
+#  Contact: lima@esrf.fr
 #
-# This is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
+#  This is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 3 of the License, or
+#  (at your option) any later version.
 #
-# This software is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+#  This software is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, see <http://www.gnu.org/licenses/>.
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, see <http://www.gnu.org/licenses/>.
 ############################################################################
 
 cmake_minimum_required(VERSION 3.1)
 
 project(mycamera)
-
-set(NAME "mycamera") # This is used by LimaTools
 
 # Include additional modules that are used inconditionnaly
 include(GNUInstallDirs)
@@ -45,12 +43,6 @@ string(TOLOWER "${PROJECT_NAME}" PROJECT_NAME_LOWER)
 set(TARGETS_EXPORT_NAME "${PROJECT_NAME_LOWER}-targets")
 #set(namespace "${PROJECT_NAME}::")
 
-# Enable C++11 and later
-if (CAMERA_MASTER_PROJECT)
-  set(CMAKE_CXX_STANDARD 11)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif()
-
 # Check if project is being used directly or via add_subdirectory
 set(CAMERA_MASTER_PROJECT OFF)
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
@@ -58,11 +50,13 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 endif()
 
 if (CAMERA_MASTER_PROJECT)
-  find_package(Lima REQUIRED)
+  find_package(Lima REQUIRED COMPONENTS devel tools)
 endif()
 
 # CMake additional macros
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${LIMA_CMAKE_INCLUDE_DIRS} ${CMAKE_MODULE_PATH})
+
+include(LimaTools)
 
 # Set version
 include(project_version)
@@ -70,32 +64,13 @@ include(project_version)
 # Enable python binding code compilation using sip generator
 if (CAMERA_MASTER_PROJECT)
   option(LIMA_ENABLE_PYTHON "compile python binding code?" OFF)
-endif()
+  option(LIMA_ENABLE_PYTANGO_SERVER "install python tango server?" OFF)
 
-if (LIMA_ENABLE_PYTHON)
-  # Find python interpreter and libs
-  find_package(PythonInterp)
-  find_package(PythonLibs)
-  if(${PYTHONINTERP_FOUND})
-    # python site-packages folder
-    execute_process(
-      COMMAND ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())"
-      OUTPUT_VARIABLE _PYTHON_SITE_PACKAGES_DIR OUTPUT_STRIP_TRAILING_WHITESPACE)
+  if (LIMA_ENABLE_PYTHON)
+    limatools_find_python_and_sip()
   endif()
-
-  set(PYTHON_SITE_PACKAGES_DIR ${_PYTHON_SITE_PACKAGES_DIR} CACHE PATH "where should python modules be installed?")
-
-  find_package(SIP REQUIRED)
-  include(SIPMacros)
-  if(WIN32)
-    set(SIP_TAGS WIN32_PLATFORM)
-  elseif(UNIX)
-    set(SIP_TAGS POSIX_PLATFORM)
-  endif(WIN32)
-  set(SIP_EXTRA_OPTIONS -e -g)
-
-  find_package(NumPy REQUIRED)
 endif()
+
 
 # Find SDK library
 find_package(SDK REQUIRED)
@@ -104,18 +79,13 @@ file(GLOB_RECURSE MYCAMERA_INCS "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
 
 # Library definition
 add_library(mycamera SHARED
-  src/camera.cpp
-  src/interface.cpp
+  src/MyCameraCamera.cpp
+  src/MyCameraInterface.cpp
   ${MYCAMERA_INCS}
 )
 
 # Generate export macros
 generate_export_header(mycamera)
-
-# Add dependencies on SDK
-target_compile_definitions(mycamera PUBLIC ${SDK_DEFINITIONS})
-target_include_directories(mycamera PUBLIC $<BUILD_INTERFACE:${SDK_INCLUDE_DIRS}>)
-target_link_libraries(mycamera PUBLIC ${SDK_LIBRARIES})
 
 # Set version and output name
 set_target_properties(mycamera PROPERTIES
@@ -132,6 +102,12 @@ target_include_directories(mycamera
 
 target_link_libraries(mycamera PUBLIC limacore)
 
+target_compile_definitions(mycamera PUBLIC ${SDK_DEFINITIONS})
+
+target_include_directories(mycamera PUBLIC ${SDK_INCLUDE_DIRS})
+
+target_link_libraries(mycamera PUBLIC ${SDK_LIBRARIES})
+
 if(WIN32)
   target_compile_definitions(mycamera
     PRIVATE mycamera_EXPORTS
@@ -141,7 +117,6 @@ endif()
 
 # Binding code for python
 if(LIMA_ENABLE_PYTHON)
-  include(LimaTools)
   limatools_run_sip_for_camera(mycamera)
 endif()
 
@@ -179,11 +154,14 @@ install(
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
-if(CAMERA_ENABLE_PYTHON)
+if(LIMA_ENABLE_PYTHON)
   install(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python/
     DESTINATION "${PYTHON_SITE_PACKAGES_DIR}/Lima/MyCamera"
-  )
+    )
+  if (LIMA_ENABLE_PYTANGO_SERVER)
+    add_subdirectory(tango)
+  endif()
 endif()
 
 ## Tests
