@@ -1,26 +1,22 @@
-# Lima Camera plugin Template
-
-This repository aims to get you started with LImA camera plugin development. It provides scaffholding for a camera named MyCamera.
-
 [![License](https://img.shields.io/github/license/esrf-bliss/lima.svg?style=flat)](https://opensource.org/licenses/GPL-3.0)
 [![Gitter](https://img.shields.io/gitter/room/esrf-bliss/lima.svg?style=flat)](https://gitter.im/esrf-bliss/LImA)
-[![Conda](https://img.shields.io/conda/dn/esrf-bcu/lima-camera-template.svg?style=flat)](https://anaconda.org/esrf-bcu)
-[![Version](https://img.shields.io/conda/vn/esrf-bcu/lima-camera-template.svg?style=flat)](https://anaconda.org/esrf-bcu)
-[![Platform](https://img.shields.io/conda/pn/esrf-bcu/lima-camera-template.svg?style=flat)](https://anaconda.org/esrf-bcu)
+[![Conda](https://img.shields.io/conda/dn/esrf-bcu/lima-camera-ximea.svg?style=flat)](https://anaconda.org/esrf-bcu)
+[![Version](https://img.shields.io/conda/vn/esrf-bcu/lima-camera-ximea.svg?style=flat)](https://anaconda.org/esrf-bcu)
+[![Platform](https://img.shields.io/conda/pn/esrf-bcu/lima-camera-ximea.svg?style=flat)](https://anaconda.org/esrf-bcu)
 
-# LImA Template Camera Plugin
+# LImA Ximea Camera Plugin
 
-This is the LImA plugin for the Template cameras.
+This is the LImA plugin for Ximea cameras.
 
 ## Install
 
 ### Camera python
 
-conda install -c esrf-bcu lima-camera-template
+conda install -c esrf-bcu lima-camera-ximea
 
 ### Camera tango device server
 
-conda install -c tango-controls -c esrf-bcu lima-camera-template-tango
+conda install -c tango-controls -c esrf-bcu lima-camera-ximea-tango
 
 # LImA
 
@@ -31,6 +27,3 @@ Lima is a C++ library which can be used with many different cameras. The library
 ## Documentation
 
 The documentation is available [here](https://lima.blissgarden.org)
-
-
-
