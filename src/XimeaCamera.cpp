@@ -22,7 +22,6 @@
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
 
-#include <stdio.h>
 #include "XimeaCamera.h"
 
 using namespace lima;
@@ -41,7 +40,6 @@ Camera::Camera(int camera_id)
 	if(this->status != XI_OK) THROW_HW_ERROR(Error) << "Could not open camera " << camera_id << "; status: " << this->status;
 
 	DEB_TRACE() << "Camera " << camera_id << " opened; status: " << this->status;
-	printf("camera ok");
 }
 
 //---------------------------
