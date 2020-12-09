@@ -1,4 +1,4 @@
 from Lima import Core
 
-from limamycamera import MyCamera as _C
+from limaxix import xiX as _C
 globals().update(_C.__dict__)

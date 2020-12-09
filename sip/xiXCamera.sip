@@ -22,19 +22,19 @@
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
 
-namespace MyCamera
+namespace xiX
 {
   class Camera
   {
 %TypeHeaderCode
-#include <MyCameraCamera.h>
+#include <xiXCamera.h>
 %End
 
   public:
-    Camera();
+    Camera(int camera_id);
     ~Camera();
 
   private:
-    Camera(const MyCamera::Camera&);
+    Camera(const xiX::Camera&);
   };
 };

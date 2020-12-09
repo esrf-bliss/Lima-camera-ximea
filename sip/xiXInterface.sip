@@ -22,15 +22,15 @@
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
 
-namespace MyCamera
+namespace xiX
 {
   class Interface : HwInterface
   {
 %TypeHeaderCode
-#include <MyCameraInterface.h>
+#include <xiXInterface.h>
 %End
   public:
-    Interface(MyCamera::Camera& cam /KeepReference/);
+    Interface(xiX::Camera& cam /KeepReference/);
     virtual ~Interface();
 
     //- From HwInterface
