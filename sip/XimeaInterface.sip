@@ -22,34 +22,25 @@
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
 
-#include <stdio.h>
-#include "xiXCamera.h"
-
-using namespace lima;
-using namespace lima::xiX;
-using namespace std;
-
-
-//---------------------------
-//- Ctor
-//---------------------------
-Camera::Camera(int camera_id)
+namespace Ximea
 {
-	DEB_CONSTRUCTOR();
+  class Interface : HwInterface
+  {
+%TypeHeaderCode
+#include <XimeaInterface.h>
+%End
+  public:
+    Interface(Ximea::Camera& cam /KeepReference/);
+    virtual ~Interface();
 
-	this->status = xiOpenDevice(camera_id, &this->xiH);
-	if(this->status != XI_OK) THROW_HW_ERROR(Error) << "Could not open camera " << camera_id << "; status: " << this->status;
+    //- From HwInterface
+    virtual void	getCapList(std::vector<HwCap> &cap_list /Out/) const;
+    virtual void	reset(ResetLevel reset_level);
+    virtual void 	prepareAcq();
+    virtual void 	startAcq();
+    virtual void 	stopAcq();
+    virtual void 	getStatus(StatusType& status /Out/);
+    virtual int 	getNbHwAcquiredFrames();
 
-	DEB_TRACE() << "Camera " << camera_id << " opened; status: " << this->status;
-	printf("camera ok");
-}
-
-//---------------------------
-//- Dtor
-//---------------------------
-Camera::~Camera()
-{
-	DEB_DESTRUCTOR();
-
-	if(this->xiH) xiCloseDevice(this->xiH);
-}
+  };
+};

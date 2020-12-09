@@ -22,19 +22,56 @@
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
 
-namespace xiX
+#include "XimeaInterface.h"
+#include "XimeaCamera.h"
+
+
+using namespace lima;
+using namespace lima::Ximea;
+
+
+Interface::Interface(Camera& cam) : m_cam(cam)
 {
-  class Camera
-  {
-%TypeHeaderCode
-#include <xiXCamera.h>
-%End
+  DEB_CONSTRUCTOR();
+}
 
-  public:
-    Camera(int camera_id);
-    ~Camera();
+Interface::~Interface()
+{
+  DEB_DESTRUCTOR();
+}
 
-  private:
-    Camera(const xiX::Camera&);
-  };
-};
+void Interface::getCapList(CapList &cap_list) const
+{
+}
+
+void Interface::reset(ResetLevel reset_level)
+{
+  DEB_MEMBER_FUNCT();
+  DEB_PARAM() << DEB_VAR1(reset_level);
+}
+
+void Interface::prepareAcq()
+{
+  DEB_MEMBER_FUNCT();
+}
+
+void Interface::startAcq()
+{
+  DEB_MEMBER_FUNCT();
+}
+
+void Interface::stopAcq()
+{
+  DEB_MEMBER_FUNCT();
+}
+
+void Interface::getStatus(StatusType& status)
+{
+  DEB_MEMBER_FUNCT();
+}
+
+int Interface::getNbHwAcquiredFrames()
+{
+  DEB_MEMBER_FUNCT();
+  return 0;
+}

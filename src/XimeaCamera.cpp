@@ -22,56 +22,34 @@
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
 
-#include "xiXInterface.h"
-#include "xiXCamera.h"
-
+#include <stdio.h>
+#include "XimeaCamera.h"
 
 using namespace lima;
-using namespace lima::xiX;
+using namespace lima::Ximea;
+using namespace std;
 
 
-Interface::Interface(Camera& cam) : m_cam(cam)
+//---------------------------
+//- Ctor
+//---------------------------
+Camera::Camera(int camera_id)
 {
-  DEB_CONSTRUCTOR();
+	DEB_CONSTRUCTOR();
+
+	this->status = xiOpenDevice(camera_id, &this->xiH);
+	if(this->status != XI_OK) THROW_HW_ERROR(Error) << "Could not open camera " << camera_id << "; status: " << this->status;
+
+	DEB_TRACE() << "Camera " << camera_id << " opened; status: " << this->status;
+	printf("camera ok");
 }
 
-Interface::~Interface()
+//---------------------------
+//- Dtor
+//---------------------------
+Camera::~Camera()
 {
-  DEB_DESTRUCTOR();
-}
+	DEB_DESTRUCTOR();
 
-void Interface::getCapList(CapList &cap_list) const
-{
-}
-
-void Interface::reset(ResetLevel reset_level)
-{
-  DEB_MEMBER_FUNCT();
-  DEB_PARAM() << DEB_VAR1(reset_level);
-}
-
-void Interface::prepareAcq()
-{
-  DEB_MEMBER_FUNCT();
-}
-
-void Interface::startAcq()
-{
-  DEB_MEMBER_FUNCT();
-}
-
-void Interface::stopAcq()
-{
-  DEB_MEMBER_FUNCT();
-}
-
-void Interface::getStatus(StatusType& status)
-{
-  DEB_MEMBER_FUNCT();
-}
-
-int Interface::getNbHwAcquiredFrames()
-{
-  DEB_MEMBER_FUNCT();
-  return 0;
+	if(this->xiH) xiCloseDevice(this->xiH);
 }

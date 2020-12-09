@@ -22,43 +22,41 @@
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
 
-#ifndef XIXCAMERA_H
-#define XIXCAMERA_H
+#ifndef XIMEAINTERFACE_H
+#define XIMEAINTERFACE_H
 
-#include "lima/Debug.h"
-#include "lima/Exceptions.h"
+#include <ximea_export.h>
 
-#ifdef WIN32
-#	include "xiApi.h"
-#else
-#	include <m3api/xiApi.h>
-#endif // WIN32
-
-#include <xix_export.h>
+#include "lima/HwInterface.h"
 
 
 namespace lima
 {
-	namespace xiX
+	namespace Ximea
 	{
-
-		class XIX_EXPORT Camera
+		class Camera;
+		class XIMEA_EXPORT Interface : public HwInterface
 		{
-			DEB_CLASS_NAMESPC(DebModCamera, "Camera", "xiX");
-
-			friend class Interface;
+			DEB_CLASS_NAMESPC(DebModCamera, "XimeaInterface", "Ximea");
 
 		public:
-			Camera(int camera_id);
-			~Camera();
+			Interface(Camera&);
+			virtual ~Interface();
+
+			//- From HwInterface
+			virtual void getCapList(CapList&) const;
+			virtual void reset(ResetLevel reset_level);
+			virtual void prepareAcq();
+			virtual void startAcq();
+			virtual void stopAcq();
+			virtual void getStatus(StatusType& status);
+			virtual int	getNbHwAcquiredFrames();
 
 		private:
-			HANDLE xiH;
-			XI_RETURN status;
+			Camera&		m_cam;
 		};
 
-  	} // namespace xiX
+	} // namespace Ximea
 } // namespace lima
 
-
-#endif // XIXCAMERA_H
+#endif // XIMEAINTERFACE_H

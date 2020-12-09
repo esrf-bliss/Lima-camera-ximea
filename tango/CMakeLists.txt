@@ -24,7 +24,7 @@
 
 cmake_minimum_required(VERSION 3.1)
 
-project(xix_tango NONE)
+project(ximea_tango NONE)
 
 # use lima toolbox function,
 # if cmake is ran out of camera mother project, check python environment  
