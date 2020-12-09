@@ -6,7 +6,7 @@
 {% endif %}
 
 package:
-  name: lima-camera-mycamera
+  name: lima-camera-ximea
   version: {{ version }}
 
 source:
@@ -32,18 +32,12 @@ requirements:
     - {{ pin_compatible('lima-core', max_pin='x.x') }}
     - ximea-sdk
 
-test:
-  requires:
-    - cmake
-  imports:
-    - Lima.Ximea
-  commands:
-    - cmake --version
-    - ctest --version
-    - cpack --version
+#test:
+#  imports:
+#    - Lima.Ximea
 
 about:
-  home: https://github.com/esrf-bliss/Lima
+  home: https://github.com/esrf-bliss/Lima-camera-ximea
   license: GPL
   license_file: COPYING
   summary: a library for the unified control of 2D detectors

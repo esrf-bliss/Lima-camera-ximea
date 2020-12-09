@@ -6,7 +6,7 @@
 {% endif %}
 
 package:
-  name: lima-camera-mycamera-tango
+  name: lima-camera-ximea-tango
   version: {{ version }}
 
 source:
@@ -24,10 +24,10 @@ requirements:
     - lima-core
   run:
     - lima-tango-server
-    - lima-camera-mycamera
+    - lima-camera-ximea
 
 about:
-  home: https://github.com/esrf-bliss/Lima
+  home: https://github.com/esrf-bliss/Lima-camera-ximea
   license: GPL
   license_file: COPYING
   summary: a library for the unified control of 2D detectors
