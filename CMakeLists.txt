@@ -24,7 +24,7 @@
 
 cmake_minimum_required(VERSION 3.1)
 
-project(mycamera)
+project(xix)
 
 # Include additional modules that are used inconditionnaly
 include(GNUInstallDirs)
@@ -72,57 +72,52 @@ if (CAMERA_MASTER_PROJECT)
 endif()
 
 
-# Find SDK library
-find_package(SDK REQUIRED)
+# Find SDK (xiApi) library
+find_package(xiApi REQUIRED)
 
-file(GLOB_RECURSE MYCAMERA_INCS "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
+file(GLOB_RECURSE XIX_INCS "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
 
 # Library definition
-add_library(mycamera SHARED
-  src/MyCameraCamera.cpp
-  src/MyCameraInterface.cpp
-  ${MYCAMERA_INCS}
+add_library(xix SHARED
+  src/xiXCamera.cpp
+  src/xiXInterface.cpp
+  ${XIX_INCS}
 )
 
 # Generate export macros
-generate_export_header(mycamera)
+generate_export_header(xix)
 
 # Set version and output name
-set_target_properties(mycamera PROPERTIES
+set_target_properties(xix PROPERTIES
   OUTPUT_NAME "lima${PROJECT_NAME_LOWER}"
   VERSION "${PROJECT_VERSION}"
   SOVERSION "${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}")
 
 # Add dependencies
-target_include_directories(mycamera
+target_include_directories(xix
     PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
     PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"           # For export header
     PUBLIC "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
 
-target_link_libraries(mycamera PUBLIC limacore)
-
-target_compile_definitions(mycamera PUBLIC ${SDK_DEFINITIONS})
-
-target_include_directories(mycamera PUBLIC ${SDK_INCLUDE_DIRS})
-
-target_link_libraries(mycamera PUBLIC ${SDK_LIBRARIES})
+target_link_libraries(xix PUBLIC limacore)
+target_link_libraries(xix PUBLIC xiAPI::xiAPI)
 
 if(WIN32)
-  target_compile_definitions(mycamera
-    PRIVATE mycamera_EXPORTS
+  target_compile_definitions(xix
+    PRIVATE xix_EXPORTS
     PUBLIC NOMINMAX)
-  set_target_properties(mycamera PROPERTIES PREFIX "lib" IMPORT_PREFIX "lib")
+  set_target_properties(xix PROPERTIES PREFIX "lib" IMPORT_PREFIX "lib")
 endif()
 
 # Binding code for python
 if(LIMA_ENABLE_PYTHON)
-  limatools_run_sip_for_camera(mycamera)
+  limatools_run_sip_for_camera(xix)
 endif()
 
 # Generate and install package config file and version
 if(CAMERA_MASTER_PROJECT)
-  set (PROJECT_LIBRARIES mycamera)
+  set (PROJECT_LIBRARIES xix)
   set(SIP_INSTALL_DIR ${CMAKE_INSTALL_DATADIR}/sip/lima)
   set(CMAKE_INSTALL_DIR ${CMAKE_INSTALL_DATADIR}/cmake/lima)
   include(package_config)
@@ -131,7 +126,7 @@ endif()
 ## Installation
 
 install(
-  TARGETS mycamera
+  TARGETS xix
   EXPORT "${TARGETS_EXPORT_NAME}"
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}   # import library
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}   # .so files are libraries
@@ -149,7 +144,7 @@ install(
 install(
   FILES
     ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/project_version.h
-    ${PROJECT_BINARY_DIR}/mycamera_export.h
+    ${PROJECT_BINARY_DIR}/xix_export.h
   COMPONENT devel
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
@@ -157,7 +152,7 @@ install(
 if(LIMA_ENABLE_PYTHON)
   install(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python/
-    DESTINATION "${PYTHON_SITE_PACKAGES_DIR}/Lima/MyCamera"
+    DESTINATION "${PYTHON_SITE_PACKAGES_DIR}/Lima/xiX"
     )
   if (LIMA_ENABLE_PYTANGO_SERVER)
     add_subdirectory(tango)
