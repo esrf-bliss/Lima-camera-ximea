@@ -21,38 +21,44 @@
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
-#ifndef MYCAMERAINTERFACE_H
-#define MYCAMERAINTERFACE_H
 
-#include <mycamera_export.h>
+#ifndef XIXCAMERA_H
+#define XIXCAMERA_H
 
-#include "lima/HwInterface.h"
+#include "lima/Debug.h"
+#include "lima/Exceptions.h"
+
+#ifdef WIN32
+#	include "xiApi.h"
+#else
+#	include <m3api/xiApi.h>
+#endif // WIN32
+
+#include <xix_export.h>
+
 
 namespace lima
 {
-namespace MyCamera
-{
-  class MYCAMERA_EXPORT Interface : public HwInterface
-  {
-    DEB_CLASS_NAMESPC(DebModCamera, "MyCameraInterface", "MyCamera");
-    
-  public:
-    Interface(Camera&);
-    virtual ~Interface();
-    //- From HwInterface
-    virtual void	getCapList(CapList&) const;
-    virtual void	reset(ResetLevel reset_level);
-    virtual void	prepareAcq();
-    virtual void	startAcq();
-    virtual void	stopAcq();
-    virtual void	getStatus(StatusType& status);
-    virtual int	        getNbHwAcquiredFrames();
+	namespace xiX
+	{
 
-  private:
-    Camera&		m_cam;
-  };
-  
-} // namespace MyCamera
+		class XIX_EXPORT Camera
+		{
+			DEB_CLASS_NAMESPC(DebModCamera, "Camera", "xiX");
+
+			friend class Interface;
+
+		public:
+			Camera(int camera_id);
+			~Camera();
+
+		private:
+			HANDLE xiH;
+			XI_RETURN status;
+		};
+
+  	} // namespace xiX
 } // namespace lima
 
-#endif // MYCAMERAINTERFACE_H
+
+#endif // XIXCAMERA_H

@@ -22,19 +22,26 @@
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
 
-#include "MyCameraCamera.h"
+#include <stdio.h>
+#include "xiXCamera.h"
 
 using namespace lima;
-using namespace lima::MyCamera;
+using namespace lima::xiX;
 using namespace std;
 
 
 //---------------------------
 //- Ctor
 //---------------------------
-Camera::Camera()
+Camera::Camera(int camera_id)
 {
-  DEB_CONSTRUCTOR();
+	DEB_CONSTRUCTOR();
+
+	this->status = xiOpenDevice(camera_id, &this->xiH);
+	if(this->status != XI_OK) THROW_HW_ERROR(Error) << "Could not open camera " << camera_id << "; status: " << this->status;
+
+	DEB_TRACE() << "Camera " << camera_id << " opened; status: " << this->status;
+	printf("camera ok");
 }
 
 //---------------------------
@@ -42,5 +49,7 @@ Camera::Camera()
 //---------------------------
 Camera::~Camera()
 {
-    DEB_DESTRUCTOR();
+	DEB_DESTRUCTOR();
+
+	if(this->xiH) xiCloseDevice(this->xiH);
 }

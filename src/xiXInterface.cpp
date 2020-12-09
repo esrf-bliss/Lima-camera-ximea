@@ -22,16 +22,15 @@
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
 
-#include "MyCameraInterface.h"
-#include "MyCameraCamera.h"
+#include "xiXInterface.h"
+#include "xiXCamera.h"
 
 
 using namespace lima;
-using namespace lima::MyCamera;
+using namespace lima::xiX;
 
 
-Interface::Interface(Camera& cam) :
-  m_cam(cam)
+Interface::Interface(Camera& cam) : m_cam(cam)
 {
   DEB_CONSTRUCTOR();
 }
@@ -74,5 +73,5 @@ void Interface::getStatus(StatusType& status)
 int Interface::getNbHwAcquiredFrames()
 {
   DEB_MEMBER_FUNCT();
-  //return acq_frames;
+  return 0;
 }
