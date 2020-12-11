@@ -1,12 +1,10 @@
 //###########################################################################
 // This file is part of LImA, a Library for Image Acquisition
 //
-// Copyright (C) : 2009-2020
+// Copyright (C) : 2009-2011
 // European Synchrotron Radiation Facility
-// CS40220 38043 Grenoble Cedex 9 
+// BP 220, Grenoble 38043
 // FRANCE
-//
-// Contact: lima@esrf.fr
 //
 // This is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,68 +19,73 @@
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
-
-#include "XimeaInterface.h"
-#include "XimeaCamera.h"
-#include "XimeaDetInfoCtrlObj.h"
+#include <sstream>
 #include "XimeaSyncCtrlObj.h"
-#include "XimeaVideoCtrlObj.h"
+#include "XimeaCamera.h"
 
 using namespace lima;
 using namespace lima::Ximea;
 
-Interface::Interface(Camera& cam) : m_cam(cam)
+SyncCtrlObj::SyncCtrlObj(Camera& cam) : m_cam(cam)
 {
-	DEB_CONSTRUCTOR();
-	this->m_det_info = new DetInfoCtrlObj(cam);
-	this->m_sync = new SyncCtrlObj(cam);
-	this->m_video = new VideoCtrlObj(cam);
 }
 
-Interface::~Interface()
+SyncCtrlObj::~SyncCtrlObj()
 {
-	DEB_DESTRUCTOR();
-	delete this->m_det_info;
-	delete this->m_sync;
-	delete this->m_video;
 }
 
-void Interface::getCapList(CapList &cap_list) const
+bool SyncCtrlObj::checkTrigMode(TrigMode trig_mode)
 {
-	cap_list.push_back(HwCap(this->m_det_info));
-	cap_list.push_back(HwCap(this->m_sync));
-	cap_list.push_back(HwCap(this->m_video));
-	cap_list.push_back(HwCap(&(this->m_video->getHwBufferCtrlObj())));
+	return false;
 }
 
-void Interface::reset(ResetLevel reset_level)
-{
-	DEB_MEMBER_FUNCT();
-	DEB_PARAM() << DEB_VAR1(reset_level);
-}
-
-void Interface::prepareAcq()
+void SyncCtrlObj::setTrigMode(TrigMode trig_mode)
 {
 	DEB_MEMBER_FUNCT();
 }
 
-void Interface::startAcq()
+void SyncCtrlObj::getTrigMode(TrigMode &trig_mode)
+{
+}
+
+void SyncCtrlObj::setExpTime(double exp_time)
+{
+}
+
+void SyncCtrlObj::getExpTime(double &exp_time)
+{
+}
+
+void SyncCtrlObj::setLatTime(double lat_time)
+{
+}
+
+void SyncCtrlObj::getLatTime(double& lat_time)
+{
+}
+
+void SyncCtrlObj::setNbHwFrames(int nb_frames)
+{
+}
+
+void SyncCtrlObj::getNbHwFrames(int& nb_frames)
+{
+}
+
+void SyncCtrlObj::getValidRanges(ValidRangesType& valid_ranges)
 {
 	DEB_MEMBER_FUNCT();
 }
 
-void Interface::stopAcq()
+bool SyncCtrlObj::checkAutoExposureMode(HwSyncCtrlObj::AutoExposureMode mode) const
 {
 	DEB_MEMBER_FUNCT();
+	DEB_PARAM() << DEB_VAR1(mode);
+	return false;
 }
 
-void Interface::getStatus(StatusType& status)
+void SyncCtrlObj::setHwAutoExposureMode(AutoExposureMode mode)
 {
 	DEB_MEMBER_FUNCT();
-}
-
-int Interface::getNbHwAcquiredFrames()
-{
-	DEB_MEMBER_FUNCT();
-	return 0;
+	DEB_PARAM() << DEB_VAR1(mode);
 }

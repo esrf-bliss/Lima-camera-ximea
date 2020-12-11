@@ -75,12 +75,12 @@ endif()
 # Find SDK (xiApi) library
 find_package(xiApi REQUIRED)
 
+file(GLOB_RECURSE XIMEA_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 file(GLOB_RECURSE XIMEA_INCS "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
 
 # Library definition
 add_library(ximea SHARED
-  src/XimeaCamera.cpp
-  src/XimeaInterface.cpp
+  ${XIMEA_SRCS}
   ${XIMEA_INCS}
 )
 

@@ -1,12 +1,10 @@
 //###########################################################################
 // This file is part of LImA, a Library for Image Acquisition
 //
-// Copyright (C) : 2009-2020
+// Copyright (C) : 2009-2011
 // European Synchrotron Radiation Facility
-// CS40220 38043 Grenoble Cedex 9 
+// BP 220, Grenoble 38043
 // FRANCE
-//
-// Contact: lima@esrf.fr
 //
 // This is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,48 +19,51 @@
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
-
-#ifndef XIMEAINTERFACE_H
-#define XIMEAINTERFACE_H
+#ifndef XIMEAVIDEOCTRLOBJ_H
+#define XIMEAVIDEOCTRLOBJ_H
 
 #include <ximea_export.h>
 
-#include "lima/HwInterface.h"
+#include "lima/HwVideoCtrlObj.h"
+
+#include "XimeaCamera.h"
 
 namespace lima
 {
 	namespace Ximea
 	{
-		class Camera;
-		class DetInfoCtrlObj;
 		class SyncCtrlObj;
-		class VideoCtrlObj;
-		class XIMEA_EXPORT Interface : public HwInterface
+		class XIMEA_EXPORT VideoCtrlObj : public HwVideoCtrlObj
 		{
-			DEB_CLASS_NAMESPC(DebModCamera, "XimeaInterface", "Ximea");
+			DEB_CLASS_NAMESPC(DebModCamera, "VideoCtrlObj", "Ximea");
 
 		public:
-			Interface(Camera&);
-			virtual ~Interface();
+			VideoCtrlObj(Camera& cam);
+			virtual ~VideoCtrlObj();
 
-			//- From HwInterface
-			virtual void getCapList(CapList&) const;
-			virtual void reset(ResetLevel reset_level);
-			virtual void prepareAcq();
-			virtual void startAcq();
-			virtual void stopAcq();
-			virtual void getStatus(StatusType& status);
-			virtual int	getNbHwAcquiredFrames();
+			virtual void getSupportedVideoMode(std::list<VideoMode> &aList) const;
+			virtual void setVideoMode(VideoMode);
+			virtual void getVideoMode(VideoMode&) const;
+
+			virtual void setLive(bool);
+			virtual void getLive(bool&) const;
+
+			virtual void getGain(double&) const;
+			virtual void setGain(double);
+			virtual bool checkAutoGainMode(AutoGainMode) const;
+			virtual void setHwAutoGainMode(AutoGainMode);
+
+			virtual void checkBin(Bin& bin);
+			virtual void checkRoi(const Roi& set_roi, Roi& hw_roi);
+
+			virtual void setBin(const Bin&){};
+			virtual void setRoi(const Roi&){};
 
 		private:
-			Camera& m_cam;
-			// CapList m_cap_list;
-			DetInfoCtrlObj* m_det_info;
-			SyncCtrlObj* m_sync;
-			VideoCtrlObj* m_video;
+			Camera&	m_cam;
 		};
 
 	} // namespace Ximea
 } // namespace lima
 
-#endif // XIMEAINTERFACE_H
+#endif // XIMEAVIDEOCTRLOBJ_H

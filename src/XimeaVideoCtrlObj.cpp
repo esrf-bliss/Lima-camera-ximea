@@ -1,12 +1,10 @@
 //###########################################################################
 // This file is part of LImA, a Library for Image Acquisition
 //
-// Copyright (C) : 2009-2020
+// Copyright (C) : 2009-2011
 // European Synchrotron Radiation Facility
-// CS40220 38043 Grenoble Cedex 9 
+// BP 220, Grenoble 38043
 // FRANCE
-//
-// Contact: lima@esrf.fr
 //
 // This is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,33 +19,65 @@
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
-
+#include "XimeaVideoCtrlObj.h"
 #include "XimeaCamera.h"
+#include "XimeaInterface.h"
 
 using namespace lima;
 using namespace lima::Ximea;
-using namespace std;
 
-//---------------------------
-//- Ctor
-//---------------------------
-Camera::Camera(int camera_id)
+VideoCtrlObj::VideoCtrlObj(Camera& cam) : m_cam(cam)
 {
-	DEB_CONSTRUCTOR();
-
-	this->xiH = NULL;
-	this->status = xiOpenDevice(camera_id, &this->xiH);
-	if(this->status != XI_OK) THROW_HW_ERROR(Error) << "Could not open camera " << camera_id << "; status: " << this->status;
-
-	DEB_TRACE() << "Camera " << camera_id << " opened; status: " << this->status;
 }
 
-//---------------------------
-//- Dtor
-//---------------------------
-Camera::~Camera()
+VideoCtrlObj::~VideoCtrlObj()
 {
-	DEB_DESTRUCTOR();
+}
 
-	if(this->xiH) xiCloseDevice(this->xiH);
+void VideoCtrlObj::getSupportedVideoMode(std::list<VideoMode>& aList) const
+{
+	DEB_MEMBER_FUNCT();
+}
+
+void VideoCtrlObj::getVideoMode(VideoMode &mode) const
+{
+	DEB_MEMBER_FUNCT();
+}
+
+void VideoCtrlObj::setVideoMode(VideoMode mode)
+{
+	DEB_MEMBER_FUNCT();
+}
+
+void VideoCtrlObj::setLive(bool flag)
+{
+}
+
+void VideoCtrlObj::getLive(bool &flag) const
+{
+}
+
+void VideoCtrlObj::getGain(double &aGain) const
+{
+}
+
+void VideoCtrlObj::setGain(double aGain)
+{
+}
+
+void VideoCtrlObj::checkBin(Bin &bin)
+{
+}
+
+void VideoCtrlObj::checkRoi(const Roi&, Roi& hw_roi)
+{
+}
+
+bool VideoCtrlObj::checkAutoGainMode(AutoGainMode mode) const
+{
+	return false;
+}
+
+void VideoCtrlObj::setHwAutoGainMode(AutoGainMode mode)
+{
 }

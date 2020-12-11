@@ -36,7 +36,6 @@
 
 #include <ximea_export.h>
 
-
 namespace lima
 {
 	namespace Ximea
@@ -47,6 +46,7 @@ namespace lima
 			DEB_CLASS_NAMESPC(DebModCamera, "Camera", "Ximea");
 
 			friend class Interface;
+			friend class SyncCtrlObj;
 
 		public:
 			Camera(int camera_id);
