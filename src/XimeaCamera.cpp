@@ -31,13 +31,13 @@ using namespace std;
 //---------------------------
 //- Ctor
 //---------------------------
-Camera::Camera(int camera_id)
+Camera::Camera(int camera_id) : xiH(nullptr)
 {
 	DEB_CONSTRUCTOR();
 
-	this->xiH = NULL;
 	this->status = xiOpenDevice(camera_id, &this->xiH);
-	if(this->status != XI_OK) THROW_HW_ERROR(Error) << "Could not open camera " << camera_id << "; status: " << this->status;
+	if(this->status != XI_OK)
+		THROW_HW_ERROR(Error) << "Could not open camera " << camera_id << "; status: " << this->status;
 
 	DEB_TRACE() << "Camera " << camera_id << " opened; status: " << this->status;
 }
@@ -49,5 +49,6 @@ Camera::~Camera()
 {
 	DEB_DESTRUCTOR();
 
-	if(this->xiH) xiCloseDevice(this->xiH);
+	if(this->xiH)
+		xiCloseDevice(this->xiH);
 }
