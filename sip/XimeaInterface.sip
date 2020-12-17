@@ -22,25 +22,25 @@
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
 
-#include "MyCameraCamera.h"
-
-using namespace lima;
-using namespace lima::MyCamera;
-using namespace std;
-
-
-//---------------------------
-//- Ctor
-//---------------------------
-Camera::Camera()
+namespace Ximea
 {
-  DEB_CONSTRUCTOR();
-}
+  class Interface : HwInterface
+  {
+%TypeHeaderCode
+#include <XimeaInterface.h>
+%End
+  public:
+    Interface(Ximea::Camera& cam /KeepReference/);
+    virtual ~Interface();
 
-//---------------------------
-//- Dtor
-//---------------------------
-Camera::~Camera()
-{
-    DEB_DESTRUCTOR();
-}
+    //- From HwInterface
+    virtual void	getCapList(std::vector<HwCap> &cap_list /Out/) const;
+    virtual void	reset(ResetLevel reset_level);
+    virtual void 	prepareAcq();
+    virtual void 	startAcq();
+    virtual void 	stopAcq();
+    virtual void 	getStatus(StatusType& status /Out/);
+    virtual int 	getNbHwAcquiredFrames();
+
+  };
+};

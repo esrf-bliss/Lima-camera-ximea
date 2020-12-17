@@ -21,5 +21,5 @@
 ############################################################################
 from Lima import Core
 
-from limamycamera import MyCamera as _C
+from limaximea import Ximea as _C
 globals().update(_C.__dict__)

@@ -6,7 +6,7 @@
 {% endif %}
 
 package:
-  name: lima-camera-mycamera
+  name: lima-camera-ximea
   version: {{ version }}
 
 source:
@@ -20,7 +20,7 @@ requirements:
     - python {{ python }}
     - sip 4.19.8              # For compatibility with pyqt 5.9.2
     - lima-core
-    - mycamera-sdk
+    - ximea-sdk
   build:
     - git
     - ninja
@@ -30,20 +30,14 @@ requirements:
     - python {{ python }}
     - sip >=4.19.4, <=4.19.8  # For compatibility with pyqt 5.9.2
     - {{ pin_compatible('lima-core', max_pin='x.x') }}
-    - mycamera-sdk
+    - ximea-sdk
 
-test:
-  requires:
-    - cmake
-  imports:
-    - Lima.MyCamera
-  commands:
-    - cmake --version
-    - ctest --version
-    - cpack --version
+#test:
+#  imports:
+#    - Lima.Ximea
 
 about:
-  home: https://github.com/esrf-bliss/Lima
+  home: https://github.com/esrf-bliss/Lima-camera-ximea
   license: GPL
   license_file: COPYING
   summary: a library for the unified control of 2D detectors

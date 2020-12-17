@@ -22,19 +22,33 @@
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
 
-namespace MyCamera
+#include "XimeaCamera.h"
+
+using namespace lima;
+using namespace lima::Ximea;
+using namespace std;
+
+//---------------------------
+//- Ctor
+//---------------------------
+Camera::Camera(int camera_id) : xiH(nullptr)
 {
-  class Camera
-  {
-%TypeHeaderCode
-#include <MyCameraCamera.h>
-%End
+	DEB_CONSTRUCTOR();
 
-  public:
-    Camera();
-    ~Camera();
+	this->status = xiOpenDevice(camera_id, &this->xiH);
+	if(this->status != XI_OK)
+		THROW_HW_ERROR(Error) << "Could not open camera " << camera_id << "; status: " << this->status;
 
-  private:
-    Camera(const MyCamera::Camera&);
-  };
-};
+	DEB_TRACE() << "Camera " << camera_id << " opened; status: " << this->status;
+}
+
+//---------------------------
+//- Dtor
+//---------------------------
+Camera::~Camera()
+{
+	DEB_DESTRUCTOR();
+
+	if(this->xiH)
+		xiCloseDevice(this->xiH);
+}

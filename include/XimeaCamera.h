@@ -21,28 +21,44 @@
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
-#ifndef MYCAMERACAMERA_H
-#define MYCAMERACAMERA_H
 
-#include <mycamera_export.h>
+#ifndef XIMEACAMERA_H
+#define XIMEACAMERA_H
 
+#include "lima/Debug.h"
+#include "lima/Exceptions.h"
+
+#ifdef WIN32
+#	include "xiApi.h"
+#else
+#	include <m3api/xiApi.h>
+#endif // WIN32
+
+#include <ximea_export.h>
 
 namespace lima
 {
-namespace MyCamera
-{
+	namespace Ximea
+	{
 
-  class MYCAMERA_EXPORT Camera
-  {
-    DEB_CLASS_NAMESPC(DebModCamera, "Camera", "MyCamera");
-  public:
-    Camera();
-    ~Camera();
-  };
-  
-} // namespace MyCamera
+		class XIMEA_EXPORT Camera
+		{
+			DEB_CLASS_NAMESPC(DebModCamera, "Camera", "Ximea");
+
+			friend class Interface;
+			friend class SyncCtrlObj;
+
+		public:
+			Camera(int camera_id);
+			~Camera();
+
+		private:
+			HANDLE xiH;
+			XI_RETURN status;
+		};
+
+  	} // namespace Ximea
 } // namespace lima
 
 
-#endif // MYCAMERACAMERA_H
-
+#endif // XIMEACAMERA_H

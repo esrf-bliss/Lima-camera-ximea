@@ -22,57 +22,67 @@
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
 
-#include "MyCameraInterface.h"
-#include "MyCameraCamera.h"
-
+#include "XimeaInterface.h"
+#include "XimeaCamera.h"
+#include "XimeaDetInfoCtrlObj.h"
+#include "XimeaSyncCtrlObj.h"
+#include "XimeaVideoCtrlObj.h"
 
 using namespace lima;
-using namespace lima::MyCamera;
+using namespace lima::Ximea;
 
-
-Interface::Interface(Camera& cam) :
-  m_cam(cam)
+Interface::Interface(Camera& cam) : m_cam(cam)
 {
-  DEB_CONSTRUCTOR();
+	DEB_CONSTRUCTOR();
+	this->m_det_info = new DetInfoCtrlObj(cam);
+	this->m_sync = new SyncCtrlObj(cam);
+	this->m_video = new VideoCtrlObj(cam);
 }
 
 Interface::~Interface()
 {
-  DEB_DESTRUCTOR();
+	DEB_DESTRUCTOR();
+	delete this->m_det_info;
+	delete this->m_sync;
+	delete this->m_video;
 }
 
 void Interface::getCapList(CapList &cap_list) const
 {
+	cap_list.push_back(HwCap(this->m_det_info));
+	cap_list.push_back(HwCap(this->m_sync));
+	cap_list.push_back(HwCap(this->m_video));
+	cap_list.push_back(HwCap(&(this->m_video->getHwBufferCtrlObj())));
 }
 
 void Interface::reset(ResetLevel reset_level)
 {
-  DEB_MEMBER_FUNCT();
-  DEB_PARAM() << DEB_VAR1(reset_level);
+	DEB_MEMBER_FUNCT();
+	DEB_PARAM() << DEB_VAR1(reset_level);
 }
 
 void Interface::prepareAcq()
 {
-  DEB_MEMBER_FUNCT();
+	DEB_MEMBER_FUNCT();
 }
 
 void Interface::startAcq()
 {
-  DEB_MEMBER_FUNCT();
+	DEB_MEMBER_FUNCT();
 }
 
 void Interface::stopAcq()
 {
-  DEB_MEMBER_FUNCT();
+	DEB_MEMBER_FUNCT();
 }
 
 void Interface::getStatus(StatusType& status)
 {
-  DEB_MEMBER_FUNCT();
+	DEB_MEMBER_FUNCT();
 }
 
 int Interface::getNbHwAcquiredFrames()
 {
-  DEB_MEMBER_FUNCT();
-  //return acq_frames;
+	DEB_MEMBER_FUNCT();
+	return 0;
 }

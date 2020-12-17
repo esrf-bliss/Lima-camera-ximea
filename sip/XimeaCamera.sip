@@ -22,25 +22,19 @@
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
 
-namespace MyCamera
+namespace Ximea
 {
-  class Interface : HwInterface
+  class Camera
   {
 %TypeHeaderCode
-#include <MyCameraInterface.h>
+#include <XimeaCamera.h>
 %End
+
   public:
-    Interface(MyCamera::Camera& cam /KeepReference/);
-    virtual ~Interface();
+    Camera(int camera_id);
+    ~Camera();
 
-    //- From HwInterface
-    virtual void	getCapList(std::vector<HwCap> &cap_list /Out/) const;
-    virtual void	reset(ResetLevel reset_level);
-    virtual void 	prepareAcq();
-    virtual void 	startAcq();
-    virtual void 	stopAcq();
-    virtual void 	getStatus(StatusType& status /Out/);
-    virtual int 	getNbHwAcquiredFrames();
-
+  private:
+    Camera(const Ximea::Camera&);
   };
 };
