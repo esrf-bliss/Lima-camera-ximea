@@ -27,6 +27,7 @@
 
 #include "lima/Debug.h"
 #include "lima/Exceptions.h"
+#include "lima/HwMaxImageSizeCallback.h"
 
 #ifdef WIN32
 #	include "xiApi.h"
@@ -35,6 +36,8 @@
 #endif // WIN32
 
 #include <ximea_export.h>
+
+#include "MagicNumbers.h"
 
 namespace lima
 {
@@ -52,9 +55,35 @@ namespace lima
 			Camera(int camera_id);
 			~Camera();
 
+			void prepareAcq();
+			void startAcq();
+			void stopAcq();
+
+			// DetInfoCtrlObj
+			void getImageType(ImageType& type);
+			void setImageType(ImageType type);
+
+			void getDetectorType(std::string& type);
+			void getDetectorModel(std::string& model);
+			void getDetectorImageSize(Size& size);
+
+			// SyncCtrlObj
+			void setExpTime(double exp_time);
+		    void getExpTime(double& exp_time);
+
+
 		private:
 			HANDLE xiH;
 			XI_RETURN status;
+			XI_IMG* buffer;
+
+			int _get_param_int(const char* param);
+			double _get_param_dbl(const char* param);
+			std::string _get_param_str(const char* param);
+
+			void _set_param_int(const char* param, int value);
+			void _set_param_dbl(const char* param, double value);
+			void _set_param_str(const char* param, std::string value, int size=-1);
 		};
 
   	} // namespace Ximea
