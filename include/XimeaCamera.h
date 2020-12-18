@@ -50,6 +50,7 @@ namespace lima
 
 			friend class Interface;
 			friend class SyncCtrlObj;
+			friend class VideoCtrlObj;
 
 		public:
 			Camera(int camera_id);
