@@ -74,10 +74,79 @@ void Camera::stopAcq()
 
 void Camera::getImageType(ImageType& type)
 {
+	DEB_MEMBER_FUNCT();
+
+	XI_BIT_DEPTH depth = (XI_BIT_DEPTH)this->_get_param_int(XI_PRM_IMAGE_DATA_BIT_DEPTH);
+	switch(depth)
+	{
+		case XI_BPP_8:
+			type = Bpp8;
+			break;
+		case XI_BPP_10:
+			type = Bpp10;
+			break;
+		case XI_BPP_12:
+			type = Bpp12;
+			break;
+		case XI_BPP_14:
+			type = Bpp14;
+			break;
+		case XI_BPP_16:
+			type = Bpp16;
+			break;
+		case XI_BPP_24:
+			type = Bpp24;
+			break;
+		case XI_BPP_32:
+			type = Bpp32;
+			break;
+
+		case XI_BPP_9:
+		case XI_BPP_11:
+			THROW_HW_ERROR(Error) << "Bit depth is not supported by Lima: " << depth;
+			break;
+
+		default:
+			THROW_HW_ERROR(Error) << "Unsupported bit depth: " << depth;
+	}
 }
 
 void Camera::setImageType(ImageType type)
 {
+	DEB_MEMBER_FUNCT();
+
+	XI_BIT_DEPTH depth;
+	switch(type)
+	{
+		case Bpp8:
+			depth = XI_BPP_8;
+			break;
+		case Bpp10:
+			depth = XI_BPP_10;
+			break;
+		case Bpp12:
+			depth = XI_BPP_12;
+			break;
+		case Bpp14:
+			depth = XI_BPP_14;
+			break;
+		case Bpp16:
+			depth = XI_BPP_16;
+			break;
+		case Bpp24:
+			depth = XI_BPP_24;
+			break;
+		case Bpp32:
+			depth = XI_BPP_32;
+			break;
+
+		default:
+			THROW_HW_ERROR(Error) << "Unsupported image type: " << type;
+	}
+
+	this->_set_param_int(XI_PRM_SENSOR_DATA_BIT_DEPTH, depth);
+	this->_set_param_int(XI_PRM_OUTPUT_DATA_BIT_DEPTH, depth);
+	this->_set_param_int(XI_PRM_IMAGE_DATA_BIT_DEPTH, depth);
 }
 
 void Camera::getDetectorType(std::string& type)
