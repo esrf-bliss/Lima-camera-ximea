@@ -37,13 +37,15 @@
 
 #include <ximea_export.h>
 
+#include "XimeaVideoCtrlObj.h"
 #include "MagicNumbers.h"
 
 namespace lima
 {
 	namespace Ximea
 	{
-
+		class VideoCtrlObj;
+		class AcqThread;
 		class XIMEA_EXPORT Camera
 		{
 			DEB_CLASS_NAMESPC(DebModCamera, "Camera", "Ximea");
@@ -51,6 +53,7 @@ namespace lima
 			friend class Interface;
 			friend class SyncCtrlObj;
 			friend class VideoCtrlObj;
+			friend class AcqThread;
 
 		public:
 			Camera(int camera_id);
@@ -70,13 +73,17 @@ namespace lima
 
 			// SyncCtrlObj
 			void setExpTime(double exp_time);
-		    void getExpTime(double& exp_time);
+			void getExpTime(double& exp_time);
 
+			void getNbHwAcquiredFrames(int& nb_acq_frames);
 
 		private:
 			HANDLE xiH;
 			XI_RETURN status;
-			XI_IMG* buffer;
+
+			int m_image_number;
+			AcqThread* m_acq_thread;
+			VideoCtrlObj* m_video;
 
 			int _get_param_int(const char* param);
 			double _get_param_dbl(const char* param);
@@ -85,9 +92,11 @@ namespace lima
 			void _set_param_int(const char* param, int value);
 			void _set_param_dbl(const char* param, double value);
 			void _set_param_str(const char* param, std::string value, int size=-1);
+
+			XI_IMG _read_image(int timeout);
 		};
 
-  	} // namespace Ximea
+	} // namespace Ximea
 } // namespace lima
 
 

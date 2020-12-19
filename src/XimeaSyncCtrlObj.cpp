@@ -19,6 +19,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
+
 #include <sstream>
 #include "XimeaSyncCtrlObj.h"
 #include "XimeaCamera.h"
@@ -77,6 +78,10 @@ void SyncCtrlObj::getNbHwFrames(int& nb_frames)
 void SyncCtrlObj::getValidRanges(ValidRangesType& valid_ranges)
 {
 	DEB_MEMBER_FUNCT();
+
+	// TODO: fill these example values with real ones
+	valid_ranges.min_exp_time = 0;
+	valid_ranges.max_exp_time = 10;
 }
 
 bool SyncCtrlObj::checkAutoExposureMode(HwSyncCtrlObj::AutoExposureMode mode) const

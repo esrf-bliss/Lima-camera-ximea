@@ -64,16 +64,19 @@ void Interface::reset(ResetLevel reset_level)
 void Interface::prepareAcq()
 {
 	DEB_MEMBER_FUNCT();
+	this->m_cam.prepareAcq();
 }
 
 void Interface::startAcq()
 {
 	DEB_MEMBER_FUNCT();
+	this->m_cam.startAcq();
 }
 
 void Interface::stopAcq()
 {
 	DEB_MEMBER_FUNCT();
+	this->m_cam.stopAcq();
 }
 
 void Interface::getStatus(StatusType& status)
@@ -84,5 +87,7 @@ void Interface::getStatus(StatusType& status)
 int Interface::getNbHwAcquiredFrames()
 {
 	DEB_MEMBER_FUNCT();
-	return 0;
+	int acq_frames;
+	this->m_cam.getNbHwAcquiredFrames(acq_frames);
+	return acq_frames;
 }

@@ -19,6 +19,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
+
 #include "XimeaVideoCtrlObj.h"
 #include "XimeaCamera.h"
 #include "XimeaInterface.h"
@@ -28,6 +29,7 @@ using namespace lima::Ximea;
 
 VideoCtrlObj::VideoCtrlObj(Camera& cam) : m_cam(cam)
 {
+	m_cam.m_video = this;
 }
 
 VideoCtrlObj::~VideoCtrlObj()
