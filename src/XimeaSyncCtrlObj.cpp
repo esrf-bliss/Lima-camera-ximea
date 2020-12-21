@@ -69,10 +69,12 @@ void SyncCtrlObj::getLatTime(double& lat_time)
 
 void SyncCtrlObj::setNbHwFrames(int nb_frames)
 {
+	this->m_cam.setNbFrames(nb_frames);
 }
 
 void SyncCtrlObj::getNbHwFrames(int& nb_frames)
 {
+	this->m_cam.getNbFrames(nb_frames);
 }
 
 void SyncCtrlObj::getValidRanges(ValidRangesType& valid_ranges)

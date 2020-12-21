@@ -75,12 +75,16 @@ namespace lima
 			void setExpTime(double exp_time);
 			void getExpTime(double& exp_time);
 
+			void setNbFrames(int nb_frames);
+			void getNbFrames(int& nb_frames);
+
 			void getNbHwAcquiredFrames(int& nb_acq_frames);
 
 		private:
 			HANDLE xiH;
 			XI_RETURN status;
 
+			int m_nb_frames;
 			int m_image_number;
 			AcqThread* m_acq_thread;
 			VideoCtrlObj* m_video;
@@ -93,7 +97,9 @@ namespace lima
 			void _set_param_dbl(const char* param, double value);
 			void _set_param_str(const char* param, std::string value, int size=-1);
 
-			XI_IMG _read_image(int timeout);
+			void _read_image(XI_IMG* image, int timeout);
+
+			void _stop_acq_thread();
 		};
 
 	} // namespace Ximea

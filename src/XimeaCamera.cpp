@@ -35,7 +35,8 @@ using namespace std;
 //---------------------------
 Camera::Camera(int camera_id)
 	: xiH(nullptr),
-	  m_image_number(0)
+	  m_image_number(0),
+	  m_acq_thread(nullptr)
 {
 	DEB_CONSTRUCTOR();
 
@@ -44,8 +45,6 @@ Camera::Camera(int camera_id)
 		THROW_HW_ERROR(Error) << "Could not open camera " << camera_id << "; status: " << this->status;
 
 	DEB_TRACE() << "Camera " << camera_id << " opened; status: " << this->status;
-
-	this->m_acq_thread = new AcqThread(*this);
 }
 
 //---------------------------
@@ -55,9 +54,7 @@ Camera::~Camera()
 {
 	DEB_DESTRUCTOR();
 
-	this->m_acq_thread->m_quit = true;
-	delete this->m_acq_thread;
-
+	this->_stop_acq_thread();
 	if(this->xiH)
 		xiCloseDevice(this->xiH);
 }
@@ -66,7 +63,9 @@ void Camera::prepareAcq()
 {
 	DEB_MEMBER_FUNCT();
 
+	this->_stop_acq_thread();
 	this->m_image_number = 0;
+	this->m_acq_thread = new AcqThread(*this);
 }
 
 void Camera::startAcq()
@@ -82,7 +81,7 @@ void Camera::stopAcq()
 {
 	DEB_MEMBER_FUNCT();
 
-	this->m_acq_thread->m_quit = true;
+	this->_stop_acq_thread();
 	xiStopAcquisition(this->xiH);
 }
 
@@ -178,20 +177,28 @@ void Camera::getDetectorImageSize(Size& size)
 	size = Size(this->_get_param_int(XI_PRM_WIDTH), this->_get_param_int(XI_PRM_HEIGHT));
 }
 
+void Camera::setExpTime(double exp_time)
+{
+	// convert exposure from s to us
+	int v = int(exp_time * TIME_HW);
+	this->_set_param_int(XI_PRM_EXPOSURE, v);
+}
+
 void Camera::getExpTime(double& exp_time)
 {
 	int r = this->_get_param_int(XI_PRM_EXPOSURE);
 	// convert exposure from us to s
-	exp_time = (double)(r / 1e6);
-	printf("\n\n----------- getExpTime: raw: %d; conv: %f\n\n", r, exp_time);
+	exp_time = (double)(r / TIME_HW);
 }
 
-void Camera::setExpTime(double exp_time)
+void Camera::setNbFrames(int nb_frames)
 {
-	// convert exposure from s to us
-	int v = int(exp_time * 1e6);
-	printf("\n\n----------- setExpTime: conv: %f; raw: %d\n\n", exp_time, v);
-	this->_set_param_int(XI_PRM_EXPOSURE, v);
+	this->m_nb_frames = nb_frames;
+}
+
+void Camera::getNbFrames(int& nb_frames)
+{
+	nb_frames = this->m_nb_frames;
 }
 
 void Camera::getNbHwAcquiredFrames(int& nb_acq_frames)
@@ -262,17 +269,22 @@ void Camera::_set_param_str(const char* param, std::string value, int size)
 		THROW_HW_ERROR(Error) << "Could not set parameter " << param << " to " << value << "; status: " << this->status;
 }
 
-XI_IMG Camera::_read_image(int timeout)
+void Camera::_read_image(XI_IMG* image, int timeout)
 {
 	DEB_MEMBER_FUNCT();
 
-	XI_IMG image;
-	memset(&image, 0, sizeof(image));
-	image.size = sizeof(XI_IMG);
-
-	this->status = xiGetImage(this->xiH, timeout, &image);
+	image->size = sizeof(XI_IMG);
+	this->status = xiGetImage(this->xiH, timeout, image);
 	if(this->status != XI_OK)
 		THROW_HW_ERROR(Error) << "Image readout failed; status: " << this->status;
+}
 
-	return image;
+void Camera::_stop_acq_thread()
+{
+	if(this->m_acq_thread)
+	{
+		if(this->m_acq_thread->hasStarted() && !this->m_acq_thread->hasFinished())
+			this->m_acq_thread->m_quit = true;
+		delete this->m_acq_thread;
+	}
 }
