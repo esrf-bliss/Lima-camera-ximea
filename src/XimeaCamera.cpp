@@ -23,7 +23,7 @@
 //###########################################################################
 
 #include "XimeaCamera.h"
-#include "XimeaVideoCtrlObj.h"
+// #include "XimeaVideoCtrlObj.h"
 #include "XimeaAcqThread.h"
 
 using namespace lima;
@@ -36,6 +36,7 @@ using namespace std;
 Camera::Camera(int camera_id)
 	: xiH(nullptr),
 	  m_image_number(0),
+	  m_buffer_size(0),
 	  m_acq_thread(nullptr)
 {
 	DEB_CONSTRUCTOR();
@@ -45,6 +46,7 @@ Camera::Camera(int camera_id)
 		THROW_HW_ERROR(Error) << "Could not open camera " << camera_id << "; status: " << this->status;
 
 	DEB_TRACE() << "Camera " << camera_id << " opened; status: " << this->status;
+	this->_set_param_int(XI_PRM_BUFFER_POLICY, XI_BP_UNSAFE);
 }
 
 //---------------------------
@@ -65,12 +67,16 @@ void Camera::prepareAcq()
 
 	this->_stop_acq_thread();
 	this->m_image_number = 0;
+	this->m_buffer_size = this->m_buffer_ctrl_obj.getBuffer().getFrameDim().getMemSize();
 	this->m_acq_thread = new AcqThread(*this);
 }
 
 void Camera::startAcq()
 {
 	DEB_MEMBER_FUNCT();
+
+	if(!this->m_image_number)
+		this->m_buffer_ctrl_obj.getBuffer().setStartTimestamp(Timestamp::now());
 
 	xiStartAcquisition(this->xiH);
 	this->m_acq_thread->m_quit = false;
@@ -206,6 +212,11 @@ void Camera::getNbHwAcquiredFrames(int& nb_acq_frames)
 	nb_acq_frames = this->m_image_number;
 }
 
+HwBufferCtrlObj* Camera::getBufferCtrlObj()
+{
+	return &this->m_buffer_ctrl_obj;
+}
+
 int Camera::_get_param_int(const char* param)
 {
 	DEB_MEMBER_FUNCT();
@@ -286,5 +297,6 @@ void Camera::_stop_acq_thread()
 		if(this->m_acq_thread->hasStarted() && !this->m_acq_thread->hasFinished())
 			this->m_acq_thread->m_quit = true;
 		delete this->m_acq_thread;
+		this->m_acq_thread = NULL;
 	}
 }

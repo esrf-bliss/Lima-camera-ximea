@@ -28,6 +28,7 @@
 #include "lima/Debug.h"
 #include "lima/Exceptions.h"
 #include "lima/HwMaxImageSizeCallback.h"
+#include "lima/HwBufferMgr.h"
 
 #ifdef WIN32
 #	include "xiApi.h"
@@ -37,14 +38,14 @@
 
 #include <ximea_export.h>
 
-#include "XimeaVideoCtrlObj.h"
+// #include "XimeaVideoCtrlObj.h"
 #include "MagicNumbers.h"
 
 namespace lima
 {
 	namespace Ximea
 	{
-		class VideoCtrlObj;
+		// class VideoCtrlObj;
 		class AcqThread;
 		class XIMEA_EXPORT Camera
 		{
@@ -80,14 +81,21 @@ namespace lima
 
 			void getNbHwAcquiredFrames(int& nb_acq_frames);
 
+
+			// Buffer control object
+			HwBufferCtrlObj* getBufferCtrlObj();
+
+
 		private:
 			HANDLE xiH;
 			XI_RETURN status;
 
 			int m_nb_frames;
 			int m_image_number;
+			size_t m_buffer_size;
 			AcqThread* m_acq_thread;
-			VideoCtrlObj* m_video;
+			SoftBufferCtrlObj m_buffer_ctrl_obj;
+			// VideoCtrlObj* m_video;
 
 			int _get_param_int(const char* param);
 			double _get_param_dbl(const char* param);

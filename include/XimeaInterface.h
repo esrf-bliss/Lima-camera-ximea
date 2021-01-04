@@ -36,7 +36,7 @@ namespace lima
 		class Camera;
 		class DetInfoCtrlObj;
 		class SyncCtrlObj;
-		class VideoCtrlObj;
+		// class VideoCtrlObj;
 		class XIMEA_EXPORT Interface : public HwInterface
 		{
 			DEB_CLASS_NAMESPC(DebModCamera, "XimeaInterface", "Ximea");
@@ -54,12 +54,15 @@ namespace lima
 			virtual void getStatus(StatusType& status);
 			virtual int	getNbHwAcquiredFrames();
 
+			Camera& getCamera() { return this->m_cam; }
+			const Camera& getCamera() const { return this->m_cam; }
+
 		private:
 			Camera& m_cam;
 			// CapList m_cap_list;
 			DetInfoCtrlObj* m_det_info;
 			SyncCtrlObj* m_sync;
-			VideoCtrlObj* m_video;
+			// VideoCtrlObj* m_video;
 		};
 
 	} // namespace Ximea

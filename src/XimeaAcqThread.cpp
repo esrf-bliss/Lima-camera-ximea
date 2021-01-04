@@ -28,17 +28,10 @@ using namespace lima::Ximea;
 AcqThread::AcqThread(Camera& cam)
 	: m_cam(cam),
 	  m_quit(false),
-	  m_buffer(nullptr),
 	  m_timeout(0)
 {
 	pthread_attr_setscope(&m_thread_attr, PTHREAD_SCOPE_PROCESS);
-
-	this->_destroy_buffer();
-
-	size_t buffer_size = this->m_cam.m_nb_frames * sizeof(XI_IMG);
-	this->m_buffer = (XI_IMG*)malloc(buffer_size);
-	memset(this->m_buffer, 0, buffer_size);
-	printf("\n\n----------- AcqThread: allocated %d bytes for %d images\n\n", buffer_size, this->m_cam.m_nb_frames);
+	memset((void*)&this->m_buffer, 0, sizeof(XI_IMG));
 
 	// use timeout of 2 * exposure time
 	double exp_time = 0;
@@ -50,64 +43,60 @@ AcqThread::~AcqThread()
 {
 	this->m_quit = true;
 	join();
-	this->_destroy_buffer();
 }
 
 void AcqThread::threadFunction()
 {
 	DEB_MEMBER_FUNCT();
 
+	StdBufferCbMgr& buffer_mgr = this->m_cam.m_buffer_ctrl_obj.getBuffer();
+
+	bool continueAcq = true;
 	while(!this->m_quit && this->m_cam.m_image_number < this->m_cam.m_nb_frames)
 	{
 		printf("\n\n----------- AcqThread: loop\n\n");
-		XI_IMG* image = &this->m_buffer[this->m_cam.m_image_number];
-		
-		this->m_cam._read_image(image, this->m_timeout);
+
+		this->m_cam._read_image(&this->m_buffer, this->m_timeout);
+
 		printf("\n\n----------- AcqThread: read image\n\n");
-		VideoMode mode;
-		switch(image->frm)
-		{
-			case XI_MONO8:
-				mode = Y8;
-				break;
-			case XI_MONO16:
-				mode = Y16;
-				break;
-			case XI_RGB24:
-				mode = RGB24;
-				break;
-			case XI_RGB32:
-				mode = RGB32;
-				break;
+		
+		int nb_buffers;
+		buffer_mgr.getNbBuffers(nb_buffers);
+		printf("\n\n----------- AcqThread: %d buffers\n\n", nb_buffers);
+					
+		HwFrameInfoType frame_info;
+		frame_info.acq_frame_nb = this->m_cam.m_image_number;
+		// copy TmpBuffer frame to SoftBuffer frame room
+		void *ptr = buffer_mgr.getFrameBufferPtr(this->m_cam.m_image_number);
+		memcpy(ptr, (void*)this->m_buffer.bp, this->m_cam.m_buffer_size);
 
-			case XI_RGB_PLANAR:
-			case XI_RAW8:
-			case XI_RAW16:
-			case XI_FRM_TRANSPORT_DATA:
-			case XI_RGB64:
-			case XI_RGB48:
-			case XI_RGB16_PLANAR:
-			case XI_RAW8X2:
-			case XI_RAW8X4:
-			case XI_RAW16X2:
-			case XI_RAW16X4:
-			case XI_RAW32:
-			case XI_RAW32FLOAT:
-				DEB_ERROR() << "Image type not known to Lima";
-				return;
+		unsigned char cam_pixel = *(unsigned char*)this->m_buffer.bp;
+		unsigned char buf_pixel = *(unsigned char*)ptr;
 
-			default:
-				THROW_HW_ERROR(Error) << "Invalid image type";
-				return;
-		}
-		printf("\n\n----------- AcqThread: video mode\n\n");
-		this->m_cam.m_video->callNewImage(
-			(char*)image->bp,
-			image->width,
-			image->height,
-			mode
-		);
-		printf("\n\n----------- AcqThread: new frame\n\n");
+		printf("\n\n ==================== \n");
+		printf("      IMAGE INFO\n");
+		printf("       = Lima =\n");
+		printf("buffer size: %d\n", this->m_cam.m_buffer_size);
+		printf("image number: %d\n", this->m_cam.m_image_number);
+		printf("frame buffer ptr: %p\n", ptr);
+		printf("first pixel: %d\n", buf_pixel);
+		printf("        = XI =\n");
+		printf("image size type: %d\n", this->m_buffer.size);
+		printf("buffer ptr: %p\n", this->m_buffer.bp);
+		printf("filled size: %d\n", this->m_buffer.bp_size);
+		printf("format: %d\n", this->m_buffer.frm);
+		printf("frame size: %dx%d\n", this->m_buffer.width, this->m_buffer.height);
+		printf("frame number: %d\n", this->m_buffer.nframe);
+		printf("acq frame number: %d\n", this->m_buffer.transport_frm);
+		printf("exposure time: %d us\n", this->m_buffer.exposure_time_us);
+		printf("gain: %d dB\n", this->m_buffer.gain_db);
+		printf("downsampling: %dx%d\n", this->m_buffer.fDownsamplingX, this->m_buffer.fDownsamplingY);
+		printf("first pixel: %d\n", cam_pixel);
+		printf(" ==================== \n\n");
+
+		continueAcq = buffer_mgr.newFrameReady(frame_info);
+		printf("\n\n----------- AcqThread: new frame, continue: %d\n\n", continueAcq);
+		DEB_TRACE() << DEB_VAR1(continueAcq);
 		++this->m_cam.m_image_number;
 		printf("\n\n----------- AcqThread: counter\n\n");
 	}

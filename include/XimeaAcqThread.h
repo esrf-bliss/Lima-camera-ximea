@@ -50,10 +50,8 @@ namespace lima
 				Camera& m_cam;
 
 				bool m_quit;
-				XI_IMG* m_buffer;
+				XI_IMG m_buffer;
 				int m_timeout;
-
-				void _destroy_buffer();
 		};
 	} // namespace Ximea
 } // namespace lima
