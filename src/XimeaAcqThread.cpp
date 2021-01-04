@@ -56,10 +56,12 @@ void AcqThread::threadFunction()
 	{
 		printf("\n\n----------- AcqThread: loop\n\n");
 
+		this->m_cam._set_status(Camera::Exposure);
 		this->m_cam._read_image(&this->m_buffer, this->m_timeout);
 
 		printf("\n\n----------- AcqThread: read image\n\n");
 		
+		this->m_cam._set_status(Camera::Readout);
 		int nb_buffers;
 		buffer_mgr.getNbBuffers(nb_buffers);
 		printf("\n\n----------- AcqThread: %d buffers\n\n", nb_buffers);
@@ -99,16 +101,12 @@ void AcqThread::threadFunction()
 		DEB_TRACE() << DEB_VAR1(continueAcq);
 		++this->m_cam.m_image_number;
 		printf("\n\n----------- AcqThread: counter\n\n");
+
+		if(continueAcq && this->m_cam.xi_status == XI_OK)
+			this->m_cam._set_status(Camera::Ready);
+		else
+			this->m_cam._set_status(Camera::Fault);
+
 	}
 	printf("\n\n----------- AcqThread: stop\n\n");
-}
-
-void AcqThread::_destroy_buffer()
-{
-	if(this->m_buffer)
-	{
-		free(this->m_buffer);
-		this->m_buffer = NULL;
-		printf("\n\n----------- AcqThread: buffer destroyed\n\n");
-	}
 }

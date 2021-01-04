@@ -57,6 +57,10 @@ namespace lima
 			friend class AcqThread;
 
 		public:
+			enum Status {
+				Ready, Exposure, Readout, Latency, Fault
+			};
+
 			Camera(int camera_id);
 			~Camera();
 
@@ -81,6 +85,7 @@ namespace lima
 
 			void getNbHwAcquiredFrames(int& nb_acq_frames);
 
+			void getStatus(Camera::Status& status);
 
 			// Buffer control object
 			HwBufferCtrlObj* getBufferCtrlObj();
@@ -88,8 +93,9 @@ namespace lima
 
 		private:
 			HANDLE xiH;
-			XI_RETURN status;
+			XI_RETURN xi_status;
 
+			Camera::Status m_status;
 			int m_nb_frames;
 			int m_image_number;
 			size_t m_buffer_size;
@@ -108,6 +114,8 @@ namespace lima
 			void _read_image(XI_IMG* image, int timeout);
 
 			void _stop_acq_thread();
+
+			void _set_status(Camera::Status status);
 		};
 
 	} // namespace Ximea
