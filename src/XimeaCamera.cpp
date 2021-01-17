@@ -46,8 +46,8 @@ Camera::Camera(int camera_id)
 	if(this->xi_status != XI_OK)
 		THROW_HW_ERROR(Error) << "Could not open camera " << camera_id << "; status: " << this->xi_status;
 
-	// set buffer policy to managed by xiApi
-	this->_set_param_int(XI_PRM_BUFFER_POLICY, XI_BP_UNSAFE);
+	// set buffer policy to managed by application
+	this->_set_param_int(XI_PRM_BUFFER_POLICY, XI_BP_SAFE);
 
 	DEB_TRACE() << "Camera " << camera_id << " opened; xi_status: " << this->xi_status;
 }

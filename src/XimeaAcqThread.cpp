@@ -56,46 +56,19 @@ void AcqThread::threadFunction()
 	{
 		printf("\n\n----------- AcqThread: loop\n\n");
 
+		// set up acq buffers
+		this->m_buffer.bp = buffer_mgr.getFrameBufferPtr(this->m_cam.m_image_number);
+		this->m_buffer.bp_size = this->m_cam.m_buffer_size;
+
 		this->m_cam._set_status(Camera::Exposure);
 		this->m_cam._read_image(&this->m_buffer, this->m_timeout);
 
 		printf("\n\n----------- AcqThread: read image\n\n");
 		
 		this->m_cam._set_status(Camera::Readout);
-		int nb_buffers;
-		buffer_mgr.getNbBuffers(nb_buffers);
-		printf("\n\n----------- AcqThread: %d buffers\n\n", nb_buffers);
-					
+
 		HwFrameInfoType frame_info;
 		frame_info.acq_frame_nb = this->m_cam.m_image_number;
-		// copy TmpBuffer frame to SoftBuffer frame room
-		void *ptr = buffer_mgr.getFrameBufferPtr(this->m_cam.m_image_number);
-		memcpy(ptr, (void*)this->m_buffer.bp, this->m_cam.m_buffer_size);
-
-		unsigned char cam_pixel = *(unsigned char*)this->m_buffer.bp;
-		unsigned char buf_pixel = *(unsigned char*)ptr;
-
-		printf("\n\n ==================== \n");
-		printf("      IMAGE INFO\n");
-		printf("       = Lima =\n");
-		printf("buffer size: %d\n", this->m_cam.m_buffer_size);
-		printf("image number: %d\n", this->m_cam.m_image_number);
-		printf("frame buffer ptr: %p\n", ptr);
-		printf("first pixel: %d\n", buf_pixel);
-		printf("        = XI =\n");
-		printf("image size type: %d\n", this->m_buffer.size);
-		printf("buffer ptr: %p\n", this->m_buffer.bp);
-		printf("filled size: %d\n", this->m_buffer.bp_size);
-		printf("format: %d\n", this->m_buffer.frm);
-		printf("frame size: %dx%d\n", this->m_buffer.width, this->m_buffer.height);
-		printf("frame number: %d\n", this->m_buffer.nframe);
-		printf("acq frame number: %d\n", this->m_buffer.transport_frm);
-		printf("exposure time: %d us\n", this->m_buffer.exposure_time_us);
-		printf("gain: %d dB\n", this->m_buffer.gain_db);
-		printf("downsampling: %dx%d\n", this->m_buffer.fDownsamplingX, this->m_buffer.fDownsamplingY);
-		printf("first pixel: %d\n", cam_pixel);
-		printf(" ==================== \n\n");
-
 		continueAcq = buffer_mgr.newFrameReady(frame_info);
 		printf("\n\n----------- AcqThread: new frame, continue: %d\n\n", continueAcq);
 		DEB_TRACE() << DEB_VAR1(continueAcq);
