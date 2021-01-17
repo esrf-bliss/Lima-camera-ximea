@@ -321,3 +321,16 @@ void Camera::_set_status(Camera::Status status)
 	
 	this->m_status = this->xi_status == XI_OK ? status : Camera::Fault;
 }
+
+// Extra attributes
+
+void Camera::getPreset(Preset& p)
+{
+	p = (Preset)this->_get_param_int(XI_PRM_USER_SET_SELECTOR);
+}
+
+void Camera::setPreset(Preset p)
+{
+	this->_set_param_int(XI_PRM_USER_SET_SELECTOR, (int)p);
+	this->_set_param_int(XI_PRM_USER_SET_LOAD, XI_ON);
+}

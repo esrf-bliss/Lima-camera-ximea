@@ -61,6 +61,30 @@ namespace lima
 				Ready, Exposure, Readout, Latency, Fault
 			};
 
+			enum Preset {
+				Preset_12_STD_L = XI_US_12_STD_L,
+				Preset_12_STD_H = XI_US_12_STD_H,
+				Preset_14_STD_L = XI_US_14_STD_L,
+				Preset_None = XI_US_NONE,
+				Preset_14_STD_H = XI_US_14_STD_H,
+				Preset_2_12_CMS_S_L = XI_US_2_12_CMS_S_L,
+				Preset_2_12_CMS_S_H = XI_US_2_12_CMS_S_H,
+				Preset_2_14_CMS_S_L = XI_US_2_14_CMS_S_L,
+				Preset_2_14_CMS_S_H = XI_US_2_14_CMS_S_H,
+				Preset_4_12_CMS_S_L = XI_US_4_12_CMS_S_L,
+				Preset_4_12_CMS_S_H = XI_US_4_12_CMS_S_H,
+				Preset_4_14_CMS_S_L = XI_US_4_14_CMS_S_L,
+				Preset_4_14_CMS_S_H = XI_US_4_14_CMS_S_H,
+				Preset_2_12_HDR_HL = XI_US_2_12_HDR_HL,
+				Preset_2_12_HDR_L = XI_US_2_12_HDR_L,
+				Preset_2_12_HDR_H = XI_US_2_12_HDR_H,
+				Preset_4_12_CMS_HDR_HL = XI_US_4_12_CMS_HDR_HL,
+				Preset_2_14_HDR_L = XI_US_2_14_HDR_L,
+				Preset_2_14_HDR_H = XI_US_2_14_HDR_H,
+				Preset_2_12_CMS_A_L = XI_US_2_12_CMS_A_L,
+				Preset_2_12_CMS_A_H = XI_US_2_12_CMS_A_H
+			};
+
 			Camera(int camera_id);
 			~Camera();
 
@@ -89,6 +113,10 @@ namespace lima
 
 			// Buffer control object
 			HwBufferCtrlObj* getBufferCtrlObj();
+
+			// Extra attributes
+			void getPreset(Preset& p);
+			void setPreset(Preset p);
 
 
 		private:
