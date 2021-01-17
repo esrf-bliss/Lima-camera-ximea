@@ -38,14 +38,12 @@
 
 #include <ximea_export.h>
 
-// #include "XimeaVideoCtrlObj.h"
 #include "MagicNumbers.h"
 
 namespace lima
 {
 	namespace Ximea
 	{
-		// class VideoCtrlObj;
 		class AcqThread;
 		class XIMEA_EXPORT Camera
 		{
@@ -101,7 +99,6 @@ namespace lima
 			size_t m_buffer_size;
 			AcqThread* m_acq_thread;
 			SoftBufferCtrlObj m_buffer_ctrl_obj;
-			// VideoCtrlObj* m_video;
 
 			int _get_param_int(const char* param);
 			double _get_param_dbl(const char* param);
