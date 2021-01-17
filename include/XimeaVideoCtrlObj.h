@@ -32,6 +32,7 @@ namespace lima
 {
 	namespace Ximea
 	{
+		class Camera;
 		class SyncCtrlObj;
 		class XIMEA_EXPORT VideoCtrlObj : public HwVideoCtrlObj
 		{

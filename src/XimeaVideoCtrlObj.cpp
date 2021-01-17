@@ -19,6 +19,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
+
 #include "XimeaVideoCtrlObj.h"
 #include "XimeaCamera.h"
 #include "XimeaInterface.h"
@@ -28,6 +29,7 @@ using namespace lima::Ximea;
 
 VideoCtrlObj::VideoCtrlObj(Camera& cam) : m_cam(cam)
 {
+	m_cam.m_video = this;
 }
 
 VideoCtrlObj::~VideoCtrlObj()
@@ -73,11 +75,20 @@ void VideoCtrlObj::checkRoi(const Roi&, Roi& hw_roi)
 {
 }
 
-bool VideoCtrlObj::checkAutoGainMode(AutoGainMode mode) const
+bool VideoCtrlObj::checkAutoGainMode(HwVideoCtrlObj::AutoGainMode mode) const
 {
-	return false;
+	DEB_MEMBER_FUNCT();
+	DEB_PARAM() << DEB_VAR1(mode);
+
+	return true;
 }
 
-void VideoCtrlObj::setHwAutoGainMode(AutoGainMode mode)
+void VideoCtrlObj::setHwAutoGainMode(HwVideoCtrlObj::AutoGainMode mode)
 {
+	DEB_MEMBER_FUNCT();
+	DEB_PARAM() << DEB_VAR1(mode);
+
+	this->m_cam._set_param_int(XI_PRM_AEAG,
+		mode == HwVideoCtrlObj::ON ? XI_ON : XI_OFF
+	);
 }
