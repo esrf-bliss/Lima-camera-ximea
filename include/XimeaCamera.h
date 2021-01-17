@@ -51,7 +51,6 @@ namespace lima
 
 			friend class Interface;
 			friend class SyncCtrlObj;
-			friend class VideoCtrlObj;
 			friend class AcqThread;
 
 		public:

@@ -54,26 +54,19 @@ void AcqThread::threadFunction()
 	bool continueAcq = true;
 	while(!this->m_quit && this->m_cam.m_image_number < this->m_cam.m_nb_frames)
 	{
-		printf("\n\n----------- AcqThread: loop\n\n");
-
 		// set up acq buffers
 		this->m_buffer.bp = buffer_mgr.getFrameBufferPtr(this->m_cam.m_image_number);
 		this->m_buffer.bp_size = this->m_cam.m_buffer_size;
 
 		this->m_cam._set_status(Camera::Exposure);
 		this->m_cam._read_image(&this->m_buffer, this->m_timeout);
-
-		printf("\n\n----------- AcqThread: read image\n\n");
 		
 		this->m_cam._set_status(Camera::Readout);
-
 		HwFrameInfoType frame_info;
 		frame_info.acq_frame_nb = this->m_cam.m_image_number;
 		continueAcq = buffer_mgr.newFrameReady(frame_info);
-		printf("\n\n----------- AcqThread: new frame, continue: %d\n\n", continueAcq);
 		DEB_TRACE() << DEB_VAR1(continueAcq);
 		++this->m_cam.m_image_number;
-		printf("\n\n----------- AcqThread: counter\n\n");
 
 		if(continueAcq && this->m_cam.xi_status == XI_OK)
 			this->m_cam._set_status(Camera::Ready);
@@ -81,5 +74,4 @@ void AcqThread::threadFunction()
 			this->m_cam._set_status(Camera::Fault);
 
 	}
-	printf("\n\n----------- AcqThread: stop\n\n");
 }
