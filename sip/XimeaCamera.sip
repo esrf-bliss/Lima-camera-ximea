@@ -70,6 +70,31 @@ namespace Ximea
 			GainSelector_Analog_North = XI_GAIN_SELECTOR_ANALOG_N,
 			GainSelector_Analog_South = XI_GAIN_SELECTOR_ANALOG_S
 		};
+
+		enum TempControlMode {
+			TempControlMode_Off = XI_TEMP_CTRL_MODE_OFF,
+			TempControlMode_Auto = XI_TEMP_CTRL_MODE_AUTO,
+			TempControlMode_Manual = XI_TEMP_CTRL_MODE_MANUAL
+		};
+
+		enum Thermometer {
+			Thermometer_Die_Raw = XI_TEMP_IMAGE_SENSOR_DIE_RAW,
+			Thermometer_Sensor_Die = XI_TEMP_IMAGE_SENSOR_DIE,
+			Thermometer_Sensor_Board = XI_TEMP_SENSOR_BOARD,
+			Thermometer_Interface_Board = XI_TEMP_INTERFACE_BOARD,
+			Thermometer_Front_Housing = XI_TEMP_FRONT_HOUSING,
+			Thermometer_Rear_Housing = XI_TEMP_REAR_HOUSING,
+			Thermometer_TEC1_Cold = XI_TEMP_TEC1_COLD,
+			Thermometer_TEC1_Hot = XI_TEMP_TEC1_HOT
+		};
+
+		enum ThermalElement {
+			ThermalElement_TEC1 = XI_TEMP_ELEM_TEC1,
+			ThermalElement_TEC2 = XI_TEMP_ELEM_TEC2,
+			ThermalElement_Fan1 = XI_TEMP_ELEM_FAN1,
+			ThermalElement_Fan_Start_Threshold = XI_TEMP_ELEM_FAN1_THRS_TEMP
+		};
+
 		Camera(int camera_id);
 		~Camera();
 
@@ -110,6 +135,24 @@ namespace Ximea
 		void setGainSelector(GainSelector s);
 		void getGain(int& g);
 		void setGain(int g);
+
+		// Temperature
+		void getIsCooled(bool& c);
+		void getTempControlMode(TempControlMode& m);
+		void setTempControlMode(TempControlMode m);
+		void getTargetTemp(double& t);
+		void setTargetTemp(double t);
+		void getThermometer(Thermometer& t);
+		void setThermometer(Thermometer t);
+		void getTemperature(double& t);
+		void getChipTemp(double& t);
+		void getHousingTemp(double& t);
+		void getBackTemp(double& t);
+		void getSensorTemp(double& t);
+		void getThermalElement(ThermalElement& e);
+		void setThermalElement(ThermalElement e);
+		void getThermalElementValue(double& v);
+		void setThermalElementValue(double v);
 
 	private:
 		Camera(const Ximea::Camera&);

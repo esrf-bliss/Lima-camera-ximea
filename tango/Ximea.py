@@ -75,6 +75,28 @@ class Ximea(PyTango.Device_4Impl):
 			"Analog_South": Xi.Camera.GainSelector_Analog_South,
 		}
 
+		self.__TempControlMode = {
+			"Off": Xi.Camera.TempControlMode_Off,
+			"Auto": Xi.Camera.TempControlMode_Auto,
+			"Manual": Xi.Camera.TempControlMode_Manual,
+		}
+
+		self.__Thermometer = {
+			"Die_Raw": Xi.Camera.Thermometer_Die_Raw,
+			"Sensor_Die": Xi.Camera.Thermometer_Sensor_Die,
+			"Sensor_Board": Xi.Camera.Thermometer_Sensor_Board,
+			"Interface_Board": Xi.Camera.Thermometer_Interface_Board,
+			"Front_Housing": Xi.Camera.Thermometer_Front_Housing,
+			"Rear_Housing": Xi.Camera.Thermometer_Rear_Housing,
+			"TEC1_Cold": Xi.Camera.Thermometer_TEC1_Cold,
+			"TEC1_Hot": Xi.Camera.Thermometer_TEC1_Hot,
+		}
+
+		self.__ThermalElement = {
+			"TEC1": Xi.Camera.ThermalElement_TEC1,
+			"TEC2": Xi.Camera.ThermalElement_TEC2,
+			"Fan1": Xi.Camera.ThermalElement_Fan1,
+			"Fan_Start_Threshold": Xi.Camera.ThermalElement_Fan_Start_Threshold,
 		}
 
 		self.init_device()
@@ -161,6 +183,94 @@ class XimeaClass(PyTango.DeviceClass):
 				'unit': 'dB',
 				'format': '',
 				'description': 'Gain value',
+			}
+		],
+		"is_cooled": [
+			[PyTango.DevLong, PyTango.SCALAR, PyTango.READ],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Is the camera cooled',
+			}
+		],
+		"temp_control_mode": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Temperature control mode',
+			}
+		],
+		"target_temp": [
+			[PyTango.DevDouble, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': '*C',
+				'format': '',
+				'description': 'Target temperature',
+			}
+		],
+		"thermometer": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Select thermometer',
+			}
+		],
+		"temperature": [
+			[PyTango.DevDouble, PyTango.SCALAR, PyTango.READ],
+			{
+				'unit': '*C',
+				'format': '',
+				'description': 'Thermometer temperature',
+			}
+		],
+		"chip_temp": [
+			[PyTango.DevDouble, PyTango.SCALAR, PyTango.READ],
+			{
+				'unit': '*C',
+				'format': '',
+				'description': 'Camera sensor temperature',
+			}
+		],
+		"housing_temp": [
+			[PyTango.DevDouble, PyTango.SCALAR, PyTango.READ],
+			{
+				'unit': '*C',
+				'format': '',
+				'description': 'Camera housing temperature',
+			}
+		],
+		"back_temp": [
+			[PyTango.DevDouble, PyTango.SCALAR, PyTango.READ],
+			{
+				'unit': '*C',
+				'format': '',
+				'description': 'Camera housing back side temperature',
+			}
+		],
+		"sensor_temp": [
+			[PyTango.DevDouble, PyTango.SCALAR, PyTango.READ],
+			{
+				'unit': '*C',
+				'format': '',
+				'description': 'Sensor board temperature',
+			}
+		],
+		"thermal_element": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Thermal control element',
+			}
+		],
+		"thermal_element_value": [
+			[PyTango.DevDouble, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': '%',
+				'format': '',
+				'description': 'Thermal element control value',
 			}
 		],
 	}
