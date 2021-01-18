@@ -85,6 +85,18 @@ namespace lima
 				Preset_2_12_CMS_A_H = XI_US_2_12_CMS_A_H
 			};
 
+			enum GainSelector {
+				GainSelector_All = XI_GAIN_SELECTOR_ALL,
+				GainSelector_Analog_All = XI_GAIN_SELECTOR_ANALOG_ALL,
+				GainSelector_Digital_All = XI_GAIN_SELECTOR_DIGITAL_ALL,
+				GainSelector_Analog_Tap1 = XI_GAIN_SELECTOR_ANALOG_TAP1,
+				GainSelector_Analog_Tap2 = XI_GAIN_SELECTOR_ANALOG_TAP2,
+				GainSelector_Analog_Tap3 = XI_GAIN_SELECTOR_ANALOG_TAP3,
+				GainSelector_Analog_Tap4 = XI_GAIN_SELECTOR_ANALOG_TAP4,
+				GainSelector_Analog_North = XI_GAIN_SELECTOR_ANALOG_N,
+				GainSelector_Analog_South = XI_GAIN_SELECTOR_ANALOG_S
+			};
+
 			Camera(int camera_id);
 			~Camera();
 
@@ -114,10 +126,17 @@ namespace lima
 			// Buffer control object
 			HwBufferCtrlObj* getBufferCtrlObj();
 
-			// Extra attributes
+			// ========== Extra attributes ==========
+
+			// Presets
 			void getPreset(Preset& p);
 			void setPreset(Preset p);
 
+			// Gain
+			void getGainSelector(GainSelector& s);
+			void setGainSelector(GainSelector s);
+			void getGain(int& g);
+			void setGain(int g);
 
 		private:
 			HANDLE xiH;

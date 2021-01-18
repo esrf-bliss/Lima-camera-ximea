@@ -47,8 +47,8 @@ Camera::Camera(int camera_id)
 	if(this->xi_status != XI_OK)
 		THROW_HW_ERROR(Error) << "Could not open camera " << camera_id << "; status: " << this->xi_status;
 
-	// set buffer policy to managed by xiApi
-	this->_set_param_int(XI_PRM_BUFFER_POLICY, XI_BP_UNSAFE);
+	// set buffer policy to managed by application
+	this->_set_param_int(XI_PRM_BUFFER_POLICY, XI_BP_SAFE);
 
 	DEB_TRACE() << "Camera " << camera_id << " opened; xi_status: " << this->xi_status;
 }
@@ -333,4 +333,24 @@ void Camera::setPreset(Preset p)
 {
 	this->_set_param_int(XI_PRM_USER_SET_SELECTOR, (int)p);
 	this->_set_param_int(XI_PRM_USER_SET_LOAD, XI_ON);
+}
+
+void Camera::getGainSelector(GainSelector &s)
+{
+	s = (GainSelector)this->_get_param_int(XI_PRM_GAIN_SELECTOR);
+}
+
+void Camera::setGainSelector(GainSelector s)
+{
+	this->_set_param_int(XI_PRM_GAIN_SELECTOR, (int)s);
+}
+
+void Camera::getGain(int& g)
+{
+	g = this->_get_param_int(XI_PRM_GAIN);
+}
+
+void Camera::setGain(int g)
+{
+	this->_set_param_int(XI_PRM_GAIN, g);
 }

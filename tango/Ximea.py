@@ -36,31 +36,45 @@ class Ximea(PyTango.Device_4Impl):
 	# ------------------------------------------------------------------
 	#    Device constructor
 	# ------------------------------------------------------------------
-	def __init__(self, *args) :
+	def __init__(self, *args):
 		PyTango.Device_4Impl.__init__(self, *args)
 
 		self.__Preset = {
-			"Preset_12_STD_L": Xi.Camera.Preset_12_STD_L,
-			"Preset_12_STD_H": Xi.Camera.Preset_12_STD_H,
-			"Preset_14_STD_L": Xi.Camera.Preset_14_STD_L,
-			"Preset_None": Xi.Camera.Preset_None,
-			"Preset_14_STD_H": Xi.Camera.Preset_14_STD_H,
-			"Preset_2_12_CMS_S_L": Xi.Camera.Preset_2_12_CMS_S_L,
-			"Preset_2_12_CMS_S_H": Xi.Camera.Preset_2_12_CMS_S_H,
-			"Preset_2_14_CMS_S_L": Xi.Camera.Preset_2_14_CMS_S_L,
-			"Preset_2_14_CMS_S_H": Xi.Camera.Preset_2_14_CMS_S_H,
-			"Preset_4_12_CMS_S_L": Xi.Camera.Preset_4_12_CMS_S_L,
-			"Preset_4_12_CMS_S_H": Xi.Camera.Preset_4_12_CMS_S_H,
-			"Preset_4_14_CMS_S_L": Xi.Camera.Preset_4_14_CMS_S_L,
-			"Preset_4_14_CMS_S_H": Xi.Camera.Preset_4_14_CMS_S_H,
-			"Preset_2_12_HDR_HL": Xi.Camera.Preset_2_12_HDR_HL,
-			"Preset_2_12_HDR_L": Xi.Camera.Preset_2_12_HDR_L,
-			"Preset_2_12_HDR_H": Xi.Camera.Preset_2_12_HDR_H,
-			"Preset_4_12_CMS_HDR_HL": Xi.Camera.Preset_4_12_CMS_HDR_HL,
-			"Preset_2_14_HDR_L": Xi.Camera.Preset_2_14_HDR_L,
-			"Preset_2_14_HDR_H": Xi.Camera.Preset_2_14_HDR_H,
-			"Preset_2_12_CMS_A_L": Xi.Camera.Preset_2_12_CMS_A_L,
-			"Preset_2_12_CMS_A_H": Xi.Camera.Preset_2_12_CMS_A_H
+			"12_STD_L": Xi.Camera.Preset_12_STD_L,
+			"12_STD_H": Xi.Camera.Preset_12_STD_H,
+			"14_STD_L": Xi.Camera.Preset_14_STD_L,
+			"None": Xi.Camera.Preset_None,
+			"14_STD_H": Xi.Camera.Preset_14_STD_H,
+			"2_12_CMS_S_L": Xi.Camera.Preset_2_12_CMS_S_L,
+			"2_12_CMS_S_H": Xi.Camera.Preset_2_12_CMS_S_H,
+			"2_14_CMS_S_L": Xi.Camera.Preset_2_14_CMS_S_L,
+			"2_14_CMS_S_H": Xi.Camera.Preset_2_14_CMS_S_H,
+			"4_12_CMS_S_L": Xi.Camera.Preset_4_12_CMS_S_L,
+			"4_12_CMS_S_H": Xi.Camera.Preset_4_12_CMS_S_H,
+			"4_14_CMS_S_L": Xi.Camera.Preset_4_14_CMS_S_L,
+			"4_14_CMS_S_H": Xi.Camera.Preset_4_14_CMS_S_H,
+			"2_12_HDR_HL": Xi.Camera.Preset_2_12_HDR_HL,
+			"2_12_HDR_L": Xi.Camera.Preset_2_12_HDR_L,
+			"2_12_HDR_H": Xi.Camera.Preset_2_12_HDR_H,
+			"4_12_CMS_HDR_HL": Xi.Camera.Preset_4_12_CMS_HDR_HL,
+			"2_14_HDR_L": Xi.Camera.Preset_2_14_HDR_L,
+			"2_14_HDR_H": Xi.Camera.Preset_2_14_HDR_H,
+			"2_12_CMS_A_L": Xi.Camera.Preset_2_12_CMS_A_L,
+			"2_12_CMS_A_H": Xi.Camera.Preset_2_12_CMS_A_H
+		}
+
+		self.__GainSelector = {
+			"All": Xi.Camera.GainSelector_All,
+			"Analog_All": Xi.Camera.GainSelector_Analog_All,
+			"Digital_All": Xi.Camera.GainSelector_Digital_All,
+			"Analog_Tap1": Xi.Camera.GainSelector_Analog_Tap1,
+			"Analog_Tap2": Xi.Camera.GainSelector_Analog_Tap2,
+			"Analog_Tap3": Xi.Camera.GainSelector_Analog_Tap3,
+			"Analog_Tap4": Xi.Camera.GainSelector_Analog_Tap4,
+			"Analog_North": Xi.Camera.GainSelector_Analog_North,
+			"Analog_South": Xi.Camera.GainSelector_Analog_South,
+		}
+
 		}
 
 		self.init_device()
@@ -131,6 +145,22 @@ class XimeaClass(PyTango.DeviceClass):
 				'unit': 'N/A',
 				'format': '',
 				'description': 'Select configuration preset',
+			}
+		],
+		"gain_selector": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Select gain type',
+			}
+		],
+		"gain": [
+			[PyTango.DevLong, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'dB',
+				'format': '',
+				'description': 'Gain value',
 			}
 		],
 	}
