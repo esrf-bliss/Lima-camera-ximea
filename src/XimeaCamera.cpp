@@ -97,6 +97,13 @@ void Camera::stopAcq()
 	this->_set_status(Camera::Ready);
 }
 
+void Camera::reset()
+{
+	DEB_MEMBER_FUNCT();
+
+	this->_set_param_int(XI_PRM_DEVICE_RESET, XI_ON);
+}
+
 void Camera::getImageType(ImageType& type)
 {
 	DEB_MEMBER_FUNCT();

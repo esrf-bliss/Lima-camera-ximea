@@ -60,6 +60,10 @@ void Interface::reset(ResetLevel reset_level)
 {
 	DEB_MEMBER_FUNCT();
 	DEB_PARAM() << DEB_VAR1(reset_level);
+
+	this->stopAcq();
+	this->m_cam.reset();
+	this->m_cam._set_status(Camera::Ready);
 }
 
 void Interface::prepareAcq()

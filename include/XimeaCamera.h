@@ -256,6 +256,8 @@ namespace lima
 			void startAcq();
 			void stopAcq();
 
+			void reset();
+
 			// DetInfoCtrlObj
 			void getImageType(ImageType& type);
 			void setImageType(ImageType type);
