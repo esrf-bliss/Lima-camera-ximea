@@ -26,6 +26,7 @@
 #include "XimeaCamera.h"
 #include "XimeaDetInfoCtrlObj.h"
 #include "XimeaSyncCtrlObj.h"
+#include "XimeaRoiCtrlObj.h"
 
 using namespace lima;
 using namespace lima::Ximea;
