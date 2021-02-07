@@ -87,6 +87,10 @@ namespace lima
 			// Buffer control object
 			HwBufferCtrlObj* getBufferCtrlObj();
 
+			// Binning control object
+			void checkBin(Bin&);
+			void setBin(const Bin&);
+			void getBin(Bin&);
 
 		private:
 			HANDLE xiH;
