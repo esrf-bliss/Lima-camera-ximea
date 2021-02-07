@@ -303,6 +303,19 @@ namespace Ximea
 		void setHorizontalDecimationPattern(DecimationPattern p);
 		void getVerticalDecimationPattern(DecimationPattern& p);
 		void setVerticalDecimationPattern(DecimationPattern p);
+		void getExposurePriority(double& p);
+		void setExposurePriority(double p);
+		void getAutoGainLimit(int& l);
+		void setAutoGainLimit(int l);
+		void getAutoExposureLimit(int& l);
+		void setAutoExposureLimit(int l);
+		void getAutoIntensityLevel(int& l);
+		void setAutoIntensityLevel(int l);
+		void getBandwidthLimit(double& l);
+		void setBandwidthLimit(double l);
+		void getBandwidthLimitEnabled(bool& e);
+		void setBandwidthLimitEnabled(bool e);
+		void getAvailableBandwidth(double& b);
 
 	private:
 		Camera(const Ximea::Camera&);

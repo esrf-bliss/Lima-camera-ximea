@@ -553,6 +553,62 @@ class XimeaClass(PyTango.DeviceClass):
 				'description': 'Decimation vertical pattern',
 			}
 		],
+		"exposure_priority": [
+			[PyTango.DevDouble, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Exposure priority (0.8 - exposure 80%, gain 20%)',
+			}
+		],
+		"auto_gain_limit": [
+			[PyTango.DevLong, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Gain limit for AEAG procedure',
+			}
+		],
+		"auto_exposure_limit": [
+			[PyTango.DevLong, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'us',
+				'format': '',
+				'description': 'Exposure limit for AEAG procedure',
+			}
+		],
+		"auto_intensity_level": [
+			[PyTango.DevDouble, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': '%',
+				'format': '',
+				'description': 'Target average intensity for AEAG procedure',
+			}
+		],
+		"bandwidth_limit": [
+			[PyTango.DevDouble, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'Mb/s',
+				'format': '',
+				'description': 'Bandwidth limit',
+			}
+		],
+		"bandwidth_limit_enabled": [
+			[PyTango.DevBoolean, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Enable bandwidth limiting',
+			}
+		],
+		"available_bandwidth": [
+			[PyTango.DevDouble, PyTango.SCALAR, PyTango.READ],
+			{
+				'unit': 'Mb/s',
+				'format': '',
+				'description': 'Measured available bandwidth',
+			}
+		],
 	}
 
 	def __init__(self, name):

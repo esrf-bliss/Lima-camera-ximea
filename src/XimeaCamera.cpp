@@ -655,3 +655,68 @@ void Camera::setVerticalDecimationPattern(DecimationPattern p)
 	this->_set_param_int(XI_PRM_DECIMATION_VERTICAL_PATTERN, (int)p);
 }
 
+void Camera::getExposurePriority(double& p)
+{
+	p = this->_get_param_dbl(XI_PRM_EXP_PRIORITY);
+}
+
+void Camera::setExposurePriority(double p)
+{
+	this->_set_param_dbl(XI_PRM_EXP_PRIORITY, p);
+}
+
+void Camera::getAutoGainLimit(int& l)
+{
+	l = this->_get_param_int(XI_PRM_AG_MAX_LIMIT);
+}
+
+void Camera::setAutoGainLimit(int l)
+{
+	this->_set_param_int(XI_PRM_AG_MAX_LIMIT, l);
+}
+
+void Camera::getAutoExposureLimit(int& l)
+{
+	l = this->_get_param_int(XI_PRM_AE_MAX_LIMIT);
+}
+
+void Camera::setAutoExposureLimit(int l)
+{
+	this->_set_param_int(XI_PRM_AE_MAX_LIMIT, l);
+}
+
+void Camera::getAutoIntensityLevel(int& l)
+{
+	l = this->_get_param_int(XI_PRM_AEAG_LEVEL);
+}
+
+void Camera::setAutoIntensityLevel(int l)
+{
+	this->_set_param_int(XI_PRM_AEAG_LEVEL, l);
+}
+
+void Camera::getBandwidthLimit(double& l)
+{
+	l = this->_get_param_dbl(XI_PRM_LIMIT_BANDWIDTH);
+}
+
+void Camera::setBandwidthLimit(double l)
+{
+	this->_set_param_dbl(XI_PRM_LIMIT_BANDWIDTH, l);
+}
+
+void Camera::getBandwidthLimitEnabled(bool& e)
+{
+	e = (bool)this->_get_param_int(XI_PRM_LIMIT_BANDWIDTH_MODE);
+}
+
+void Camera::setBandwidthLimitEnabled(bool e)
+{
+	this->_set_param_int(XI_PRM_LIMIT_BANDWIDTH_MODE, (int)e);
+}
+
+void Camera::getAvailableBandwidth(double& b)
+{
+	b = this->_get_param_dbl(XI_PRM_AVAILABLE_BANDWIDTH);
+}
+
