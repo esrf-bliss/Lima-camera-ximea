@@ -87,6 +87,11 @@ namespace lima
 			// Buffer control object
 			HwBufferCtrlObj* getBufferCtrlObj();
 
+			// ROI control object
+			void checkRoi(const Roi& set_roi, Roi& hw_roi);
+			void setRoi(const Roi& set_roi);
+			void getRoi(Roi& hw_roi);
+
 
 		private:
 			HANDLE xiH;

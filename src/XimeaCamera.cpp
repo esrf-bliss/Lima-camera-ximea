@@ -224,10 +224,56 @@ HwBufferCtrlObj* Camera::getBufferCtrlObj()
 
 void Camera::getStatus(Camera::Status& status)
 {
-    DEB_MEMBER_FUNCT();
+	DEB_MEMBER_FUNCT();
 
-    status = this->m_status;
-    DEB_RETURN() << DEB_VAR1(status);
+	status = this->m_status;
+	DEB_RETURN() << DEB_VAR1(status);
+}
+
+void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
+{
+	DEB_MEMBER_FUNCT();
+	DEB_PARAM() << DEB_VAR1(set_roi);
+
+	// TODO: What should be done here?
+	hw_roi = set_roi;
+
+	DEB_RETURN() << DEB_VAR1(hw_roi);
+}
+
+void Camera::setRoi(const Roi& ask_roi)
+{
+	DEB_MEMBER_FUNCT();
+	DEB_PARAM() << DEB_VAR1(ask_roi);
+
+	// check if new ROI is the same as currently set one
+	Roi r;
+	this->getRoi(r);
+	if(r == ask_roi) return;
+
+	if(ask_roi.isActive())
+	{
+		// then set the new ROI
+		this->_set_param_int(XI_PRM_OFFSET_X, ask_roi.getTopLeft().x);
+		this->_set_param_int(XI_PRM_OFFSET_Y, ask_roi.getTopLeft().y);
+		this->_set_param_int(XI_PRM_WIDTH, ask_roi.getSize().getWidth());
+		this->_set_param_int(XI_PRM_HEIGHT, ask_roi.getSize().getHeight())
+	}
+}
+
+void Camera::getRoi(Roi& hw_roi)
+{
+	DEB_MEMBER_FUNCT();
+
+	int x = this->_get_param_int(XI_PRM_OFFSET_X);
+	int y = this->_get_param_int(XI_PRM_OFFSET_Y);
+	int w = this->_get_param_int(XI_PRM_WIDTH);
+	int h = this->_get_param_int(XI_PRM_HEIGHT);
+
+	Roi r(x, y, w, h);
+	hw_roi = r;
+
+	DEB_RETURN() << DEB_VAR1(hw_roi);
 }
 
 int Camera::_get_param_int(const char* param)
