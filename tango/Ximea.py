@@ -192,6 +192,17 @@ class Ximea(PyTango.Device_4Impl):
 			"Bayer": Xi.Camera.BinningPattern_Bayer,
 		}
 
+		self.__DecimationEngine = {
+			"Sensor": Xi.Camera.DecimationEngine_Sensor,
+			"FPGA": Xi.Camera.DecimationEngine_FPGA,
+			"Host": Xi.Camera.DecimationEngine_Host,
+		}
+
+		self.__DecimationPattern = {
+			"Mono": Xi.Camera.DecimationPattern_Mono,
+			"Bayer": Xi.Camera.DecimationPattern_Bayer,
+		}
+
 		self.init_device()
 
 	# ------------------------------------------------------------------
@@ -500,6 +511,46 @@ class XimeaClass(PyTango.DeviceClass):
 				'unit': 'N/A',
 				'format': '',
 				'description': 'Binning vertical pattern',
+			}
+		],
+		"decimation_engine": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Decimation engine selector',
+			}
+		],
+		"horizontal_decimation": [
+			[PyTango.DevLong, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Horizontal decimation value',
+			}
+		],
+		"vertical_decimation": [
+			[PyTango.DevLong, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Vertical decimation value',
+			}
+		],
+		"horizontal_decimation_pattern": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Decimation horizontal pattern',
+			}
+		],
+		"vertical_decimation_pattern": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Decimation vertical pattern',
 			}
 		],
 	}

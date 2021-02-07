@@ -604,3 +604,54 @@ void Camera::setVerticalBinningPattern(BinningPattern p)
 {
 	this->_set_param_int(XI_PRM_BINNING_VERTICAL_PATTERN, (int)p);
 }
+
+void Camera::getDecimationEngine(DecimationEngine &e)
+{
+	e = (DecimationEngine)this->_get_param_int(XI_PRM_DECIMATION_SELECTOR);
+}
+
+void Camera::setDecimationEngine(DecimationEngine e)
+{
+	this->_set_param_int(XI_PRM_DECIMATION_SELECTOR, (int)e);
+}
+
+void Camera::getHorizontalDecimation(int& d)
+{
+	d = this->_get_param_int(XI_PRM_DECIMATION_HORIZONTAL);
+}
+
+void Camera::setHorizontalDecimation(int d)
+{
+	this->_set_param_int(XI_PRM_DECIMATION_HORIZONTAL, d);
+}
+
+void Camera::getVerticalDecimation(int& d)
+{
+	d = this->_get_param_int(XI_PRM_DECIMATION_VERTICAL);
+}
+
+void Camera::setVerticalDecimation(int d)
+{
+	this->_set_param_int(XI_PRM_DECIMATION_VERTICAL, d);
+}
+
+void Camera::getHorizontalDecimationPattern(DecimationPattern &p)
+{
+	p = (DecimationPattern)this->_get_param_int(XI_PRM_DECIMATION_HORIZONTAL_PATTERN);
+}
+
+void Camera::setHorizontalDecimationPattern(DecimationPattern p)
+{
+	this->_set_param_int(XI_PRM_DECIMATION_HORIZONTAL_PATTERN, (int)p);
+}
+
+void Camera::getVerticalDecimationPattern(DecimationPattern &p)
+{
+	p = (DecimationPattern)this->_get_param_int(XI_PRM_DECIMATION_VERTICAL_PATTERN);
+}
+
+void Camera::setVerticalDecimationPattern(DecimationPattern p)
+{
+	this->_set_param_int(XI_PRM_DECIMATION_VERTICAL_PATTERN, (int)p);
+}
+

@@ -188,6 +188,17 @@ namespace Ximea
 			BinningPattern_Bayer = XI_BIN_BAYER
 		};
 
+		enum DecimationEngine {
+			DecimationEngine_Sensor = XI_DEC_SELECT_SENSOR,
+			DecimationEngine_FPGA = XI_DEC_SELECT_DEVICE_FPGA,
+			DecimationEngine_Host = XI_DEC_SELECT_HOST_CPU
+		};
+
+		enum DecimationPattern {
+			DecimationPattern_Mono = XI_DEC_MONO,
+			DecimationPattern_Bayer = XI_DEC_BAYER
+		};
+
 		Camera(int camera_id);
 		~Camera();
 
@@ -276,12 +287,22 @@ namespace Ximea
 		void setVerticalFlip(bool f);
 		void getInterlineExpMode(InterlineExpMode& m);
 		void setInterlineExpMode(InterlineExpMode m);
-		void getBinningEngine(BinningEngine &e);
+		void getBinningEngine(BinningEngine& e);
 		void setBinningEngine(BinningEngine e);
-		void getHorizontalBinningPattern(BinningPattern &p);
+		void getHorizontalBinningPattern(BinningPattern& p);
 		void setHorizontalBinningPattern(BinningPattern p);
-		void getVerticalBinningPattern(BinningPattern &p);
+		void getVerticalBinningPattern(BinningPattern& p);
 		void setVerticalBinningPattern(BinningPattern p);
+		void getDecimationEngine(DecimationEngine& e);
+		void setDecimationEngine(DecimationEngine e);
+		void getHorizontalDecimation(int& d);
+		void setHorizontalDecimation(int d);
+		void getVerticalDecimation(int& d);
+		void setVerticalDecimation(int d);
+		void getHorizontalDecimationPattern(DecimationPattern& p);
+		void setHorizontalDecimationPattern(DecimationPattern p);
+		void getVerticalDecimationPattern(DecimationPattern& p);
+		void setVerticalDecimationPattern(DecimationPattern p);
 
 	private:
 		Camera(const Ximea::Camera&);
