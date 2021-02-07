@@ -95,6 +95,88 @@ namespace Ximea
 			ThermalElement_Fan_Start_Threshold = XI_TEMP_ELEM_FAN1_THRS_TEMP
 		};
 
+		enum ExposureSelector {
+			ExposureSelector_Common = XI_EXPOSURE_TIME_SELECTOR_COMMON,
+			ExposureSelector_Group1 = XI_EXPOSURE_TIME_SELECTOR_GROUP1,
+			ExposureSelector_Group2 = XI_EXPOSURE_TIME_SELECTOR_GROUP2
+		};
+
+		enum Downsampling {
+			Downsampling_1x1 = XI_DWN_1x1,
+			Downsampling_2x2 = XI_DWN_2x2,
+			Downsampling_3x3 = XI_DWN_3x3,
+			Downsampling_4x4 = XI_DWN_4x4,
+			Downsampling_5x5 = XI_DWN_5x5,
+			Downsampling_6x6 = XI_DWN_6x6,
+			Downsampling_7x7 = XI_DWN_7x7,
+			Downsampling_8x8 = XI_DWN_8x8,
+			Downsampling_9x9 = XI_DWN_9x9,
+			Downsampling_10x10 = XI_DWN_10x10,
+			Downsampling_16x16 = XI_DWN_16x16
+		};
+
+		enum DownsamplingType {
+			DownsamplingType_Binning = XI_BINNING,
+			DownsamplingType_Skipping = XI_SKIPPING
+		};
+
+		enum TestPatternGenerator {
+			TestPatternGenerator_Sensor = XI_TESTPAT_GEN_SENSOR,
+			TestPatternGenerator_FPGA = XI_TESTPAT_GEN_FPGA
+		};
+
+		enum TestPattern {
+			TestPattern_Off = XI_TESTPAT_OFF,
+			TestPattern_Black = XI_TESTPAT_BLACK,
+			TestPattern_White = XI_TESTPAT_WHITE,
+			TestPattern_Grey_Horizontal = XI_TESTPAT_GREY_HORIZ_RAMP,
+			TestPattern_Grey_Vertical = XI_TESTPAT_GREY_VERT_RAMP,
+			TestPattern_Grey_Horizontal_Moving = XI_TESTPAT_GREY_HORIZ_RAMP_MOVING,
+			TestPattern_Grey_Vertical_Moving = XI_TESTPAT_GREY_VERT_RAMP_MOVING,
+			TestPattern_Line_Horizontal_Moving = XI_TESTPAT_HORIZ_LINE_MOVING,
+			TestPattern_Line_Vertical_Moving = XI_TESTPAT_VERT_LINE_MOVING,
+			TestPattern_Color_Bar = XI_TESTPAT_COLOR_BAR,
+			TestPattern_Frame_Counter = XI_TESTPAT_FRAME_COUNTER,
+			TestPattern_Counter = XI_TESTPAT_DEVICE_SPEC_COUNTER
+		};
+
+		enum ImageFormat {
+			ImageFormat_Mono8 = XI_MONO8,
+			ImageFormat_Mono16 = XI_MONO16,
+			ImageFormat_RGB24 = XI_RGB24,
+			ImageFormat_RGB32 = XI_RGB32,
+			ImageFormat_RGB_Planar = XI_RGB_PLANAR,
+			ImageFormat_Raw8 = XI_RAW8,
+			ImageFormat_Raw16 = XI_RAW16,
+			ImageFormat_Transport = XI_FRM_TRANSPORT_DATA,
+			ImageFormat_RGB48 = XI_RGB48,
+			ImageFormat_RGB64 = XI_RGB64,
+			ImageFormat_RGB16_Planar = XI_RGB16_PLANAR,
+			ImageFormat_Raw8x2 = XI_RAW8X2,
+			ImageFormat_Raw8x4 = XI_RAW8X4,
+			ImageFormat_Raw16x2 = XI_RAW16X2,
+			ImageFormat_Raw16x4 = XI_RAW16X4,
+			ImageFormat_Raw32 = XI_RAW32,
+			ImageFormat_Raw32_Float = XI_RAW32FLOAT
+		};
+
+		enum Shutter {
+			Shutter_Global = XI_SHUTTER_GLOBAL,
+			Shutter_Rolling = XI_SHUTTER_ROLLING,
+			Shutter_Reset_Release = XI_SHUTTER_GLOBAL_RESET_RELEASE
+		};
+
+		enum Taps {
+			Taps_1 = XI_TAP_CNT_1,
+			Taps_2 = XI_TAP_CNT_2,
+			Taps_4 = XI_TAP_CNT_4
+		};
+
+		enum InterlineExpMode {
+			InterlineExpMode_Off = XI_INTERLINE_EXPOSURE_MODE_OFF,
+			InterlineExpMode_On = XI_INTERLINE_EXPOSURE_MODE_ON
+		};
+
 		Camera(int camera_id);
 		~Camera();
 
@@ -153,6 +235,36 @@ namespace Ximea
 		void setThermalElement(ThermalElement e);
 		void getThermalElementValue(double& v);
 		void setThermalElementValue(double v);
+
+		// Other parameters
+		void getExposureSelector(ExposureSelector& s);
+		void setExposureSelector(ExposureSelector s);
+		void getBurstCount(int& c);
+		void setBurstCount(int c);
+		void getDownsampling(Downsampling& d);
+		void setDownsampling(Downsampling d);
+		void getDownsamplingType(DownsamplingType& t);
+		void setDownsamplingType(DownsamplingType t);
+		void getTestPatternGenerator(TestPatternGenerator& g);
+		void setTestPatternGenerator(TestPatternGenerator g);
+		void getTestPattern(TestPattern& p);
+		void setTestPattern(TestPattern p);
+		void getImageFormat(ImageFormat& f);
+		void setImageFormat(ImageFormat f);
+		void getShutter(Shutter& s);
+		void setShutter(Shutter s);
+		void getTaps(Taps& t);
+		void setTaps(Taps t);
+		void getAutoExposureGain(bool& a);
+		void setAutoExposureGain(bool a);
+		void getAutoWhiteBalance(bool& a);
+		void setAutoWhiteBalance(bool a);
+		void getHorizontalFlip(bool& f);
+		void setHorizontalFlip(bool f);
+		void getVerticalFlip(bool& f);
+		void setVerticalFlip(bool f);
+		void getInterlineExpMode(InterlineExpMode& m);
+		void setInterlineExpMode(InterlineExpMode m);
 
 	private:
 		Camera(const Ximea::Camera&);

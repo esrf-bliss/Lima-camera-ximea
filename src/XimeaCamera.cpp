@@ -434,3 +434,143 @@ void Camera::setThermalElementValue(double v)
 {
 	this->_set_param_dbl(XI_PRM_TEMP_ELEMENT_VALUE, v);
 }
+
+void Camera::getExposureSelector(ExposureSelector& s)
+{
+	s = (ExposureSelector)this->_get_param_int(XI_PRM_EXPOSURE_TIME_SELECTOR);
+}
+
+void Camera::setExposureSelector(ExposureSelector s)
+{
+	this->_set_param_int(XI_PRM_EXPOSURE_TIME_SELECTOR, (int)s);
+}
+
+void Camera::getBurstCount(int& c)
+{
+	c = this->_get_param_int(XI_PRM_EXPOSURE_BURST_COUNT);
+}
+
+void Camera::setBurstCount(int c)
+{
+	this->_set_param_int(XI_PRM_EXPOSURE_BURST_COUNT, c);
+}
+
+void Camera::getDownsampling(Downsampling& d)
+{
+	d = (Downsampling)this->_get_param_int(XI_PRM_DOWNSAMPLING);
+}
+
+void Camera::setDownsampling(Downsampling d)
+{
+	this->_set_param_int(XI_PRM_DOWNSAMPLING, (int)d);
+}
+
+void Camera::getDownsamplingType(DownsamplingType& t)
+{
+	t = (DownsamplingType)this->_get_param_int(XI_PRM_DOWNSAMPLING_TYPE);
+}
+
+void Camera::setDownsamplingType(DownsamplingType t)
+{
+	this->_set_param_int(XI_PRM_DOWNSAMPLING_TYPE, (int)t);
+}
+
+void Camera::getTestPatternGenerator(TestPatternGenerator& g)
+{
+	d = (TestPatternGenerator)this->_get_param_int(XI_PRM_TEST_PATTERN_GENERATOR_SELECTOR);
+}
+
+void Camera::setTestPatternGenerator(TestPatternGenerator g)
+{
+	this->_set_param_int(XI_PRM_TEST_PATTERN_GENERATOR_SELECTOR, (int)g);
+}
+
+void Camera::getTestPattern(TestPattern& p)
+{
+	p = (TestPattern)this->_get_param_int(XI_PRM_TEST_PATTERN);
+}
+
+void Camera::setTestPattern(TestPattern p)
+{
+	this->_set_param_int(XI_PRM_TEST_PATTERN, (int)p);
+}
+
+void Camera::getImageFormat(ImageFormat& f)
+{
+	f = (ImageFormat)this->_get_param_int(XI_PRM_IMAGE_DATA_FORMAT);
+}
+
+void Camera::setImageFormat(ImageFormat f)
+{
+	this->_set_param_int(XI_PRM_IMAGE_DATA_FORMAT, (int)f);
+}
+
+void Camera::getShutter(Shutter& s)
+{
+	s = (Shutter)this->_get_param_int(XI_PRM_SHUTTER_TYPE);
+}
+
+void Camera::setShutter(Shutter s)
+{
+	this->_set_param_int(XI_PRM_SHUTTER_TYPE, (int)s);
+}
+
+void Camera::getTaps(Taps& t)
+{
+	t = (Taps)this->_get_param_int(XI_PRM_SENSOR_TAPS);
+}
+
+void Camera::setTaps(Taps t)
+{
+	this->_set_param_int(XI_PRM_SENSOR_TAPS, (int)t);
+}
+
+void Camera::getAutoExposureGain(bool& a)
+{
+	a = (bool)this->_get_param_int(XI_PRM_AEAG);
+}
+
+void Camera::setAutoExposureGain(bool a)
+{
+	this->_set_param_int(XI_PRM_AEAG, (int)a);
+}
+
+void Camera::getAutoWhiteBalance(bool& a)
+{
+	a = (bool)this->_get_param_int(XI_PRM_AUTO_WB);
+}
+
+void Camera::setAutoWhiteBalance(bool a)
+{
+	this->_set_param_int(XI_PRM_AUTO_WB, (int)a);
+}
+
+void Camera::getHorizontalFlip(bool& f)
+{
+	f = (bool)this->_get_param_int(XI_PRM_HORIZONTAL_FLIP);
+}
+
+void Camera::setHorizontalFlip(bool f)
+{
+	this->_set_param_int(XI_PRM_HORIZONTAL_FLIP, (int)f);
+}
+
+void Camera::getVerticalFlip(bool& f)
+{
+	f = (bool)this->_get_param_int(XI_PRM_VERTICAL_FLIP);
+}
+
+void Camera::setVerticalFlip(bool f)
+{
+	this->_set_param_int(XI_PRM_VERTICAL_FLIP, (int)f);
+}
+
+void Camera::getInterlineExpMode(InterlineExpMode& m)
+{
+	m = (InterlineExpMode)this->_get_param_int(XI_PRM_INTERLINE_EXPOSURE_MODE);
+}
+
+void Camera::setInterlineExpMode(InterlineExpMode m)
+{
+	this->_set_param_int(XI_PRM_INTERLINE_EXPOSURE_MODE, (int)m);
+}

@@ -99,6 +99,88 @@ class Ximea(PyTango.Device_4Impl):
 			"Fan_Start_Threshold": Xi.Camera.ThermalElement_Fan_Start_Threshold,
 		}
 
+		self.__ExposureSelector = {
+			"Common": Xi.Camera.ExposureSelector_Common,
+			"Group1": Xi.Camera.ExposureSelector_Group1,
+			"Group2": Xi.Camera.ExposureSelector_Group2,
+		}
+
+		self.__Downsampling = {
+			"1x1": Xi.Camera.Downsampling_1x1,
+			"2x2": Xi.Camera.Downsampling_2x2,
+			"3x3": Xi.Camera.Downsampling_3x3,
+			"4x4": Xi.Camera.Downsampling_4x4,
+			"5x5": Xi.Camera.Downsampling_5x5,
+			"6x6": Xi.Camera.Downsampling_6x6,
+			"7x7": Xi.Camera.Downsampling_7x7,
+			"8x8": Xi.Camera.Downsampling_8x8,
+			"9x9": Xi.Camera.Downsampling_9x9,
+			"10x10": Xi.Camera.Downsampling_10x10,
+			"16x16": Xi.Camera.Downsampling_16x16,
+		}
+
+		self.__DownsamplingType = {
+			"Binning": Xi.Camera.DownsamplingType_Binning,
+			"Skipping": Xi.Camera.DownsamplingType_Skipping,
+		}
+
+		self.__TestPatternGenerator = {
+			"Sensor": Xi.Camera.TestPatternGenerator_Sensor,
+			"FPGA": Xi.Camera.TestPatternGenerator_FPGA,
+		}
+
+		self.__TestPattern = {
+			"Off": Xi.Camera.TestPattern_Off,
+			"Black": Xi.Camera.TestPattern_Black,
+			"White": Xi.Camera.TestPattern_White,
+			"Grey_Horizontal": Xi.Camera.TestPattern_Grey_Horizontal,
+			"Grey_Vertical": Xi.Camera.TestPattern_Grey_Vertical,
+			"Grey_Horizontal_Moving": Xi.Camera.TestPattern_Grey_Horizontal_Moving,
+			"Grey_Vertical_Moving": Xi.Camera.TestPattern_Grey_Vertical_Moving,
+			"Line_Horizontal_Moving": Xi.Camera.TestPattern_Line_Horizontal_Moving,
+			"Line_Vertical_Moving": Xi.Camera.TestPattern_Line_Vertical_Moving,
+			"Color_Bar": Xi.Camera.TestPattern_Color_Bar,
+			"Frame_Counter": Xi.Camera.TestPattern_Frame_Counter,
+			"Counter": Xi.Camera.TestPattern_Counter,
+		}
+
+		self.__ImageFormat = {
+			"Mono8": Xi.Camera.ImageFormat_Mono8,
+			"Mono16": Xi.Camera.ImageFormat_Mono16,
+			"RGB24": Xi.Camera.ImageFormat_RGB24,
+			"RGB32": Xi.Camera.ImageFormat_RGB32,
+			"RGB_Planar": Xi.Camera.ImageFormat_RGB_Planar,
+			"Raw8": Xi.Camera.ImageFormat_Raw8,
+			"Raw16": Xi.Camera.ImageFormat_Raw16,
+			"Transport": Xi.Camera.ImageFormat_Transport,
+			"RGB48": Xi.Camera.ImageFormat_RGB48,
+			"RGB64": Xi.Camera.ImageFormat_RGB64,
+			"RGB16_Planar": Xi.Camera.ImageFormat_RGB16_Planar,
+			"Raw8x2": Xi.Camera.ImageFormat_Raw8x2,
+			"Raw8x4": Xi.Camera.ImageFormat_Raw8x4,
+			"Raw16x2": Xi.Camera.ImageFormat_Raw16x2,
+			"Raw16x4": Xi.Camera.ImageFormat_Raw16x4,
+			"Raw32": Xi.Camera.ImageFormat_Raw32,
+			"Raw32_Float": Xi.Camera.ImageFormat_Raw32_Float,
+		}
+
+		self.__Shutter = {
+			"Global": Xi.Camera.Shutter_Global,
+			"Rolling": Xi.Camera.Shutter_Rolling,
+			"Reset_Release": Xi.Camera.Shutter_Reset_Release,
+		}
+
+		self.__Taps = {
+			"1": Xi.Camera.Taps_1,
+			"2": Xi.Camera.Taps_2,
+			"4": Xi.Camera.Taps_4,
+		}
+
+		self.__InterlineExpMode = {
+			"Off": Xi.Camera.InterlineExpMode_Off,
+			"On": Xi.Camera.InterlineExpMode_On,
+		}
+
 		self.init_device()
 
 	# ------------------------------------------------------------------
@@ -271,6 +353,118 @@ class XimeaClass(PyTango.DeviceClass):
 				'unit': '%',
 				'format': '',
 				'description': 'Thermal element control value',
+			}
+		],
+		"exposure_selector": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Exposure mode selector',
+			}
+		],
+		"burst_count": [
+			[PyTango.DevLong, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Burst count',
+			}
+		],
+		"downsampling": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Downsampling value',
+			}
+		],
+		"downsampling_type": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Downsampling type',
+			}
+		],
+		"test_pattern_generator": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Test pattern generator',
+			}
+		],
+		"test_pattern": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Test pattern',
+			}
+		],
+		"image_format": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Image format',
+			}
+		],
+		"shutter": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Shutter mode',
+			}
+		],
+		"taps": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Sensor taps',
+			}
+		],
+		"auto_exposure_gain": [
+			[PyTango.DevBoolean, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Auto exposure and gain control',
+			}
+		],
+		"auto_white_balance": [
+			[PyTango.DevBoolean, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Auto white balance control',
+			}
+		],
+		"horizontal_flip": [
+			[PyTango.DevBoolean, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Horizontal flip',
+			}
+		],
+		"vertical_flip": [
+			[PyTango.DevBoolean, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Vertical flip',
+			}
+		],
+		"interline_exp_mode": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Interline exposure mode',
 			}
 		],
 	}
