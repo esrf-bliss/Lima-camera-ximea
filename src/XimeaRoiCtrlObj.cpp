@@ -40,7 +40,7 @@ RoiCtrlObj::~RoiCtrlObj()
 void RoiCtrlObj::checkRoi(const Roi& set_roi, Roi& hw_roi)
 {
 	DEB_MEMBER_FUNCT();
-	m_cam.checkRoi(set_roi, hw_roi);
+	this->m_cam.checkRoi(set_roi, hw_roi);
 }
 
 void RoiCtrlObj::setRoi(const Roi& roi)
@@ -48,11 +48,11 @@ void RoiCtrlObj::setRoi(const Roi& roi)
 	DEB_MEMBER_FUNCT();
 	Roi real_roi;
 	this->checkRoi(roi, real_roi);
-	m_cam.setRoi(real_roi);
+	this->m_cam.setRoi(real_roi);
 }
 
 void RoiCtrlObj::getRoi(Roi& roi)
 {
 	DEB_MEMBER_FUNCT();
-	m_cam.getRoi(roi);
+	this->m_cam.getRoi(roi);
 }
