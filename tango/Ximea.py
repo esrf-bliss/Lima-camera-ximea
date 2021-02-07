@@ -217,6 +217,16 @@ class Ximea(PyTango.Device_4Impl):
 			"Frame_Rate_Limit": Xi.Camera.AcqTimingMode_Frame_Rate_Limit,
 		}
 
+		self.__FeatureSelector = {
+			"Zero_ROT_Enable": Xi.Camera.FeatureSelector_Zero_ROT_Enable,
+			"Black_Level_Clamp": Xi.Camera.FeatureSelector_Black_Level_Clamp,
+			"FPGA_Digital_Gain_Disable": Xi.Camera.FeatureSelector_FPGA_Digital_Gain_Disable,
+			"Acquisition_Running": Xi.Camera.FeatureSelector_Acquisition_Running,
+			"Timing_Mode": Xi.Camera.FeatureSelector_Timing_Mode,
+			"Parallel_ADC": Xi.Camera.FeatureSelector_Parallel_ADC,
+			"Black_Level_Offset_Raw": Xi.Camera.FeatureSelector_Black_Level_Offset_Raw,
+		}
+
 		self.init_device()
 
 	# ------------------------------------------------------------------
@@ -669,6 +679,22 @@ class XimeaClass(PyTango.DeviceClass):
 				'unit': 'N/A',
 				'format': '',
 				'description': 'Acquisition status',
+			}
+		],
+		"feature_selector": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Sensor additional features',
+			}
+		],
+		"feature_value": [
+			[PyTango.DevLong, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Selected feature value',
 			}
 		],
 	}

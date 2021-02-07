@@ -239,6 +239,16 @@ namespace lima
 				AcqTimingMode_Frame_Rate_Limit = XI_ACQ_TIMING_MODE_FRAME_RATE_LIMIT
 			};
 
+			enum FeatureSelector {
+				FeatureSelector_Zero_ROT_Enable = XI_SENSOR_FEATURE_ZEROROT_ENABLE,
+				FeatureSelector_Black_Level_Clamp = XI_SENSOR_FEATURE_BLACK_LEVEL_CLAMP,
+				FeatureSelector_FPGA_Digital_Gain_Disable = XI_SENSOR_FEATURE_MD_FPGA_DIGITAL_GAIN_DISABLE,
+				FeatureSelector_Acquisition_Running = XI_SENSOR_FEATURE_ACQUISITION_RUNNING,
+				FeatureSelector_Timing_Mode = XI_SENSOR_FEATURE_TIMING_MODE,
+				FeatureSelector_Parallel_ADC = XI_SENSOR_FEATURE_PARALLEL_ADC,
+				FeatureSelector_Black_Level_Offset_Raw = XI_SENSOR_FEATURE_BLACK_LEVEL_OFFSET_RAW
+			};
+
 			Camera(int camera_id);
 			~Camera();
 
@@ -366,6 +376,10 @@ namespace lima
 			void getTriggerDelay(int& d);
 			void setTriggerDelay(int d);
 			void getAcqStatus(bool& s);
+			void getFeatureSelector(FeatureSelector& s);
+			void setFeatureSelector(FeatureSelector s);
+			void getFeatureValue(int& v);
+			void setFeatureValue(int v);
 
 		private:
 			HANDLE xiH;

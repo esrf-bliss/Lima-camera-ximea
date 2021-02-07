@@ -769,3 +769,23 @@ void Camera::getAcqStatus(bool& s)
 {
 	s = (bool)this->_get_param_int(XI_PRM_ACQUISITION_STATUS);
 }
+
+void Camera::getFeatureSelector(FeatureSelector& s)
+{
+	s = (FeatureSelector)this->_get_param_int(XI_PRM_SENSOR_FEATURE_SELECTOR);
+}
+
+void Camera::setFeatureSelector(FeatureSelector s)
+{
+	this->_set_param_int(XI_PRM_SENSOR_FEATURE_SELECTOR, (int)s);
+}
+
+void Camera::getFeatureValue(int& v)
+{
+	v = this->_get_param_int(XI_PRM_SENSOR_FEATURE_VALUE); 
+}
+
+void Camera::setFeatureValue(int v)
+{
+	this->_set_param_int(XI_PRM_SENSOR_FEATURE_VALUE, v);
+}
