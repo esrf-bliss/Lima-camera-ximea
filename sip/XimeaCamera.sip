@@ -177,6 +177,17 @@ namespace Ximea
 			InterlineExpMode_On = XI_INTERLINE_EXPOSURE_MODE_ON
 		};
 
+		enum BinningEngine {
+			BinningEngine_Sensor = XI_BIN_SELECT_SENSOR,
+			BinningEngine_FPGA = XI_BIN_SELECT_DEVICE_FPGA,
+			BinningEngine_Host = XI_BIN_SELECT_HOST_CPU
+		};
+
+		enum BinningPattern {
+			BinningPattern_Mono = XI_BIN_MONO,
+			BinningPattern_Bayer = XI_BIN_BAYER
+		};
+
 		Camera(int camera_id);
 		~Camera();
 
@@ -265,6 +276,12 @@ namespace Ximea
 		void setVerticalFlip(bool f);
 		void getInterlineExpMode(InterlineExpMode& m);
 		void setInterlineExpMode(InterlineExpMode m);
+		void getBinningEngine(BinningEngine &e);
+		void setBinningEngine(BinningEngine e);
+		void getHorizontalBinningPattern(BinningPattern &p);
+		void setHorizontalBinningPattern(BinningPattern p);
+		void getVerticalBinningPattern(BinningPattern &p);
+		void setVerticalBinningPattern(BinningPattern p);
 
 	private:
 		Camera(const Ximea::Camera&);

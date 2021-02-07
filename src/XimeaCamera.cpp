@@ -574,3 +574,33 @@ void Camera::setInterlineExpMode(InterlineExpMode m)
 {
 	this->_set_param_int(XI_PRM_INTERLINE_EXPOSURE_MODE, (int)m);
 }
+
+void Camera::getBinningSelector(BinningSelector &s)
+{
+	s = (BinningSelector)this->_get_param_int(XI_PRM_BINNING_SELECTOR);
+}
+
+void Camera::setBinningSelector(BinningSelector s)
+{
+	this->_set_param_int(XI_PRM_BINNING_SELECTOR, (int)s);
+}
+
+void Camera::getHorizontalBinningPattern(BinningPattern &p)
+{
+	p = (BinningPattern)this->_get_param_int(XI_PRM_BINNING_HORIZONTAL_PATTERN);
+}
+
+void Camera::setHorizontalBinningPattern(BinningPattern p)
+{
+	this->_set_param_int(XI_PRM_BINNING_HORIZONTAL_PATTERN, (int)p);
+}
+
+void Camera::getVerticalBinningPattern(BinningPattern &p)
+{
+	p = (BinningPattern)this->_get_param_int(XI_PRM_BINNING_VERTICAL_PATTERN);
+}
+
+void Camera::setVerticalBinningPattern(BinningPattern p)
+{
+	this->_set_param_int(XI_PRM_BINNING_VERTICAL_PATTERN, (int)p);
+}

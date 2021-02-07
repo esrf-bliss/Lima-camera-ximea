@@ -181,6 +181,17 @@ class Ximea(PyTango.Device_4Impl):
 			"On": Xi.Camera.InterlineExpMode_On,
 		}
 
+		self.__BinningEngine = {
+			"Sensor": Xi.Camera.BinningEngine_Sensor,
+			"FPGA": Xi.Camera.BinningEngine_FPGA,
+			"Host": Xi.Camera.BinningEngine_Host,
+		}
+
+		self.__BinningPattern = {
+			"Mono": Xi.Camera.BinningPattern_Mono,
+			"Bayer": Xi.Camera.BinningPattern_Bayer,
+		}
+
 		self.init_device()
 
 	# ------------------------------------------------------------------
@@ -465,6 +476,30 @@ class XimeaClass(PyTango.DeviceClass):
 				'unit': 'N/A',
 				'format': '',
 				'description': 'Interline exposure mode',
+			}
+		],
+		"binning_engine": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Binning engine selector',
+			}
+		],
+		"horizontal_binning_pattern": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Binning horizontal pattern',
+			}
+		],
+		"vertical_binning_pattern": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Binning vertical pattern',
 			}
 		],
 	}
