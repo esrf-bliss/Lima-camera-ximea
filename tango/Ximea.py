@@ -203,6 +203,20 @@ class Ximea(PyTango.Device_4Impl):
 			"Bayer": Xi.Camera.DecimationPattern_Bayer,
 		}
 
+		self.__CounterSelector = {
+			"Skipped_Frames_Transport": Xi.Camera.CounterSelector_Skipped_Frames_Transport,
+			"Skipped_Frames_API": Xi.Camera.CounterSelector_Skipped_Frames_API,
+			"Missed_Trigger_Overlap": Xi.Camera.CounterSelector_Missed_Trigger_Overlap,
+			"Missed_Trigger_Buffer_Full": Xi.Camera.CounterSelector_Missed_Trigger_Buffer_Full,
+			"Frame_Buffer_Full": Xi.Camera.CounterSelector_Frame_Buffer_Full,
+		}
+
+		self.__AcqTimingMode = {
+			"Free_Run": Xi.Camera.AcqTimingMode_Free_Run,
+			"Frame_Rate": Xi.Camera.AcqTimingMode_Frame_Rate,
+			"Frame_Rate_Limit": Xi.Camera.AcqTimingMode_Frame_Rate_Limit,
+		}
+
 		self.init_device()
 
 	# ------------------------------------------------------------------
@@ -607,6 +621,54 @@ class XimeaClass(PyTango.DeviceClass):
 				'unit': 'Mb/s',
 				'format': '',
 				'description': 'Measured available bandwidth',
+			}
+		],
+		"frame_rate": [
+			[PyTango.DevDouble, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'Hz',
+				'format': '',
+				'description': 'Frame rate (or limit)',
+			}
+		],
+		"counter_selector": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Counter selector',
+			}
+		],
+		"counter_value": [
+			[PyTango.DevLong, PyTango.SCALAR, PyTango.READ],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Selected counter value',
+			}
+		],
+		"acq_timing_mode": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Acquisition timing mode',
+			}
+		],
+		"trigger_delay": [
+			[PyTango.DevLong, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'us',
+				'format': '',
+				'description': 'Trigger delay',
+			}
+		],
+		"acq_status": [
+			[PyTango.DevBoolean, PyTango.SCALAR, PyTango.READ],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Acquisition status',
 			}
 		],
 	}

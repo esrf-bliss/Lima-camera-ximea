@@ -199,6 +199,20 @@ namespace Ximea
 			DecimationPattern_Bayer = XI_DEC_BAYER
 		};
 
+		enum CounterSelector {
+			CounterSelector_Skipped_Frames_Transport = XI_CNT_SEL_TRANSPORT_SKIPPED_FRAMES,
+			CounterSelector_Skipped_Frames_API = XI_CNT_SEL_API_SKIPPED_FRAMES,
+			CounterSelector_Missed_Trigger_Overlap = XI_CNT_SEL_FRAME_MISSED_TRIGGER_DUETO_OVERLAP,
+			CounterSelector_Missed_Trigger_Buffer_Full = XI_CNT_SEL_FRAME_MISSED_TRIGGER_DUETO_FRAME_BUFFER_OVR,
+			CounterSelector_Frame_Buffer_Full = XI_CNT_SEL_FRAME_BUFFER_OVERFLOW
+		};
+
+		enum AcqTimingMode {
+			AcqTimingMode_Free_Run = XI_ACQ_TIMING_MODE_FREE_RUN,
+			AcqTimingMode_Frame_Rate = XI_ACQ_TIMING_MODE_FRAME_RATE,
+			AcqTimingMode_Frame_Rate_Limit = XI_ACQ_TIMING_MODE_FRAME_RATE_LIMIT
+		};
+
 		Camera(int camera_id);
 		~Camera();
 
@@ -316,6 +330,16 @@ namespace Ximea
 		void getBandwidthLimitEnabled(bool& e);
 		void setBandwidthLimitEnabled(bool e);
 		void getAvailableBandwidth(double& b);
+		void getFrameRate(double& r);
+		void setFrameRate(double r);
+		void getCounterSelector(CounterSelector& s);
+		void setCounterSelector(CounterSelector s);
+		void getCounterValue(int& v);
+		void getAcqTimingMode(AcqTimingMode& m);
+		void setAcqTimingMode(AcqTimingMode m);
+		void getTriggerDelay(int& d);
+		void setTriggerDelay(int d);
+		void getAcqStatus(bool& s);
 
 	private:
 		Camera(const Ximea::Camera&);

@@ -720,3 +720,52 @@ void Camera::getAvailableBandwidth(double& b)
 	b = this->_get_param_dbl(XI_PRM_AVAILABLE_BANDWIDTH);
 }
 
+void Camera::getFrameRate(double& r)
+{
+	r = this->_get_param_dbl(XI_PRM_FRAMERATE);
+}
+
+void Camera::setFrameRate(double r)
+{
+	this->_set_param_dbl(XI_PRM_FRAMERATE, r);
+}
+
+void Camera::getCounterSelector(CounterSelector& s)
+{
+	s = (CounterSelector)this->_get_param_int(XI_PRM_COUNTER_SELECTOR);
+}
+
+void Camera::setCounterSelector(CounterSelector s)
+{
+	this->_set_param_int(XI_PRM_COUNTER_SELECTOR, (int)s);
+}
+
+void Camera::getCounterValue(int& v)
+{
+	v = this->_get_param_int(XI_PRM_COUNTER_VALUE);
+}
+
+void Camera::getAcqTimingMode(AcqTimingMode& m)
+{
+	m = (AcqTimingMode)this->_get_param_int(XI_PRM_ACQ_TIMING_MODE);
+}
+
+void Camera::setAcqTimingMode(AcqTimingMode m)
+{
+	this->_set_param_int(XI_PRM_ACQ_TIMING_MODE, (int)m);
+}
+
+void Camera::getTriggerDelay(int& d)
+{
+	d = this->_get_param_int(XI_PRM_TRG_DELAY);
+}
+
+void Camera::setTriggerDelay(int d)
+{
+	this->_set_param_int(XI_PRM_TRG_DELAY, d);
+}
+
+void Camera::getAcqStatus(bool& s)
+{
+	s = (bool)this->_get_param_int(XI_PRM_ACQUISITION_STATUS);
+}
