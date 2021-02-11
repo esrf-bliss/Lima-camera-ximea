@@ -27,6 +27,8 @@
 
 #include "lima/Debug.h"
 #include "lima/Exceptions.h"
+#include "lima/HwMaxImageSizeCallback.h"
+#include "lima/HwBufferMgr.h"
 
 #ifdef WIN32
 #	include "xiApi.h"
@@ -36,28 +38,83 @@
 
 #include <ximea_export.h>
 
+#include "MagicNumbers.h"
+
 namespace lima
 {
 	namespace Ximea
 	{
-
+		class AcqThread;
 		class XIMEA_EXPORT Camera
 		{
 			DEB_CLASS_NAMESPC(DebModCamera, "Camera", "Ximea");
 
 			friend class Interface;
 			friend class SyncCtrlObj;
+			friend class AcqThread;
 
 		public:
+			enum Status {
+				Ready, Exposure, Readout, Latency, Fault
+			};
+
 			Camera(int camera_id);
 			~Camera();
 
+			void prepareAcq();
+			void startAcq();
+			void stopAcq();
+
+			// DetInfoCtrlObj
+			void getImageType(ImageType& type);
+			void setImageType(ImageType type);
+
+			void getDetectorType(std::string& type);
+			void getDetectorModel(std::string& model);
+			void getDetectorImageSize(Size& size);
+
+			// SyncCtrlObj
+			void setExpTime(double exp_time);
+			void getExpTime(double& exp_time);
+
+			void setNbFrames(int nb_frames);
+			void getNbFrames(int& nb_frames);
+
+			void getNbHwAcquiredFrames(int& nb_acq_frames);
+
+			void getStatus(Camera::Status& status);
+
+			// Buffer control object
+			HwBufferCtrlObj* getBufferCtrlObj();
+
+
 		private:
 			HANDLE xiH;
-			XI_RETURN status;
+			XI_RETURN xi_status;
+
+			Camera::Status m_status;
+			int m_nb_frames;
+			int m_image_number;
+			size_t m_buffer_size;
+			AcqThread* m_acq_thread;
+			SoftBufferCtrlObj m_buffer_ctrl_obj;
+
+			int _get_param_int(const char* param);
+			double _get_param_dbl(const char* param);
+			std::string _get_param_str(const char* param);
+
+			void _set_param_int(const char* param, int value);
+			void _set_param_dbl(const char* param, double value);
+			void _set_param_str(const char* param, std::string value, int size=-1);
+
+			void _read_image(XI_IMG* image, int timeout);
+
+			void _stop_acq_thread();
+
+			void _set_status(Camera::Status status);
 		};
 
-  	} // namespace Ximea
+	} // namespace Ximea
 } // namespace lima
 
 

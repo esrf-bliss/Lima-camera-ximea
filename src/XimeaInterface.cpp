@@ -26,7 +26,6 @@
 #include "XimeaCamera.h"
 #include "XimeaDetInfoCtrlObj.h"
 #include "XimeaSyncCtrlObj.h"
-#include "XimeaVideoCtrlObj.h"
 
 using namespace lima;
 using namespace lima::Ximea;
@@ -36,7 +35,6 @@ Interface::Interface(Camera& cam) : m_cam(cam)
 	DEB_CONSTRUCTOR();
 	this->m_det_info = new DetInfoCtrlObj(cam);
 	this->m_sync = new SyncCtrlObj(cam);
-	this->m_video = new VideoCtrlObj(cam);
 }
 
 Interface::~Interface()
@@ -44,15 +42,13 @@ Interface::~Interface()
 	DEB_DESTRUCTOR();
 	delete this->m_det_info;
 	delete this->m_sync;
-	delete this->m_video;
 }
 
 void Interface::getCapList(CapList &cap_list) const
 {
 	cap_list.push_back(HwCap(this->m_det_info));
 	cap_list.push_back(HwCap(this->m_sync));
-	cap_list.push_back(HwCap(this->m_video));
-	cap_list.push_back(HwCap(&(this->m_video->getHwBufferCtrlObj())));
+	cap_list.push_back(HwCap(this->m_cam.getBufferCtrlObj()));
 }
 
 void Interface::reset(ResetLevel reset_level)
@@ -64,25 +60,49 @@ void Interface::reset(ResetLevel reset_level)
 void Interface::prepareAcq()
 {
 	DEB_MEMBER_FUNCT();
+	this->m_cam.prepareAcq();
 }
 
 void Interface::startAcq()
 {
 	DEB_MEMBER_FUNCT();
+	this->m_cam.startAcq();
 }
 
 void Interface::stopAcq()
 {
 	DEB_MEMBER_FUNCT();
+	this->m_cam.stopAcq();
 }
 
 void Interface::getStatus(StatusType& status)
 {
 	DEB_MEMBER_FUNCT();
+	Camera::Status cam_status = Camera::Ready;
+	this->m_cam.getStatus(cam_status);
+	switch(cam_status)
+	{
+		case Camera::Ready:
+			status.set(HwInterface::StatusType::Ready);
+			break;
+		case Camera::Exposure:
+			status.set(HwInterface::StatusType::Exposure);
+			break;
+		case Camera::Readout:
+			status.set(HwInterface::StatusType::Readout);
+			break;
+		case Camera::Latency:
+			status.set(HwInterface::StatusType::Latency);
+			break;
+		case Camera::Fault:
+			status.set(HwInterface::StatusType::Fault);
+	}
 }
 
 int Interface::getNbHwAcquiredFrames()
 {
 	DEB_MEMBER_FUNCT();
-	return 0;
+	int acq_frames;
+	this->m_cam.getNbHwAcquiredFrames(acq_frames);
+	return acq_frames;
 }

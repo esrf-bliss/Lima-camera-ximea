@@ -19,6 +19,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
+
 #include <sstream>
 #include "XimeaSyncCtrlObj.h"
 #include "XimeaCamera.h"
@@ -50,10 +51,12 @@ void SyncCtrlObj::getTrigMode(TrigMode &trig_mode)
 
 void SyncCtrlObj::setExpTime(double exp_time)
 {
+	this->m_cam.setExpTime(exp_time);
 }
 
-void SyncCtrlObj::getExpTime(double &exp_time)
+void SyncCtrlObj::getExpTime(double& exp_time)
 {
+	this->m_cam.getExpTime(exp_time);
 }
 
 void SyncCtrlObj::setLatTime(double lat_time)
@@ -66,26 +69,37 @@ void SyncCtrlObj::getLatTime(double& lat_time)
 
 void SyncCtrlObj::setNbHwFrames(int nb_frames)
 {
+	this->m_cam.setNbFrames(nb_frames);
 }
 
 void SyncCtrlObj::getNbHwFrames(int& nb_frames)
 {
+	this->m_cam.getNbFrames(nb_frames);
 }
 
 void SyncCtrlObj::getValidRanges(ValidRangesType& valid_ranges)
 {
 	DEB_MEMBER_FUNCT();
+
+	// TODO: fill these example values with real ones
+	valid_ranges.min_exp_time = 0;
+	valid_ranges.max_exp_time = 10;
 }
 
 bool SyncCtrlObj::checkAutoExposureMode(HwSyncCtrlObj::AutoExposureMode mode) const
 {
 	DEB_MEMBER_FUNCT();
 	DEB_PARAM() << DEB_VAR1(mode);
-	return false;
+
+	return true;
 }
 
-void SyncCtrlObj::setHwAutoExposureMode(AutoExposureMode mode)
+void SyncCtrlObj::setHwAutoExposureMode(HwSyncCtrlObj::AutoExposureMode mode)
 {
 	DEB_MEMBER_FUNCT();
 	DEB_PARAM() << DEB_VAR1(mode);
+
+	this->m_cam._set_param_int(XI_PRM_AEAG,
+		mode == HwSyncCtrlObj::ON ? XI_ON : XI_OFF
+	);
 }
