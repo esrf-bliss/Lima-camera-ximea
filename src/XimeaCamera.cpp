@@ -257,7 +257,7 @@ void Camera::setRoi(const Roi& ask_roi)
 		this->_set_param_int(XI_PRM_OFFSET_X, ask_roi.getTopLeft().x);
 		this->_set_param_int(XI_PRM_OFFSET_Y, ask_roi.getTopLeft().y);
 		this->_set_param_int(XI_PRM_WIDTH, ask_roi.getSize().getWidth());
-		this->_set_param_int(XI_PRM_HEIGHT, ask_roi.getSize().getHeight())
+		this->_set_param_int(XI_PRM_HEIGHT, ask_roi.getSize().getHeight());
 	}
 }
 
