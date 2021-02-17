@@ -484,7 +484,7 @@ void Camera::setDownsamplingType(DownsamplingType t)
 
 void Camera::getTestPatternGenerator(TestPatternGenerator& g)
 {
-	d = (TestPatternGenerator)this->_get_param_int(XI_PRM_TEST_PATTERN_GENERATOR_SELECTOR);
+	g = (TestPatternGenerator)this->_get_param_int(XI_PRM_TEST_PATTERN_GENERATOR_SELECTOR);
 }
 
 void Camera::setTestPatternGenerator(TestPatternGenerator g)
@@ -582,14 +582,14 @@ void Camera::setInterlineExpMode(InterlineExpMode m)
 	this->_set_param_int(XI_PRM_INTERLINE_EXPOSURE_MODE, (int)m);
 }
 
-void Camera::getBinningSelector(BinningSelector &s)
+void Camera::getBinningEngine(BinningEngine &e)
 {
-	s = (BinningSelector)this->_get_param_int(XI_PRM_BINNING_SELECTOR);
+	e = (BinningEngine)this->_get_param_int(XI_PRM_BINNING_SELECTOR);
 }
 
-void Camera::setBinningSelector(BinningSelector s)
+void Camera::setBinningEngine(BinningEngine e)
 {
-	this->_set_param_int(XI_PRM_BINNING_SELECTOR, (int)s);
+	this->_set_param_int(XI_PRM_BINNING_SELECTOR, (int)e);
 }
 
 void Camera::getHorizontalBinningPattern(BinningPattern &p)
