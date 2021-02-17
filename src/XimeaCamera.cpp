@@ -23,7 +23,6 @@
 //###########################################################################
 
 #include "XimeaCamera.h"
-// #include "XimeaVideoCtrlObj.h"
 #include "XimeaAcqThread.h"
 
 using namespace lima;

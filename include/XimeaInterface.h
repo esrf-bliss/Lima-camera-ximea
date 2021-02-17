@@ -36,7 +36,6 @@ namespace lima
 		class Camera;
 		class DetInfoCtrlObj;
 		class SyncCtrlObj;
-		// class VideoCtrlObj;
 		class XIMEA_EXPORT Interface : public HwInterface
 		{
 			DEB_CLASS_NAMESPC(DebModCamera, "XimeaInterface", "Ximea");
@@ -62,7 +61,6 @@ namespace lima
 			// CapList m_cap_list;
 			DetInfoCtrlObj* m_det_info;
 			SyncCtrlObj* m_sync;
-			// VideoCtrlObj* m_video;
 		};
 
 	} // namespace Ximea
