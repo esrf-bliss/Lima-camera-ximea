@@ -245,6 +245,16 @@ void Camera::getStatus(Camera::Status& status)
     DEB_RETURN() << DEB_VAR1(status);
 }
 
+void Camera::getTriggerPolarity(TriggerPolarity& p)
+{
+	p = this->m_trig_polarity;
+}
+
+void Camera::setTriggerPolarity(TriggerPolarity p)
+{
+	this->m_trig_polarity = p;
+}
+
 int Camera::_get_param_int(const char* param)
 {
 	DEB_MEMBER_FUNCT();

@@ -36,8 +36,14 @@ class Ximea(PyTango.Device_4Impl):
 	# ------------------------------------------------------------------
 	#    Device constructor
 	# ------------------------------------------------------------------
-	def __init__(self, *args) :
+	def __init__(self, *args):
 		PyTango.Device_4Impl.__init__(self, *args)
+
+		self.__TriggerPolarity = {
+			"Low / Falling": Xi.Camera.TriggerPolarity_Low_Falling,
+			"High / Rising": Xi.Camera.TriggerPolarity_High_Rising
+		}
+
 		self.init_device()
 
 	# ------------------------------------------------------------------
@@ -99,7 +105,16 @@ class XimeaClass(PyTango.DeviceClass):
 		],
 	}
 
-	attr_list = {}
+	attr_list = {
+		"trigger_polarity": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Select trigger polarity',
+			}
+		],
+	}
 
 	def __init__(self, name):
 		PyTango.DeviceClass.__init__(self, name)

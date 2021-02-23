@@ -58,6 +58,10 @@ namespace lima
 				Ready, Exposure, Readout, Latency, Fault
 			};
 
+			enum TriggerPolarity {
+				TriggerPolarity_Low_Falling, TriggerPolarity_High_Rising
+			}
+
 			Camera(int camera_id);
 			~Camera();
 
@@ -90,6 +94,10 @@ namespace lima
 			// Buffer control object
 			HwBufferCtrlObj* getBufferCtrlObj();
 
+			// Trigger polarity
+			void getTriggerPolarity(TriggerPolarity& p);
+			void setTriggerPolarity(TriggerPolarity p);
+
 
 		private:
 			HANDLE xiH;
@@ -102,6 +110,7 @@ namespace lima
 			AcqThread* m_acq_thread;
 			SoftBufferCtrlObj m_buffer_ctrl_obj;
 			TrigMode m_trigger_mode;
+			TriggerPolarity m_trig_polarity;
 
 			int _get_param_int(const char* param);
 			double _get_param_dbl(const char* param);
