@@ -188,6 +188,21 @@ void Camera::getDetectorImageSize(Size& size)
 	size = Size(this->_get_param_int(XI_PRM_WIDTH), this->_get_param_int(XI_PRM_HEIGHT));
 }
 
+void Camera::setTrigMode(TrigMode mode)
+{
+	DEB_MEMBER_FUNCT();
+	DEB_PARAM() << DEB_VAR1(mode);
+}
+
+void Camera::getTrigMode(TrigMode& mode)
+{
+	DEB_MEMBER_FUNCT();
+
+	mode = this->m_trigger_mode;
+
+	DEB_RETURN() << DEB_VAR1(this->m_trigger_mode);
+}
+
 void Camera::setExpTime(double exp_time)
 {
 	// convert exposure from s to us

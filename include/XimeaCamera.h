@@ -74,6 +74,9 @@ namespace lima
 			void getDetectorImageSize(Size& size);
 
 			// SyncCtrlObj
+			void setTrigMode(TrigMode mode);
+			void getTrigMode(TrigMode& mode);
+
 			void setExpTime(double exp_time);
 			void getExpTime(double& exp_time);
 
@@ -98,6 +101,7 @@ namespace lima
 			size_t m_buffer_size;
 			AcqThread* m_acq_thread;
 			SoftBufferCtrlObj m_buffer_ctrl_obj;
+			TrigMode m_trigger_mode;
 
 			int _get_param_int(const char* param);
 			double _get_param_dbl(const char* param);
