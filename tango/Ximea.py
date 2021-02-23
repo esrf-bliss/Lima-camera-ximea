@@ -114,6 +114,14 @@ class XimeaClass(PyTango.DeviceClass):
 				'description': 'Select trigger polarity',
 			}
 		],
+		"software_trigger": [
+			[PyTango.DevBoolean, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Software trigger; write to generate trigger, reads always false',
+			}
+		],
 	}
 
 	def __init__(self, name):

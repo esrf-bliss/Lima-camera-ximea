@@ -295,6 +295,17 @@ void Camera::setTriggerPolarity(TriggerPolarity p)
 	this->m_trig_polarity = p;
 }
 
+void Camera::getSoftwareTrigger(bool& t)
+{
+	// always return false
+	t = false;
+}
+
+void Camera::setSoftwareTrigger(bool t)
+{
+	this->_generate_soft_trigger();
+}
+
 int Camera::_get_param_int(const char* param)
 {
 	DEB_MEMBER_FUNCT();
@@ -366,6 +377,11 @@ void Camera::_read_image(XI_IMG* image, int timeout)
 	this->xi_status = xiGetImage(this->xiH, timeout, image);
 	if(this->xi_status != XI_OK)
 		THROW_HW_ERROR(Error) << "Image readout failed; xi_status: " << this->xi_status;
+}
+
+void Camera::_generate_soft_trigger(void)
+{
+	this->_set_param_int(XI_PRM_TRG_SOFTWARE, XI_ON);
 }
 
 void Camera::_stop_acq_thread()

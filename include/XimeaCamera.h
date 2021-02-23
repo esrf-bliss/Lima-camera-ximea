@@ -98,6 +98,9 @@ namespace lima
 			void getTriggerPolarity(TriggerPolarity& p);
 			void setTriggerPolarity(TriggerPolarity p);
 
+			// Software trigger
+			void getSoftwareTrigger(bool &t);
+			void setSoftwareTrigger(bool t);
 
 		private:
 			HANDLE xiH;
@@ -121,6 +124,7 @@ namespace lima
 			void _set_param_str(const char* param, std::string value, int size=-1);
 
 			void _read_image(XI_IMG* image, int timeout);
+			void _generate_soft_trigger(void);
 
 			void _stop_acq_thread();
 
