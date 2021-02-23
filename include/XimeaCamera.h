@@ -60,7 +60,7 @@ namespace lima
 
 			enum TriggerPolarity {
 				TriggerPolarity_Low_Falling, TriggerPolarity_High_Rising
-			}
+			};
 
 			Camera(int camera_id);
 			~Camera();

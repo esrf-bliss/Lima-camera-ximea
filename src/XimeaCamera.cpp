@@ -192,6 +192,46 @@ void Camera::setTrigMode(TrigMode mode)
 {
 	DEB_MEMBER_FUNCT();
 	DEB_PARAM() << DEB_VAR1(mode);
+
+	if(mode == IntTrig)
+	{
+		this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_SOFTWARE);
+		this->_set_param_int(XI_PRM_TRG_SELECTOR, XI_TRG_SEL_FRAME_BURST_START);
+	}
+	else if(mode == IntTrigMult)
+	{
+		this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_SOFTWARE);
+		this->_set_param_int(XI_PRM_TRG_SELECTOR, XI_TRG_SEL_FRAME_START);
+	}
+	else if(mode == ExtTrigSingle)
+	{
+		if(this->m_trig_polarity == TriggerPolarity_Low_Falling)
+			this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_EDGE_FALLING);
+		else if(this->m_trig_polarity == TriggerPolarity_High_Rising)
+			this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_EDGE_RISING);
+
+		this->_set_param_int(XI_PRM_TRG_SELECTOR, XI_TRG_SEL_FRAME_BURST_START);
+	}
+	else if(mode == ExtTrigMult)
+	{
+		if(this->m_trig_polarity == TriggerPolarity_Low_Falling)
+			this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_EDGE_FALLING);
+		else if(this->m_trig_polarity == TriggerPolarity_High_Rising)
+			this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_EDGE_RISING);
+
+		this->_set_param_int(XI_PRM_TRG_SELECTOR, XI_TRG_SEL_FRAME_START);
+	}
+	else if(mode == ExtGate)
+	{
+		if(this->m_trig_polarity == TriggerPolarity_Low_Falling)
+			this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_LEVEL_LOW);
+		else if(this->m_trig_polarity == TriggerPolarity_High_Rising)
+			this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_LEVEL_HIGH);
+
+		this->_set_param_int(XI_PRM_TRG_SELECTOR, XI_TRG_SEL_EXPOSURE_ACTIVE);
+	}
+
+	this->m_trigger_mode = mode;
 }
 
 void Camera::getTrigMode(TrigMode& mode)
