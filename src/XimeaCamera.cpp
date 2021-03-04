@@ -38,7 +38,8 @@ Camera::Camera(int camera_id)
 	  m_status(Camera::Ready),
 	  m_image_number(0),
 	  m_buffer_size(0),
-	  m_acq_thread(nullptr)
+	  m_acq_thread(nullptr),
+	  m_trig_polarity(Camera::TriggerPolarity_High_Rising)
 {
 	DEB_CONSTRUCTOR();
 

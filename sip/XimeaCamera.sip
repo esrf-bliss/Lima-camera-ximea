@@ -24,17 +24,59 @@
 
 namespace Ximea
 {
-  class Camera
-  {
+	class Camera
+	{
 %TypeHeaderCode
 #include <XimeaCamera.h>
 %End
 
-  public:
-    Camera(int camera_id);
-    ~Camera();
+	public:
+		enum Status {
+			Ready, Exposure, Readout, Latency, Fault
+		};
 
-  private:
-    Camera(const Ximea::Camera&);
-  };
+		enum TriggerPolarity {
+			TriggerPolarity_Low_Falling, TriggerPolarity_High_Rising
+		};
+
+		Camera(int camera_id);
+		~Camera();
+
+		void prepareAcq();
+		void startAcq();
+		void stopAcq();
+
+		// DetInfoCtrlObj
+		void getImageType(ImageType& type);
+		void setImageType(ImageType type);
+
+		void getDetectorType(std::string& type);
+		void getDetectorModel(std::string& model);
+		void getDetectorImageSize(Size& size);
+
+		// SyncCtrlObj
+		void setExpTime(double exp_time);
+		void getExpTime(double& exp_time);
+
+		void setNbFrames(int nb_frames);
+		void getNbFrames(int& nb_frames);
+
+		void getNbHwAcquiredFrames(int& nb_acq_frames);
+
+		void getStatus(Camera::Status& status);
+
+		// Buffer control object
+		HwBufferCtrlObj* getBufferCtrlObj();
+
+		// Trigger polarity
+		void getTriggerPolarity(TriggerPolarity& p);
+		void setTriggerPolarity(TriggerPolarity p);
+
+		// Software trigger
+		void getSoftwareTrigger(bool &t);
+		void setSoftwareTrigger(bool t);
+
+	private:
+		Camera(const Ximea::Camera&);
+	};
 };
