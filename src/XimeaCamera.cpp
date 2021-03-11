@@ -307,6 +307,106 @@ void Camera::setSoftwareTrigger(bool t)
 	this->_generate_soft_trigger();
 }
 
+void Camera::getGpiSelector(GPISelector& s)
+{
+	s = (GPISelector)this->_get_param_int(XI_PRM_GPI_SELECTOR);
+}
+
+void Camera::setGpiSelector(GPISelector s)
+{
+	this->_set_param_int(XI_PRM_GPI_SELECTOR, (int)s);
+}
+
+void Camera::getGpiMode(GPIMode& m)
+{
+	m = (GPIMode)this->_get_param_int(XI_PRM_GPI_MODE);
+}
+
+void Camera::setGpiMode(GPIMode m)
+{
+	this->_set_param_int(XI_PRM_GPI_MODE, (int)m);
+}
+
+void Camera::getGpiLevel(int& l)
+{
+	l = this->_get_param_int(XI_PRM_GPI_LEVEL);
+}
+
+void Camera::setGpiLevel(int l)
+{
+	this->_set_param_int(XI_PRM_GPI_LEVEL, l);
+}
+
+void Camera::getGpiLevelAtExpStart(int& l)
+{
+	l = this->_get_param_int(XI_PRM_GPI_LEVEL_AT_IMAGE_EXP_START);
+}
+
+void Camera::setGpiLevelAtExpStart(int l)
+{
+	this->_set_param_int(XI_PRM_GPI_LEVEL_AT_IMAGE_EXP_START, l);
+}
+
+void Camera::getGpiLevelAtExpEnd(int& l)
+{
+	l = this->_get_param_int(XI_PRM_GPI_LEVEL_AT_IMAGE_EXP_END);
+}
+
+void Camera::setGpiLevelAtExpEnd(int l)
+{
+	this->_set_param_int(XI_PRM_GPI_LEVEL_AT_IMAGE_EXP_END, l);
+}
+
+void Camera::getGpiDebounce(bool& e)
+{
+	e = (bool)this->_get_param_int(XI_PRM_DEBOUNCE_EN);
+}
+
+void Camera::setGpiDebounce(bool e)
+{
+	this->_set_param_int(XI_PRM_DEBOUNCE_EN, (int)e);
+}
+
+void Camera::getGpoSelector(GPOSelector& s)
+{
+	s = (GPOSelector)this->_get_param_int(XI_PRM_GPO_SELECTOR);
+}
+
+void Camera::setGpoSelector(GPOSelector s)
+{
+	this->_set_param_int(XI_PRM_GPO_SELECTOR, (int)s);
+}
+
+void Camera::getGpoMode(GPOMode& m)
+{
+	m = (GPOMode)this->_get_param_int(XI_PRM_GPO_MODE);
+}
+
+void Camera::setGpoMode(GPOMode m)
+{
+	this->_set_param_int(XI_PRM_GPO_MODE, (int)m);
+}
+
+void Camera::getLedSelector(LEDSelector& s)
+{
+	s = (LEDSelector)this->_get_param_int(XI_PRM_LED_SELECTOR);
+}
+
+void Camera::setLedSelector(LEDSelector s)
+{
+	this->_set_param_int(XI_PRM_LED_SELECTOR, (int)s);
+}
+
+void Camera::getLedMode(LEDMode& m)
+{
+	m = (LEDMode)this->_get_param_int(XI_PRM_LED_MODE);
+}
+
+void Camera::setLedMode(LEDMode m)
+{
+	this->_set_param_int(XI_PRM_LED_MODE, (int)m);
+}
+
 int Camera::_get_param_int(const char* param)
 {
 	DEB_MEMBER_FUNCT();
