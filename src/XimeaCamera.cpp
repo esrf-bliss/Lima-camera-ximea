@@ -38,7 +38,8 @@ Camera::Camera(int camera_id)
 	  m_status(Camera::Ready),
 	  m_image_number(0),
 	  m_buffer_size(0),
-	  m_acq_thread(nullptr)
+	  m_acq_thread(nullptr),
+	  m_trig_polarity(Camera::TriggerPolarity_High_Rising)
 {
 	DEB_CONSTRUCTOR();
 
@@ -195,6 +196,61 @@ void Camera::getDetectorImageSize(Size& size)
 	size = Size(this->_get_param_int(XI_PRM_WIDTH), this->_get_param_int(XI_PRM_HEIGHT));
 }
 
+void Camera::setTrigMode(TrigMode mode)
+{
+	DEB_MEMBER_FUNCT();
+	DEB_PARAM() << DEB_VAR1(mode);
+
+	if(mode == IntTrig)
+	{
+		this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_SOFTWARE);
+		this->_set_param_int(XI_PRM_TRG_SELECTOR, XI_TRG_SEL_FRAME_BURST_START);
+	}
+	else if(mode == IntTrigMult)
+	{
+		this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_SOFTWARE);
+		this->_set_param_int(XI_PRM_TRG_SELECTOR, XI_TRG_SEL_FRAME_START);
+	}
+	else if(mode == ExtTrigSingle)
+	{
+		if(this->m_trig_polarity == TriggerPolarity_Low_Falling)
+			this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_EDGE_FALLING);
+		else if(this->m_trig_polarity == TriggerPolarity_High_Rising)
+			this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_EDGE_RISING);
+
+		this->_set_param_int(XI_PRM_TRG_SELECTOR, XI_TRG_SEL_FRAME_BURST_START);
+	}
+	else if(mode == ExtTrigMult)
+	{
+		if(this->m_trig_polarity == TriggerPolarity_Low_Falling)
+			this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_EDGE_FALLING);
+		else if(this->m_trig_polarity == TriggerPolarity_High_Rising)
+			this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_EDGE_RISING);
+
+		this->_set_param_int(XI_PRM_TRG_SELECTOR, XI_TRG_SEL_FRAME_START);
+	}
+	else if(mode == ExtGate)
+	{
+		if(this->m_trig_polarity == TriggerPolarity_Low_Falling)
+			this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_LEVEL_LOW);
+		else if(this->m_trig_polarity == TriggerPolarity_High_Rising)
+			this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_LEVEL_HIGH);
+
+		this->_set_param_int(XI_PRM_TRG_SELECTOR, XI_TRG_SEL_EXPOSURE_ACTIVE);
+	}
+
+	this->m_trigger_mode = mode;
+}
+
+void Camera::getTrigMode(TrigMode& mode)
+{
+	DEB_MEMBER_FUNCT();
+
+	mode = this->m_trigger_mode;
+
+	DEB_RETURN() << DEB_VAR1(this->m_trigger_mode);
+}
+
 void Camera::setExpTime(double exp_time)
 {
 	// convert exposure from s to us
@@ -235,6 +291,127 @@ void Camera::getStatus(Camera::Status& status)
 
     status = this->m_status;
     DEB_RETURN() << DEB_VAR1(status);
+}
+
+void Camera::getTriggerPolarity(TriggerPolarity& p)
+{
+	p = this->m_trig_polarity;
+}
+
+void Camera::setTriggerPolarity(TriggerPolarity p)
+{
+	this->m_trig_polarity = p;
+}
+
+void Camera::getSoftwareTrigger(bool& t)
+{
+	// always return false
+	t = false;
+}
+
+void Camera::setSoftwareTrigger(bool t)
+{
+	this->_generate_soft_trigger();
+}
+
+void Camera::getGpiSelector(GPISelector& s)
+{
+	s = (GPISelector)this->_get_param_int(XI_PRM_GPI_SELECTOR);
+}
+
+void Camera::setGpiSelector(GPISelector s)
+{
+	this->_set_param_int(XI_PRM_GPI_SELECTOR, (int)s);
+}
+
+void Camera::getGpiMode(GPIMode& m)
+{
+	m = (GPIMode)this->_get_param_int(XI_PRM_GPI_MODE);
+}
+
+void Camera::setGpiMode(GPIMode m)
+{
+	this->_set_param_int(XI_PRM_GPI_MODE, (int)m);
+}
+
+void Camera::getGpiLevel(int& l)
+{
+	l = this->_get_param_int(XI_PRM_GPI_LEVEL);
+}
+
+void Camera::setGpiLevel(int l)
+{
+	this->_set_param_int(XI_PRM_GPI_LEVEL, l);
+}
+
+void Camera::getGpiLevelAtExpStart(int& l)
+{
+	l = this->_get_param_int(XI_PRM_GPI_LEVEL_AT_IMAGE_EXP_START);
+}
+
+void Camera::setGpiLevelAtExpStart(int l)
+{
+	this->_set_param_int(XI_PRM_GPI_LEVEL_AT_IMAGE_EXP_START, l);
+}
+
+void Camera::getGpiLevelAtExpEnd(int& l)
+{
+	l = this->_get_param_int(XI_PRM_GPI_LEVEL_AT_IMAGE_EXP_END);
+}
+
+void Camera::setGpiLevelAtExpEnd(int l)
+{
+	this->_set_param_int(XI_PRM_GPI_LEVEL_AT_IMAGE_EXP_END, l);
+}
+
+void Camera::getGpiDebounce(bool& e)
+{
+	e = (bool)this->_get_param_int(XI_PRM_DEBOUNCE_EN);
+}
+
+void Camera::setGpiDebounce(bool e)
+{
+	this->_set_param_int(XI_PRM_DEBOUNCE_EN, (int)e);
+}
+
+void Camera::getGpoSelector(GPOSelector& s)
+{
+	s = (GPOSelector)this->_get_param_int(XI_PRM_GPO_SELECTOR);
+}
+
+void Camera::setGpoSelector(GPOSelector s)
+{
+	this->_set_param_int(XI_PRM_GPO_SELECTOR, (int)s);
+}
+
+void Camera::getGpoMode(GPOMode& m)
+{
+	m = (GPOMode)this->_get_param_int(XI_PRM_GPO_MODE);
+}
+
+void Camera::setGpoMode(GPOMode m)
+{
+	this->_set_param_int(XI_PRM_GPO_MODE, (int)m);
+}
+
+void Camera::getLedSelector(LEDSelector& s)
+{
+	s = (LEDSelector)this->_get_param_int(XI_PRM_LED_SELECTOR);
+}
+
+void Camera::setLedSelector(LEDSelector s)
+{
+	this->_set_param_int(XI_PRM_LED_SELECTOR, (int)s);
+}
+
+void Camera::getLedMode(LEDMode& m)
+{
+	m = (LEDMode)this->_get_param_int(XI_PRM_LED_MODE);
+}
+
+void Camera::setLedMode(LEDMode m)
+{
+	this->_set_param_int(XI_PRM_LED_MODE, (int)m);
 }
 
 int Camera::_get_param_int(const char* param)
@@ -308,6 +485,11 @@ void Camera::_read_image(XI_IMG* image, int timeout)
 	this->xi_status = xiGetImage(this->xiH, timeout, image);
 	if(this->xi_status != XI_OK)
 		THROW_HW_ERROR(Error) << "Image readout failed; xi_status: " << this->xi_status;
+}
+
+void Camera::_generate_soft_trigger(void)
+{
+	this->_set_param_int(XI_PRM_TRG_SOFTWARE, XI_ON);
 }
 
 void Camera::_stop_acq_thread()

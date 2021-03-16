@@ -227,6 +227,89 @@ class Ximea(PyTango.Device_4Impl):
 			"Black_Level_Offset_Raw": Xi.Camera.FeatureSelector_Black_Level_Offset_Raw,
 		}
 
+		self.__TriggerPolarity = {
+			"LOW / FALLING": Xi.Camera.TriggerPolarity_Low_Falling,
+			"HIGH / RISING": Xi.Camera.TriggerPolarity_High_Rising
+		}
+
+		self.__GpiSelector = {
+			"PORT_1": Xi.Camera.GPISelector_Port_1,
+			"PORT_2": Xi.Camera.GPISelector_Port_2,
+			"PORT_3": Xi.Camera.GPISelector_Port_3,
+			"PORT_4": Xi.Camera.GPISelector_Port_4,
+			"PORT_5": Xi.Camera.GPISelector_Port_5,
+			"PORT_6": Xi.Camera.GPISelector_Port_6,
+			"PORT_7": Xi.Camera.GPISelector_Port_7,
+			"PORT_8": Xi.Camera.GPISelector_Port_8,
+			"PORT_9": Xi.Camera.GPISelector_Port_9,
+			"PORT_10": Xi.Camera.GPISelector_Port_10,
+			"PORT_11": Xi.Camera.GPISelector_Port_11,
+			"PORT_12": Xi.Camera.GPISelector_Port_12,
+		}
+
+		self.__GpiMode = {
+			"OFF": Xi.Camera.GPIMode_Off,
+			"TRIGGER": Xi.Camera.GPIMode_Trigger,
+			"EXT_EVENT": Xi.Camera.GPIMode_Ext_Event,
+		}
+
+		self.__GpoSelector = {
+			"PORT_1": Xi.Camera.GPOSelector_Port_1,
+			"PORT_2": Xi.Camera.GPOSelector_Port_2,
+			"PORT_3": Xi.Camera.GPOSelector_Port_3,
+			"PORT_4": Xi.Camera.GPOSelector_Port_4,
+			"PORT_5": Xi.Camera.GPOSelector_Port_5,
+			"PORT_6": Xi.Camera.GPOSelector_Port_6,
+			"PORT_7": Xi.Camera.GPOSelector_Port_7,
+			"PORT_8": Xi.Camera.GPOSelector_Port_8,
+			"PORT_9": Xi.Camera.GPOSelector_Port_9,
+			"PORT_10": Xi.Camera.GPOSelector_Port_10,
+			"PORT_11": Xi.Camera.GPOSelector_Port_11,
+			"PORT_12": Xi.Camera.GPOSelector_Port_12,
+		}
+
+		self.__GpoMode = {
+			"OFF": Xi.Camera.GPOMode_Off,
+			"ON": Xi.Camera.GPOMode_On,
+			"FRAME_ACTIVE": Xi.Camera.GPOMode_Frame_Active,
+			"NEG_FRAME_ACTIVE": Xi.Camera.GPOMode_Neg_Frame_Active,
+			"EXPOSURE_ACTIVE": Xi.Camera.GPOMode_Exposure_Active,
+			"NEG_EXPOSURE_ACTIVE": Xi.Camera.GPOMode_Neg_Exposure_Active,
+			"FRAME_TRIGGER_WAIT": Xi.Camera.GPOMode_Frame_Trigger_Wait,
+			"NEG_FRAME_TRIGGER_WAIT": Xi.Camera.GPOMode_Neg_Frame_Trigger_Wait,
+			"EXPOSURE_PULSE": Xi.Camera.GPOMode_Exposure_Pulse,
+			"NEG_EXPOSURE_PULSE": Xi.Camera.GPOMode_Neg_Exposure_Pulse,
+			"BUSY": Xi.Camera.GPOMode_Busy,
+			"NEG_BUSY": Xi.Camera.GPOMode_Neg_Busy,
+			"HIGH_IMPEDANCE": Xi.Camera.GPOMode_High_Impedance,
+			"FRAME_BUFFER_OVERFLOW": Xi.Camera.GPOMode_Frame_Buffer_Overflow,
+			"EXPOSURE_ACTIVE_FIRST_ROW": Xi.Camera.GPOMode_Exposure_Active_First_Row,
+			"NEG_EXPOSURE_ACTIVE_FIRST_ROW": Xi.Camera.GPOMode_Neg_Exposure_Active_First_Row,
+			"EXPOSURE_ACTIVE_ALL_ROWS": Xi.Camera.GPOMode_Exposure_Active_All_Rows,
+			"NEG_EXPOSURE_ACTIVE_ALL_ROWS": Xi.Camera.GPOMode_Neg_Exposure_Active_All_Rows,
+		}
+
+		self.__LedSelector = {
+			"LED_1": Xi.Camera.LEDSelector_1,
+			"LED_2": Xi.Camera.LEDSelector_2,
+			"LED_3": Xi.Camera.LEDSelector_3,
+			"LED_4": Xi.Camera.LEDSelector_4,
+			"LED_5": Xi.Camera.LEDSelector_5,
+		}
+
+		self.__LedMode = {
+			"HEARTBEAT": Xi.Camera.LEDMode_Heartbeat,
+			"TRIGGER_ACTIVE": Xi.Camera.LEDMode_Trigger_Active,
+			"EXT_EVENT_ACTIVE": Xi.Camera.LEDMode_Ext_Event_Active,
+			"LINK": Xi.Camera.LEDMode_Link,
+			"ACQUISITION": Xi.Camera.LEDMode_Acquisition,
+			"EXPOSURE_ACTIVE": Xi.Camera.LEDMode_Exposure_Active,
+			"FRAME_ACTIVE": Xi.Camera.LEDMode_Frame_Active,
+			"OFF": Xi.Camera.LEDMode_Off,
+			"ON": Xi.Camera.LEDMode_On,
+			"BLINK": Xi.Camera.LEDMode_Blink,
+		}
+
 		self.init_device()
 
 	# ------------------------------------------------------------------
@@ -289,6 +372,102 @@ class XimeaClass(PyTango.DeviceClass):
 	}
 
 	attr_list = {
+		"trigger_polarity": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Select trigger polarity',
+			}
+		],
+		"software_trigger": [
+			[PyTango.DevBoolean, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Software trigger; write to generate trigger, reads always false',
+			}
+		],
+		"gpi_selector": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Select GPI to configure',
+			}
+		],
+		"gpi_mode": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Select GPI mode',
+			}
+		],
+		"gpi_level": [
+			[PyTango.DevLong, PyTango.SCALAR, PyTango.READ],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Read GPI level',
+			}
+		],
+		"gpi_level_at_exp_start": [
+			[PyTango.DevLong, PyTango.SCALAR, PyTango.READ],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Read GPI level at exposure start',
+			}
+		],
+		"gpi_level_at_exp_end": [
+			[PyTango.DevLong, PyTango.SCALAR, PyTango.READ],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Read GPI level at exposure end',
+			}
+		],
+		"gpi_debounce": [
+			[PyTango.DevBoolean, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Enable GPI debounce',
+			}
+		],
+		"gpo_selector": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Select GPO to configure',
+			}
+		],
+		"gpo_mode": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Select GPO mode',
+			}
+		],
+		"led_selector": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Select LED to configure',
+			}
+		],
+		"led_mode": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Select LED mode',
+			}
+		],
 		"preset": [
 			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
 			{

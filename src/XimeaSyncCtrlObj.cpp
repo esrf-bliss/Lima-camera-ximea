@@ -37,16 +37,31 @@ SyncCtrlObj::~SyncCtrlObj()
 
 bool SyncCtrlObj::checkTrigMode(TrigMode trig_mode)
 {
-	return false;
+	switch(trig_mode)
+	{
+		case IntTrig:
+		case IntTrigMult:
+		case ExtTrigSingle:
+		case ExtTrigMult:
+		case ExtGate:
+			return true;
+
+		default:
+			return false;
+	}
 }
 
 void SyncCtrlObj::setTrigMode(TrigMode trig_mode)
 {
 	DEB_MEMBER_FUNCT();
+	if(!checkTrigMode(trig_mode))
+		THROW_HW_ERROR(InvalidValue) << "Invalid trig_mode " << DEB_VAR1(trig_mode);
+	this->m_cam.setTrigMode(trig_mode);
 }
 
-void SyncCtrlObj::getTrigMode(TrigMode &trig_mode)
+void SyncCtrlObj::getTrigMode(TrigMode& trig_mode)
 {
+	this->m_cam.getTrigMode(trig_mode);
 }
 
 void SyncCtrlObj::setExpTime(double exp_time)
