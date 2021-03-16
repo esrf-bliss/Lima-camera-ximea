@@ -3,7 +3,7 @@
 //
 // Copyright (C) : 2009-2020
 // European Synchrotron Radiation Facility
-// CS40220 38043 Grenoble Cedex 9 
+// CS40220 38043 Grenoble Cedex 9
 // FRANCE
 //
 // Contact: lima@esrf.fr
