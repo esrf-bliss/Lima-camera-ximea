@@ -33,6 +33,14 @@ from Lima import Ximea as Xi
 from Lima.Server import AttrHelper
 
 
+# this is needed by get_control, so needs to be outside class Ximea
+_TempControlMode = {
+	"OFF": Xi.Camera.TempControlMode_Off,
+	"AUTO": Xi.Camera.TempControlMode_Auto,
+	"MANUAL": Xi.Camera.TempControlMode_Manual,
+}
+
+
 class Ximea(PyTango.Device_4Impl):
 	Core.DEB_CLASS(Core.DebModApplication, 'LimaCCDs')
 
@@ -78,11 +86,7 @@ class Ximea(PyTango.Device_4Impl):
 			"Analog_South": Xi.Camera.GainSelector_Analog_South,
 		}
 
-		self.__TempControlMode = {
-			"Off": Xi.Camera.TempControlMode_Off,
-			"Auto": Xi.Camera.TempControlMode_Auto,
-			"Manual": Xi.Camera.TempControlMode_Manual,
-		}
+		self.__TempControlMode = _TempControlMode
 
 		self.__Thermometer = {
 			"Die_Raw": Xi.Camera.Thermometer_Die_Raw,
@@ -364,6 +368,16 @@ class XimeaClass(PyTango.DeviceClass):
 			PyTango.DevString,
 			"Camera ID",
 			None
+		],
+		"startup_temp_control_mode": [
+			PyTango.DevString,
+			"Startup temperature control mode",
+			"AUTO"
+		],
+		"startup_target_temp": [
+			PyTango.DevDouble,
+			"Startup target temperature",
+			25.0
 		],
 	}
 
@@ -893,22 +907,20 @@ _XimeaCam = None
 _XimeaInterface = None
 
 
-def get_control(**keys):
+def get_control(camera_id, startup_temp_control_mode="AUTO", startup_target_temp=25.0, **keys):
 	global _XimeaCam
 	global _XimeaInterface
-
-	if 'camera_id' in keys:
-		camera_id = keys['camera_id']
-	else:
-		# TODO: probably want to throw an exception here
-		pass
 
 	print("Ximea camera_id:", camera_id)
 
 	# all properties are passed as string from LimaCCDs device get_control helper
 	# so need to be converted to correct type
 	if _XimeaCam is None:
-		_XimeaCam = Xi.Camera(int(camera_id))
+		_XimeaCam = Xi.Camera(
+			int(camera_id),
+			_TempControlMode[startup_temp_control_mode.upper()],
+			float(startup_target_temp)
+		)
 		_XimeaInterface = Xi.Interface(_XimeaCam)
 	return Core.CtControl(_XimeaInterface)
 

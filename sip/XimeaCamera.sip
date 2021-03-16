@@ -305,7 +305,7 @@ namespace Ximea
 			LEDMode_Blink = XI_LED_BLINK
 		};
 
-		Camera(int camera_id);
+		Camera(int camera_id, TempControlMode startup_temp_control_mode, double startup_target_temp);
 		~Camera();
 
 		void prepareAcq();
