@@ -523,6 +523,7 @@ class XimeaClass(PyTango.DeviceClass):
 				'unit': 'N/A',
 				'format': '',
 				'description': 'Temperature control mode',
+				'memorized': 'true',
 			}
 		],
 		"target_temp": [
@@ -531,6 +532,7 @@ class XimeaClass(PyTango.DeviceClass):
 				'unit': '*C',
 				'format': '',
 				'description': 'Target temperature',
+				'memorized': 'true',
 			}
 		],
 		"thermometer": [
