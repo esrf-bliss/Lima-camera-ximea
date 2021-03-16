@@ -46,7 +46,7 @@ class Ximea(PyTango.Device_4Impl):
 			"12_STD_L": Xi.Camera.Mode_12_STD_L,
 			"12_STD_H": Xi.Camera.Mode_12_STD_H,
 			"14_STD_L": Xi.Camera.Mode_14_STD_L,
-			"None": Xi.Camera.Mode_None,
+			"NONE": Xi.Camera.Mode_None,
 			"14_STD_H": Xi.Camera.Mode_14_STD_H,
 			"2_12_CMS_S_L": Xi.Camera.Mode_2_12_CMS_S_L,
 			"2_12_CMS_S_H": Xi.Camera.Mode_2_12_CMS_S_H,
@@ -67,110 +67,110 @@ class Ximea(PyTango.Device_4Impl):
 		}
 
 		self.__GainSelector = {
-			"All": Xi.Camera.GainSelector_All,
-			"Analog_All": Xi.Camera.GainSelector_Analog_All,
-			"Digital_All": Xi.Camera.GainSelector_Digital_All,
-			"Analog_Tap1": Xi.Camera.GainSelector_Analog_Tap1,
-			"Analog_Tap2": Xi.Camera.GainSelector_Analog_Tap2,
-			"Analog_Tap3": Xi.Camera.GainSelector_Analog_Tap3,
-			"Analog_Tap4": Xi.Camera.GainSelector_Analog_Tap4,
-			"Analog_North": Xi.Camera.GainSelector_Analog_North,
-			"Analog_South": Xi.Camera.GainSelector_Analog_South,
+			"ALL": Xi.Camera.GainSelector_All,
+			"ANALOG_ALL": Xi.Camera.GainSelector_Analog_All,
+			"DIGITAL_ALL": Xi.Camera.GainSelector_Digital_All,
+			"ANALOG_TAP1": Xi.Camera.GainSelector_Analog_Tap1,
+			"ANALOG_TAP2": Xi.Camera.GainSelector_Analog_Tap2,
+			"ANALOG_TAP3": Xi.Camera.GainSelector_Analog_Tap3,
+			"ANALOG_TAP4": Xi.Camera.GainSelector_Analog_Tap4,
+			"ANALOG_NORTH": Xi.Camera.GainSelector_Analog_North,
+			"ANALOG_SOUTH": Xi.Camera.GainSelector_Analog_South,
 		}
 
 		self.__TempControlMode = {
-			"Off": Xi.Camera.TempControlMode_Off,
-			"Auto": Xi.Camera.TempControlMode_Auto,
-			"Manual": Xi.Camera.TempControlMode_Manual,
+			"OFF": Xi.Camera.TempControlMode_Off,
+			"AUTO": Xi.Camera.TempControlMode_Auto,
+			"MANUAL": Xi.Camera.TempControlMode_Manual,
 		}
 
 		self.__Thermometer = {
-			"Die_Raw": Xi.Camera.Thermometer_Die_Raw,
-			"Sensor_Die": Xi.Camera.Thermometer_Sensor_Die,
-			"Sensor_Board": Xi.Camera.Thermometer_Sensor_Board,
-			"Interface_Board": Xi.Camera.Thermometer_Interface_Board,
-			"Front_Housing": Xi.Camera.Thermometer_Front_Housing,
-			"Rear_Housing": Xi.Camera.Thermometer_Rear_Housing,
-			"TEC1_Cold": Xi.Camera.Thermometer_TEC1_Cold,
-			"TEC1_Hot": Xi.Camera.Thermometer_TEC1_Hot,
+			"DIE_RAW": Xi.Camera.Thermometer_Die_Raw,
+			"SENSOR_DIE": Xi.Camera.Thermometer_Sensor_Die,
+			"SENSOR_BOARD": Xi.Camera.Thermometer_Sensor_Board,
+			"INTERFACE_BOARD": Xi.Camera.Thermometer_Interface_Board,
+			"FRONT_HOUSING": Xi.Camera.Thermometer_Front_Housing,
+			"REAR_HOUSING": Xi.Camera.Thermometer_Rear_Housing,
+			"TEC1_COLD": Xi.Camera.Thermometer_TEC1_Cold,
+			"TEC1_HOT": Xi.Camera.Thermometer_TEC1_Hot,
 		}
 
 		self.__ThermalElement = {
 			"TEC1": Xi.Camera.ThermalElement_TEC1,
 			"TEC2": Xi.Camera.ThermalElement_TEC2,
-			"Fan1": Xi.Camera.ThermalElement_Fan1,
-			"Fan_Start_Threshold": Xi.Camera.ThermalElement_Fan_Start_Threshold,
+			"FAN1": Xi.Camera.ThermalElement_Fan1,
+			"FAN_START_THRESHOLD": Xi.Camera.ThermalElement_Fan_Start_Threshold,
 		}
 
 		self.__ExposureSelector = {
-			"Common": Xi.Camera.ExposureSelector_Common,
-			"Group1": Xi.Camera.ExposureSelector_Group1,
-			"Group2": Xi.Camera.ExposureSelector_Group2,
+			"COMMON": Xi.Camera.ExposureSelector_Common,
+			"GROUP1": Xi.Camera.ExposureSelector_Group1,
+			"GROUP2": Xi.Camera.ExposureSelector_Group2,
 		}
 
 		self.__Downsampling = {
-			"1x1": Xi.Camera.Downsampling_1x1,
-			"2x2": Xi.Camera.Downsampling_2x2,
-			"3x3": Xi.Camera.Downsampling_3x3,
-			"4x4": Xi.Camera.Downsampling_4x4,
-			"5x5": Xi.Camera.Downsampling_5x5,
-			"6x6": Xi.Camera.Downsampling_6x6,
-			"7x7": Xi.Camera.Downsampling_7x7,
-			"8x8": Xi.Camera.Downsampling_8x8,
-			"9x9": Xi.Camera.Downsampling_9x9,
-			"10x10": Xi.Camera.Downsampling_10x10,
-			"16x16": Xi.Camera.Downsampling_16x16,
+			"1X1": Xi.Camera.Downsampling_1x1,
+			"2X2": Xi.Camera.Downsampling_2x2,
+			"3X3": Xi.Camera.Downsampling_3x3,
+			"4X4": Xi.Camera.Downsampling_4x4,
+			"5X5": Xi.Camera.Downsampling_5x5,
+			"6X6": Xi.Camera.Downsampling_6x6,
+			"7X7": Xi.Camera.Downsampling_7x7,
+			"8X8": Xi.Camera.Downsampling_8x8,
+			"9X9": Xi.Camera.Downsampling_9x9,
+			"10X10": Xi.Camera.Downsampling_10x10,
+			"16X16": Xi.Camera.Downsampling_16x16,
 		}
 
 		self.__DownsamplingType = {
-			"Binning": Xi.Camera.DownsamplingType_Binning,
-			"Skipping": Xi.Camera.DownsamplingType_Skipping,
+			"BINNING": Xi.Camera.DownsamplingType_Binning,
+			"SKIPPING": Xi.Camera.DownsamplingType_Skipping,
 		}
 
 		self.__TestPatternGenerator = {
-			"Sensor": Xi.Camera.TestPatternGenerator_Sensor,
+			"SENSOR": Xi.Camera.TestPatternGenerator_Sensor,
 			"FPGA": Xi.Camera.TestPatternGenerator_FPGA,
 		}
 
 		self.__TestPattern = {
-			"Off": Xi.Camera.TestPattern_Off,
-			"Black": Xi.Camera.TestPattern_Black,
-			"White": Xi.Camera.TestPattern_White,
-			"Grey_Horizontal": Xi.Camera.TestPattern_Grey_Horizontal,
-			"Grey_Vertical": Xi.Camera.TestPattern_Grey_Vertical,
-			"Grey_Horizontal_Moving": Xi.Camera.TestPattern_Grey_Horizontal_Moving,
-			"Grey_Vertical_Moving": Xi.Camera.TestPattern_Grey_Vertical_Moving,
-			"Line_Horizontal_Moving": Xi.Camera.TestPattern_Line_Horizontal_Moving,
-			"Line_Vertical_Moving": Xi.Camera.TestPattern_Line_Vertical_Moving,
-			"Color_Bar": Xi.Camera.TestPattern_Color_Bar,
-			"Frame_Counter": Xi.Camera.TestPattern_Frame_Counter,
-			"Counter": Xi.Camera.TestPattern_Counter,
+			"OFF": Xi.Camera.TestPattern_Off,
+			"BLACK": Xi.Camera.TestPattern_Black,
+			"WHITE": Xi.Camera.TestPattern_White,
+			"GREY_HORIZONTAL": Xi.Camera.TestPattern_Grey_Horizontal,
+			"GREY_VERTICAL": Xi.Camera.TestPattern_Grey_Vertical,
+			"GREY_HORIZONTAL_MOVING": Xi.Camera.TestPattern_Grey_Horizontal_Moving,
+			"GREY_VERTICAL_MOVING": Xi.Camera.TestPattern_Grey_Vertical_Moving,
+			"LINE_HORIZONTAL_MOVING": Xi.Camera.TestPattern_Line_Horizontal_Moving,
+			"LINE_VERTICAL_MOVING": Xi.Camera.TestPattern_Line_Vertical_Moving,
+			"COLOR_BAR": Xi.Camera.TestPattern_Color_Bar,
+			"FRAME_COUNTER": Xi.Camera.TestPattern_Frame_Counter,
+			"COUNTER": Xi.Camera.TestPattern_Counter,
 		}
 
 		self.__ImageFormat = {
-			"Mono8": Xi.Camera.ImageFormat_Mono8,
-			"Mono16": Xi.Camera.ImageFormat_Mono16,
+			"MONO8": Xi.Camera.ImageFormat_Mono8,
+			"MONO16": Xi.Camera.ImageFormat_Mono16,
 			"RGB24": Xi.Camera.ImageFormat_RGB24,
 			"RGB32": Xi.Camera.ImageFormat_RGB32,
-			"RGB_Planar": Xi.Camera.ImageFormat_RGB_Planar,
-			"Raw8": Xi.Camera.ImageFormat_Raw8,
-			"Raw16": Xi.Camera.ImageFormat_Raw16,
-			"Transport": Xi.Camera.ImageFormat_Transport,
+			"RGB_PLANAR": Xi.Camera.ImageFormat_RGB_Planar,
+			"RAW8": Xi.Camera.ImageFormat_Raw8,
+			"RAW16": Xi.Camera.ImageFormat_Raw16,
+			"TRANSPORT": Xi.Camera.ImageFormat_Transport,
 			"RGB48": Xi.Camera.ImageFormat_RGB48,
 			"RGB64": Xi.Camera.ImageFormat_RGB64,
-			"RGB16_Planar": Xi.Camera.ImageFormat_RGB16_Planar,
-			"Raw8x2": Xi.Camera.ImageFormat_Raw8x2,
-			"Raw8x4": Xi.Camera.ImageFormat_Raw8x4,
-			"Raw16x2": Xi.Camera.ImageFormat_Raw16x2,
-			"Raw16x4": Xi.Camera.ImageFormat_Raw16x4,
-			"Raw32": Xi.Camera.ImageFormat_Raw32,
-			"Raw32_Float": Xi.Camera.ImageFormat_Raw32_Float,
+			"RGB16_PLANAR": Xi.Camera.ImageFormat_RGB16_Planar,
+			"RAW8X2": Xi.Camera.ImageFormat_Raw8x2,
+			"RAW8X4": Xi.Camera.ImageFormat_Raw8x4,
+			"RAW16X2": Xi.Camera.ImageFormat_Raw16x2,
+			"RAW16X4": Xi.Camera.ImageFormat_Raw16x4,
+			"RAW32": Xi.Camera.ImageFormat_Raw32,
+			"RAW32_FLOAT": Xi.Camera.ImageFormat_Raw32_Float,
 		}
 
 		self.__Shutter = {
-			"Global": Xi.Camera.Shutter_Global,
-			"Rolling": Xi.Camera.Shutter_Rolling,
-			"Reset_Release": Xi.Camera.Shutter_Reset_Release,
+			"GLOBAL": Xi.Camera.Shutter_Global,
+			"ROLLING": Xi.Camera.Shutter_Rolling,
+			"RESET_RELEASE": Xi.Camera.Shutter_Reset_Release,
 		}
 
 		self.__Taps = {
@@ -180,54 +180,54 @@ class Ximea(PyTango.Device_4Impl):
 		}
 
 		self.__InterlineExpMode = {
-			"Off": Xi.Camera.InterlineExpMode_Off,
-			"On": Xi.Camera.InterlineExpMode_On,
+			"OFF": Xi.Camera.InterlineExpMode_Off,
+			"ON": Xi.Camera.InterlineExpMode_On,
 		}
 
 		self.__BinningEngine = {
-			"Sensor": Xi.Camera.BinningEngine_Sensor,
+			"SENSOR": Xi.Camera.BinningEngine_Sensor,
 			"FPGA": Xi.Camera.BinningEngine_FPGA,
-			"Host": Xi.Camera.BinningEngine_Host,
+			"HOST": Xi.Camera.BinningEngine_Host,
 		}
 
 		self.__BinningPattern = {
-			"Mono": Xi.Camera.BinningPattern_Mono,
-			"Bayer": Xi.Camera.BinningPattern_Bayer,
+			"MONO": Xi.Camera.BinningPattern_Mono,
+			"BAYER": Xi.Camera.BinningPattern_Bayer,
 		}
 
 		self.__DecimationEngine = {
-			"Sensor": Xi.Camera.DecimationEngine_Sensor,
+			"SENSOR": Xi.Camera.DecimationEngine_Sensor,
 			"FPGA": Xi.Camera.DecimationEngine_FPGA,
-			"Host": Xi.Camera.DecimationEngine_Host,
+			"HOST": Xi.Camera.DecimationEngine_Host,
 		}
 
 		self.__DecimationPattern = {
-			"Mono": Xi.Camera.DecimationPattern_Mono,
-			"Bayer": Xi.Camera.DecimationPattern_Bayer,
+			"MONO": Xi.Camera.DecimationPattern_Mono,
+			"BAYER": Xi.Camera.DecimationPattern_Bayer,
 		}
 
 		self.__CounterSelector = {
-			"Skipped_Frames_Transport": Xi.Camera.CounterSelector_Skipped_Frames_Transport,
-			"Skipped_Frames_API": Xi.Camera.CounterSelector_Skipped_Frames_API,
-			"Missed_Trigger_Overlap": Xi.Camera.CounterSelector_Missed_Trigger_Overlap,
-			"Missed_Trigger_Buffer_Full": Xi.Camera.CounterSelector_Missed_Trigger_Buffer_Full,
-			"Frame_Buffer_Full": Xi.Camera.CounterSelector_Frame_Buffer_Full,
+			"SKIPPED_FRAMES_TRANSPORT": Xi.Camera.CounterSelector_Skipped_Frames_Transport,
+			"SKIPPED_FRAMES_API": Xi.Camera.CounterSelector_Skipped_Frames_API,
+			"MISSED_TRIGGER_OVERLAP": Xi.Camera.CounterSelector_Missed_Trigger_Overlap,
+			"MISSED_TRIGGER_BUFFER_FULL": Xi.Camera.CounterSelector_Missed_Trigger_Buffer_Full,
+			"FRAME_BUFFER_FULL": Xi.Camera.CounterSelector_Frame_Buffer_Full,
 		}
 
 		self.__AcqTimingMode = {
-			"Free_Run": Xi.Camera.AcqTimingMode_Free_Run,
-			"Frame_Rate": Xi.Camera.AcqTimingMode_Frame_Rate,
-			"Frame_Rate_Limit": Xi.Camera.AcqTimingMode_Frame_Rate_Limit,
+			"FREE_RUN": Xi.Camera.AcqTimingMode_Free_Run,
+			"FRAME_RATE": Xi.Camera.AcqTimingMode_Frame_Rate,
+			"FRAME_RATE_LIMIT": Xi.Camera.AcqTimingMode_Frame_Rate_Limit,
 		}
 
 		self.__FeatureSelector = {
-			"Zero_ROT_Enable": Xi.Camera.FeatureSelector_Zero_ROT_Enable,
-			"Black_Level_Clamp": Xi.Camera.FeatureSelector_Black_Level_Clamp,
-			"FPGA_Digital_Gain_Disable": Xi.Camera.FeatureSelector_FPGA_Digital_Gain_Disable,
-			"Acquisition_Running": Xi.Camera.FeatureSelector_Acquisition_Running,
-			"Timing_Mode": Xi.Camera.FeatureSelector_Timing_Mode,
-			"Parallel_ADC": Xi.Camera.FeatureSelector_Parallel_ADC,
-			"Black_Level_Offset_Raw": Xi.Camera.FeatureSelector_Black_Level_Offset_Raw,
+			"ZERO_ROT_ENABLE": Xi.Camera.FeatureSelector_Zero_ROT_Enable,
+			"BLACK_LEVEL_CLAMP": Xi.Camera.FeatureSelector_Black_Level_Clamp,
+			"FPGA_DIGITAL_GAIN_DISABLE": Xi.Camera.FeatureSelector_FPGA_Digital_Gain_Disable,
+			"ACQUISITION_RUNNING": Xi.Camera.FeatureSelector_Acquisition_Running,
+			"TIMING_MODE": Xi.Camera.FeatureSelector_Timing_Mode,
+			"PARALLEL_ADC": Xi.Camera.FeatureSelector_Parallel_ADC,
+			"BLACK_LEVEL_OFFSET_RAW": Xi.Camera.FeatureSelector_Black_Level_Offset_Raw,
 		}
 
 		self.__TriggerPolarity = {
