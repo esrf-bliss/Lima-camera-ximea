@@ -367,6 +367,11 @@ namespace lima
 			void setBin(const Bin&);
 			void getBin(Bin&);
 
+			// ROI control object
+			void checkRoi(const Roi& set_roi, Roi& hw_roi);
+			void setRoi(const Roi& set_roi);
+			void getRoi(Roi& hw_roi);
+
 			// Trigger polarity
 			void getTriggerPolarity(TriggerPolarity& p);
 			void setTriggerPolarity(TriggerPolarity p);

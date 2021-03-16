@@ -27,6 +27,7 @@
 #include "XimeaDetInfoCtrlObj.h"
 #include "XimeaSyncCtrlObj.h"
 #include "XimeaBinCtrlObj.h"
+#include "XimeaRoiCtrlObj.h"
 
 using namespace lima;
 using namespace lima::Ximea;
@@ -37,6 +38,7 @@ Interface::Interface(Camera& cam) : m_cam(cam)
 	this->m_det_info = new DetInfoCtrlObj(cam);
 	this->m_sync = new SyncCtrlObj(cam);
 	this->m_bin = new BinCtrlObj(cam);
+	this->m_roi = new RoiCtrlObj(cam);
 }
 
 Interface::~Interface()
@@ -45,6 +47,7 @@ Interface::~Interface()
 	delete this->m_det_info;
 	delete this->m_sync;
 	delete this->m_bin;
+	delete this->m_roi;
 }
 
 void Interface::getCapList(CapList &cap_list) const
@@ -53,6 +56,7 @@ void Interface::getCapList(CapList &cap_list) const
 	cap_list.push_back(HwCap(this->m_sync));
 	cap_list.push_back(HwCap(this->m_cam.getBufferCtrlObj()));
 	cap_list.push_back(HwCap(this->m_bin));
+	cap_list.push_back(HwCap(this->m_roi));
 }
 
 void Interface::reset(ResetLevel reset_level)
