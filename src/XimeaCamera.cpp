@@ -50,6 +50,10 @@ Camera::Camera(int camera_id, TempControlMode startup_temp_control_mode, double 
 	// set buffer policy to managed by application
 	this->_set_param_int(XI_PRM_BUFFER_POLICY, XI_BP_SAFE);
 
+	// set startup temperature control values
+	this->setTempControlMode(startup_temp_control_mode);
+	this->setTargetTemp(startup_target_temp);
+
 	DEB_TRACE() << "Camera " << camera_id << " opened; xi_status: " << this->xi_status;
 }
 
