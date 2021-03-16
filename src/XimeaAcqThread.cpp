@@ -67,6 +67,7 @@ void AcqThread::threadFunction()
 			this->m_cam._set_status(Camera::Ready);
 		else
 			this->m_cam._set_status(Camera::Fault);
-
 	}
+	// when leaving the thread stop acqusition no matter what
+	xiStopAcquisition(this->m_cam.xiH);
 }
