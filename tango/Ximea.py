@@ -511,7 +511,7 @@ class XimeaClass(PyTango.DeviceClass):
 				'description': 'Temperature control mode',
 			}
 		],
-		"target_temp": [
+		"temp_target": [
 			[PyTango.DevDouble, PyTango.SCALAR, PyTango.READ_WRITE],
 			{
 				'unit': '*C',
@@ -535,7 +535,7 @@ class XimeaClass(PyTango.DeviceClass):
 				'description': 'Thermometer temperature',
 			}
 		],
-		"chip_temp": [
+		"temp_chip": [
 			[PyTango.DevDouble, PyTango.SCALAR, PyTango.READ],
 			{
 				'unit': '*C',
@@ -543,7 +543,7 @@ class XimeaClass(PyTango.DeviceClass):
 				'description': 'Camera sensor temperature',
 			}
 		],
-		"housing_temp": [
+		"temp_housing": [
 			[PyTango.DevDouble, PyTango.SCALAR, PyTango.READ],
 			{
 				'unit': '*C',
@@ -551,7 +551,7 @@ class XimeaClass(PyTango.DeviceClass):
 				'description': 'Camera housing temperature',
 			}
 		],
-		"back_temp": [
+		"temp_back": [
 			[PyTango.DevDouble, PyTango.SCALAR, PyTango.READ],
 			{
 				'unit': '*C',
@@ -559,7 +559,7 @@ class XimeaClass(PyTango.DeviceClass):
 				'description': 'Camera housing back side temperature',
 			}
 		],
-		"sensor_temp": [
+		"temp_sensor": [
 			[PyTango.DevDouble, PyTango.SCALAR, PyTango.READ],
 			{
 				'unit': '*C',
