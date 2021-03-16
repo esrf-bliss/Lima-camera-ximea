@@ -365,6 +365,11 @@ class XimeaClass(PyTango.DeviceClass):
 			"Camera ID",
 			None
 		],
+		"trigger_gpi_port": [
+			PyTango.DevLong,
+			"GPI port used by default for trigger input",
+			2
+		],
 	}
 
 	cmd_list = {
@@ -893,22 +898,16 @@ _XimeaCam = None
 _XimeaInterface = None
 
 
-def get_control(**keys):
+def get_control(camera_id, trigger_gpi_port=2, **keys):
 	global _XimeaCam
 	global _XimeaInterface
-
-	if 'camera_id' in keys:
-		camera_id = keys['camera_id']
-	else:
-		# TODO: probably want to throw an exception here
-		pass
 
 	print("Ximea camera_id:", camera_id)
 
 	# all properties are passed as string from LimaCCDs device get_control helper
 	# so need to be converted to correct type
 	if _XimeaCam is None:
-		_XimeaCam = Xi.Camera(int(camera_id))
+		_XimeaCam = Xi.Camera(int(camera_id), int(trigger_gpi_port))
 		_XimeaInterface = Xi.Interface(_XimeaCam)
 	return Core.CtControl(_XimeaInterface)
 
