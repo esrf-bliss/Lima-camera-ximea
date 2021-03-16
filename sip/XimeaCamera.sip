@@ -221,6 +221,7 @@ namespace Ximea
 			FeatureSelector_Timing_Mode = XI_SENSOR_FEATURE_TIMING_MODE,
 			FeatureSelector_Parallel_ADC = XI_SENSOR_FEATURE_PARALLEL_ADC,
 			FeatureSelector_Black_Level_Offset_Raw = XI_SENSOR_FEATURE_BLACK_LEVEL_OFFSET_RAW
+		};
 
 		enum TriggerPolarity {
 			TriggerPolarity_Low_Falling, TriggerPolarity_High_Rising
@@ -334,7 +335,7 @@ namespace Ximea
 
 		// Buffer control object
 		HwBufferCtrlObj* getBufferCtrlObj();
-		
+
 		// Trigger polarity
 		void getTriggerPolarity(TriggerPolarity& p);
 		void setTriggerPolarity(TriggerPolarity p);

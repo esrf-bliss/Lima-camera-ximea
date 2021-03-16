@@ -3,7 +3,7 @@
 //
 // Copyright (C) : 2009-2020
 // European Synchrotron Radiation Facility
-// CS40220 38043 Grenoble Cedex 9 
+// CS40220 38043 Grenoble Cedex 9
 // FRANCE
 //
 // Contact: lima@esrf.fr
@@ -22,11 +22,12 @@
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
 
-#ifndef XIMEAINTERFACE_H
-#define XIMEAINTERFACE_H
+#ifndef XIMEABINCTRLOBJ_H
+#define XIMEABINCTRLOBJ_H
 
 #include <ximea_export.h>
 
+#include "lima/HwBinCtrlObj.h"
 #include "lima/HwInterface.h"
 
 namespace lima
@@ -34,38 +35,22 @@ namespace lima
 	namespace Ximea
 	{
 		class Camera;
-		class DetInfoCtrlObj;
-		class SyncCtrlObj;
-		class BinCtrlObj;
-		class XIMEA_EXPORT Interface : public HwInterface
+		class BinCtrlObj : public HwBinCtrlObj
 		{
-			DEB_CLASS_NAMESPC(DebModCamera, "XimeaInterface", "Ximea");
-
+			DEB_CLASS_NAMESPC(DebModCamera, "BinCtrlObj", "Ximea");
+		
 		public:
-			Interface(Camera&);
-			virtual ~Interface();
+			BinCtrlObj(Camera&);
+			virtual ~BinCtrlObj();
 
-			//- From HwInterface
-			virtual void getCapList(CapList&) const;
-			virtual void reset(ResetLevel reset_level);
-			virtual void prepareAcq();
-			virtual void startAcq();
-			virtual void stopAcq();
-			virtual void getStatus(StatusType& status);
-			virtual int	getNbHwAcquiredFrames();
-
-			Camera& getCamera() { return this->m_cam; }
-			const Camera& getCamera() const { return this->m_cam; }
-
+			virtual void setBin(const Bin& bin);
+			virtual void getBin(Bin& bin);
+			virtual void checkBin(Bin& bin);
+		
 		private:
-			Camera& m_cam;
-			// CapList m_cap_list;
-			DetInfoCtrlObj* m_det_info;
-			SyncCtrlObj* m_sync;
-			BinCtrlObj*	m_bin;
+			Camera&	m_cam;
 		};
-
 	} // namespace Ximea
 } // namespace lima
 
-#endif // XIMEAINTERFACE_H
+#endif // XIMEABINCTRLOBJ_H

@@ -414,6 +414,38 @@ void Camera::setLedMode(LEDMode m)
 	this->_set_param_int(XI_PRM_LED_MODE, (int)m);
 }
 
+void Camera::checkBin(Bin &aBin)
+{
+	DEB_MEMBER_FUNCT();
+	// TODO: What to do here?
+	DEB_RETURN() << DEB_VAR1(aBin);
+}
+
+void Camera::setBin(const Bin &aBin)
+{
+	DEB_MEMBER_FUNCT();
+
+	// only sum mode is supported by Lima
+	this->_set_param_int(XI_PRM_BINNING_HORIZONTAL_MODE, XI_BIN_MODE_SUM);
+	this->_set_param_int(XI_PRM_BINNING_VERTICAL_MODE, XI_BIN_MODE_SUM);
+
+	this->_set_param_int(XI_PRM_BINNING_HORIZONTAL, aBin.getX());
+	this->_set_param_int(XI_PRM_BINNING_VERTICAL, aBin.getY());
+
+	DEB_RETURN() << DEB_VAR1(aBin);
+}
+
+void Camera::getBin(Bin &aBin)
+{
+	DEB_MEMBER_FUNCT();
+
+	int h = this->_get_param_int(XI_PRM_BINNING_HORIZONTAL);
+	int v = this->_get_param_int(XI_PRM_BINNING_VERTICAL);
+	aBin = Bin(h, v);
+
+	DEB_RETURN() << DEB_VAR1(aBin);
+}
+
 int Camera::_get_param_int(const char* param)
 {
 	DEB_MEMBER_FUNCT();

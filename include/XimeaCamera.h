@@ -244,6 +244,7 @@ namespace lima
 				FeatureSelector_Timing_Mode = XI_SENSOR_FEATURE_TIMING_MODE,
 				FeatureSelector_Parallel_ADC = XI_SENSOR_FEATURE_PARALLEL_ADC,
 				FeatureSelector_Black_Level_Offset_Raw = XI_SENSOR_FEATURE_BLACK_LEVEL_OFFSET_RAW
+			};
 
 			enum TriggerPolarity {
 				TriggerPolarity_Low_Falling, TriggerPolarity_High_Rising
@@ -360,6 +361,11 @@ namespace lima
 
 			// Buffer control object
 			HwBufferCtrlObj* getBufferCtrlObj();
+
+			// Binning control object
+			void checkBin(Bin&);
+			void setBin(const Bin&);
+			void getBin(Bin&);
 
 			// Trigger polarity
 			void getTriggerPolarity(TriggerPolarity& p);
