@@ -636,12 +636,12 @@ void Camera::setTempControlMode(TempControlMode m)
 	this->_set_param_int(XI_PRM_COOLING, (int)m);
 }
 
-void Camera::getTargetTemp(double& t)
+void Camera::getTempTarget(double& t)
 {
 	t = this->_get_param_dbl(XI_PRM_TARGET_TEMP);
 }
 
-void Camera::setTargetTemp(double t)
+void Camera::setTempTarget(double t)
 {
 	this->_set_param_dbl(XI_PRM_TARGET_TEMP, t);
 }
@@ -661,22 +661,22 @@ void Camera::getTemperature(double& t)
 	t = this->_get_param_dbl(XI_PRM_TEMP);
 }
 
-void Camera::getChipTemp(double& t)
+void Camera::getTempChip(double& t)
 {
 	t = this->_get_param_dbl(XI_PRM_CHIP_TEMP);
 }
 
-void Camera::getHousingTemp(double& t)
+void Camera::getTempHousing(double& t)
 {
 	t = this->_get_param_dbl(XI_PRM_HOUS_TEMP);
 }
 
-void Camera::getBackTemp(double& t)
+void Camera::getTempBack(double& t)
 {
 	t = this->_get_param_dbl(XI_PRM_HOUS_BACK_SIDE_TEMP);
 }
 
-void Camera::getSensorTemp(double& t)
+void Camera::getTempSensor(double& t)
 {
 	t = this->_get_param_dbl(XI_PRM_SENSOR_BOARD_TEMP);
 }
