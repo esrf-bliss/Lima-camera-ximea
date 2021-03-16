@@ -533,6 +533,8 @@ namespace lima
 			void _read_image(XI_IMG* image, int timeout);
 			void _generate_soft_trigger(void);
 
+			void _setup_gpio_trigger(void);
+
 			void _stop_acq_thread();
 
 			void _set_status(Camera::Status status);

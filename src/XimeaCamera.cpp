@@ -214,6 +214,7 @@ void Camera::setTrigMode(TrigMode mode)
 	}
 	else if(mode == ExtTrigSingle)
 	{
+		this->_setup_gpio_trigger();
 		if(this->m_trig_polarity == TriggerPolarity_Low_Falling)
 			this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_EDGE_FALLING);
 		else if(this->m_trig_polarity == TriggerPolarity_High_Rising)
@@ -223,6 +224,7 @@ void Camera::setTrigMode(TrigMode mode)
 	}
 	else if(mode == ExtTrigMult)
 	{
+		this->_setup_gpio_trigger();
 		if(this->m_trig_polarity == TriggerPolarity_Low_Falling)
 			this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_EDGE_FALLING);
 		else if(this->m_trig_polarity == TriggerPolarity_High_Rising)
@@ -232,6 +234,7 @@ void Camera::setTrigMode(TrigMode mode)
 	}
 	else if(mode == ExtGate)
 	{
+		this->_setup_gpio_trigger();
 		if(this->m_trig_polarity == TriggerPolarity_Low_Falling)
 			this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_LEVEL_LOW);
 		else if(this->m_trig_polarity == TriggerPolarity_High_Rising)
@@ -569,6 +572,17 @@ void Camera::_read_image(XI_IMG* image, int timeout)
 void Camera::_generate_soft_trigger(void)
 {
 	this->_set_param_int(XI_PRM_TRG_SOFTWARE, XI_ON);
+}
+
+void Camera::_setup_gpio_trigger(void)
+{
+	GPISelector selected_gpi;
+	this->getGpiSelector(selected_gpi);
+
+	this->setGpiSelector((GPISelector)this->m_trigger_gpi_port);
+	this->setGpiMode(Camera::GPIMode_Trigger);
+
+	this->setGpiSelector(selected_gpi);
 }
 
 void Camera::_stop_acq_thread()
