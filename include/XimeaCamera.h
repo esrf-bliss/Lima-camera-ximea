@@ -328,7 +328,7 @@ namespace lima
 				LEDMode_Blink = XI_LED_BLINK
 			};
 
-			Camera(int camera_id, int trigger_gpi_port);
+			Camera(int camera_id, GPISelector trigger_gpi_port);
 			~Camera();
 
 			void prepareAcq();
@@ -520,7 +520,7 @@ namespace lima
 			
 			// internal
 			TriggerPolarity m_trig_polarity;
-			int m_trigger_gpi_port;
+			GPISelector m_trigger_gpi_port;
 
 			int _get_param_int(const char* param);
 			double _get_param_dbl(const char* param);

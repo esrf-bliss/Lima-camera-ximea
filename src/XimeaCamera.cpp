@@ -32,7 +32,7 @@ using namespace std;
 //---------------------------
 //- Ctor
 //---------------------------
-Camera::Camera(int camera_id, int trigger_gpi_port)
+Camera::Camera(int camera_id, GPISelector trigger_gpi_port)
 	: xiH(nullptr),
 	  xi_status(XI_OK),
 	  m_status(Camera::Ready),
@@ -579,7 +579,7 @@ void Camera::_setup_gpio_trigger(void)
 	GPISelector selected_gpi;
 	this->getGpiSelector(selected_gpi);
 
-	this->setGpiSelector((GPISelector)this->m_trigger_gpi_port);
+	this->setGpiSelector(this->m_trigger_gpi_port);
 	this->setGpiMode(Camera::GPIMode_Trigger);
 
 	this->setGpiSelector(selected_gpi);
