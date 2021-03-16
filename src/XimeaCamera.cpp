@@ -203,12 +203,12 @@ void Camera::setTrigMode(TrigMode mode)
 
 	if(mode == IntTrig)
 	{
-		this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_SOFTWARE);
+		this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_OFF);
 		this->_set_param_int(XI_PRM_TRG_SELECTOR, XI_TRG_SEL_FRAME_BURST_START);
 	}
 	else if(mode == IntTrigMult)
 	{
-		this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_SOFTWARE);
+		this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_OFF);
 		this->_set_param_int(XI_PRM_TRG_SELECTOR, XI_TRG_SEL_FRAME_START);
 	}
 	else if(mode == ExtTrigSingle)
