@@ -590,15 +590,15 @@ void Camera::_set_status(Camera::Status status)
 
 // Extra attributes
 
-void Camera::getPreset(Preset& p)
+void Camera::getMode(Mode& m)
 {
-	p = (Preset)this->_get_param_int(XI_PRM_USER_SET_SELECTOR);
+	m = (Mode)this->_get_param_int(XI_PRM_USER_SET_SELECTOR);
 }
 
-void Camera::setPreset(Preset p)
+void Camera::setMode(Mode m)
 {
-	this->_set_param_int(XI_PRM_USER_SET_SELECTOR, (int)p);
-	this->_set_param_int(XI_PRM_USER_SET_LOAD, XI_ON);
+	this->_set_param_int(XI_PRM_USER_SET_SELECTOR, (int)m);
+	this->_set_param_int(XI_PRM_USER_SET_LOAD, 0);
 }
 
 void Camera::getGainSelector(GainSelector &s)

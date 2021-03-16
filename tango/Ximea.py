@@ -42,28 +42,28 @@ class Ximea(PyTango.Device_4Impl):
 	def __init__(self, *args):
 		PyTango.Device_4Impl.__init__(self, *args)
 
-		self.__Preset = {
-			"12_STD_L": Xi.Camera.Preset_12_STD_L,
-			"12_STD_H": Xi.Camera.Preset_12_STD_H,
-			"14_STD_L": Xi.Camera.Preset_14_STD_L,
-			"None": Xi.Camera.Preset_None,
-			"14_STD_H": Xi.Camera.Preset_14_STD_H,
-			"2_12_CMS_S_L": Xi.Camera.Preset_2_12_CMS_S_L,
-			"2_12_CMS_S_H": Xi.Camera.Preset_2_12_CMS_S_H,
-			"2_14_CMS_S_L": Xi.Camera.Preset_2_14_CMS_S_L,
-			"2_14_CMS_S_H": Xi.Camera.Preset_2_14_CMS_S_H,
-			"4_12_CMS_S_L": Xi.Camera.Preset_4_12_CMS_S_L,
-			"4_12_CMS_S_H": Xi.Camera.Preset_4_12_CMS_S_H,
-			"4_14_CMS_S_L": Xi.Camera.Preset_4_14_CMS_S_L,
-			"4_14_CMS_S_H": Xi.Camera.Preset_4_14_CMS_S_H,
-			"2_12_HDR_HL": Xi.Camera.Preset_2_12_HDR_HL,
-			"2_12_HDR_L": Xi.Camera.Preset_2_12_HDR_L,
-			"2_12_HDR_H": Xi.Camera.Preset_2_12_HDR_H,
-			"4_12_CMS_HDR_HL": Xi.Camera.Preset_4_12_CMS_HDR_HL,
-			"2_14_HDR_L": Xi.Camera.Preset_2_14_HDR_L,
-			"2_14_HDR_H": Xi.Camera.Preset_2_14_HDR_H,
-			"2_12_CMS_A_L": Xi.Camera.Preset_2_12_CMS_A_L,
-			"2_12_CMS_A_H": Xi.Camera.Preset_2_12_CMS_A_H
+		self.__Mode = {
+			"12_STD_L": Xi.Camera.Mode_12_STD_L,
+			"12_STD_H": Xi.Camera.Mode_12_STD_H,
+			"14_STD_L": Xi.Camera.Mode_14_STD_L,
+			"None": Xi.Camera.Mode_None,
+			"14_STD_H": Xi.Camera.Mode_14_STD_H,
+			"2_12_CMS_S_L": Xi.Camera.Mode_2_12_CMS_S_L,
+			"2_12_CMS_S_H": Xi.Camera.Mode_2_12_CMS_S_H,
+			"2_14_CMS_S_L": Xi.Camera.Mode_2_14_CMS_S_L,
+			"2_14_CMS_S_H": Xi.Camera.Mode_2_14_CMS_S_H,
+			"4_12_CMS_S_L": Xi.Camera.Mode_4_12_CMS_S_L,
+			"4_12_CMS_S_H": Xi.Camera.Mode_4_12_CMS_S_H,
+			"4_14_CMS_S_L": Xi.Camera.Mode_4_14_CMS_S_L,
+			"4_14_CMS_S_H": Xi.Camera.Mode_4_14_CMS_S_H,
+			"2_12_HDR_HL": Xi.Camera.Mode_2_12_HDR_HL,
+			"2_12_HDR_L": Xi.Camera.Mode_2_12_HDR_L,
+			"2_12_HDR_H": Xi.Camera.Mode_2_12_HDR_H,
+			"4_12_CMS_HDR_HL": Xi.Camera.Mode_4_12_CMS_HDR_HL,
+			"2_14_HDR_L": Xi.Camera.Mode_2_14_HDR_L,
+			"2_14_HDR_H": Xi.Camera.Mode_2_14_HDR_H,
+			"2_12_CMS_A_L": Xi.Camera.Mode_2_12_CMS_A_L,
+			"2_12_CMS_A_H": Xi.Camera.Mode_2_12_CMS_A_H
 		}
 
 		self.__GainSelector = {
@@ -471,7 +471,7 @@ class XimeaClass(PyTango.DeviceClass):
 				'description': 'Select LED mode',
 			}
 		],
-		"preset": [
+		"mode": [
 			[PyTango.DevString, PyTango.SCALAR, PyTango.READ_WRITE],
 			{
 				'unit': 'N/A',
