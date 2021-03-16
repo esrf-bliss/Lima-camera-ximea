@@ -370,9 +370,9 @@ class XimeaClass(PyTango.DeviceClass):
 			None
 		],
 		"trigger_gpi_port": [
-			PyTango.DevLong,
+			PyTango.DevString,
 			"GPI port used by default for trigger input",
-			2
+			"PORT_2"
 		],
 	}
 
