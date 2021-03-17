@@ -58,28 +58,28 @@ namespace lima
 				Ready, Exposure, Readout, Latency, Fault
 			};
 
-			enum Preset {
-				Preset_12_STD_L = XI_US_12_STD_L,
-				Preset_12_STD_H = XI_US_12_STD_H,
-				Preset_14_STD_L = XI_US_14_STD_L,
-				Preset_None = XI_US_NONE,
-				Preset_14_STD_H = XI_US_14_STD_H,
-				Preset_2_12_CMS_S_L = XI_US_2_12_CMS_S_L,
-				Preset_2_12_CMS_S_H = XI_US_2_12_CMS_S_H,
-				Preset_2_14_CMS_S_L = XI_US_2_14_CMS_S_L,
-				Preset_2_14_CMS_S_H = XI_US_2_14_CMS_S_H,
-				Preset_4_12_CMS_S_L = XI_US_4_12_CMS_S_L,
-				Preset_4_12_CMS_S_H = XI_US_4_12_CMS_S_H,
-				Preset_4_14_CMS_S_L = XI_US_4_14_CMS_S_L,
-				Preset_4_14_CMS_S_H = XI_US_4_14_CMS_S_H,
-				Preset_2_12_HDR_HL = XI_US_2_12_HDR_HL,
-				Preset_2_12_HDR_L = XI_US_2_12_HDR_L,
-				Preset_2_12_HDR_H = XI_US_2_12_HDR_H,
-				Preset_4_12_CMS_HDR_HL = XI_US_4_12_CMS_HDR_HL,
-				Preset_2_14_HDR_L = XI_US_2_14_HDR_L,
-				Preset_2_14_HDR_H = XI_US_2_14_HDR_H,
-				Preset_2_12_CMS_A_L = XI_US_2_12_CMS_A_L,
-				Preset_2_12_CMS_A_H = XI_US_2_12_CMS_A_H
+			enum Mode {
+				Mode_12_STD_L = XI_US_12_STD_L,
+				Mode_12_STD_H = XI_US_12_STD_H,
+				Mode_14_STD_L = XI_US_14_STD_L,
+				Mode_None = XI_US_NONE,
+				Mode_14_STD_H = XI_US_14_STD_H,
+				Mode_2_12_CMS_S_L = XI_US_2_12_CMS_S_L,
+				Mode_2_12_CMS_S_H = XI_US_2_12_CMS_S_H,
+				Mode_2_14_CMS_S_L = XI_US_2_14_CMS_S_L,
+				Mode_2_14_CMS_S_H = XI_US_2_14_CMS_S_H,
+				Mode_4_12_CMS_S_L = XI_US_4_12_CMS_S_L,
+				Mode_4_12_CMS_S_H = XI_US_4_12_CMS_S_H,
+				Mode_4_14_CMS_S_L = XI_US_4_14_CMS_S_L,
+				Mode_4_14_CMS_S_H = XI_US_4_14_CMS_S_H,
+				Mode_2_12_HDR_HL = XI_US_2_12_HDR_HL,
+				Mode_2_12_HDR_L = XI_US_2_12_HDR_L,
+				Mode_2_12_HDR_H = XI_US_2_12_HDR_H,
+				Mode_4_12_CMS_HDR_HL = XI_US_4_12_CMS_HDR_HL,
+				Mode_2_14_HDR_L = XI_US_2_14_HDR_L,
+				Mode_2_14_HDR_H = XI_US_2_14_HDR_H,
+				Mode_2_12_CMS_A_L = XI_US_2_12_CMS_A_L,
+				Mode_2_12_CMS_A_H = XI_US_2_12_CMS_A_H
 			};
 
 			enum GainSelector {
@@ -405,9 +405,9 @@ namespace lima
 
 			// ========== Extra attributes ==========
 
-			// Presets
-			void getPreset(Preset& p);
-			void setPreset(Preset p);
+			// Modes
+			void getMode(Mode& m);
+			void setMode(Mode m);
 
 			// Gain
 			void getGainSelector(GainSelector& s);
@@ -419,15 +419,15 @@ namespace lima
 			void getIsCooled(bool& c);
 			void getTempControlMode(TempControlMode& m);
 			void setTempControlMode(TempControlMode m);
-			void getTargetTemp(double& t);
-			void setTargetTemp(double t);
+			void getTempTarget(double& t);
+			void setTempTarget(double t);
 			void getThermometer(Thermometer& t);
 			void setThermometer(Thermometer t);
 			void getTemperature(double& t);
-			void getChipTemp(double& t);
-			void getHousingTemp(double& t);
-			void getBackTemp(double& t);
-			void getSensorTemp(double& t);
+			void getTempChip(double& t);
+			void getTempHousing(double& t);
+			void getTempBack(double& t);
+			void getTempSensor(double& t);
 			void getThermalElement(ThermalElement& e);
 			void setThermalElement(ThermalElement e);
 			void getThermalElementValue(double& v);
