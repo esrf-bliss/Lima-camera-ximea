@@ -52,7 +52,7 @@ void AcqThread::threadFunction()
 	StdBufferCbMgr& buffer_mgr = this->m_cam.m_buffer_ctrl_obj.getBuffer();
 
 	bool continueAcq = true;
-	while(!this->m_quit && this->m_cam.m_image_number < this->m_cam.m_nb_frames)
+	while(!this->m_quit && (this->m_cam.m_nb_frames == 0 || this->m_cam.m_image_number < this->m_cam.m_nb_frames))
 	{
 		// set up acq buffers
 		this->m_buffer.bp = buffer_mgr.getFrameBufferPtr(this->m_cam.m_image_number);
