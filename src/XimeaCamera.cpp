@@ -32,7 +32,7 @@ using namespace std;
 //---------------------------
 //- Ctor
 //---------------------------
-Camera::Camera(int camera_id, GPISelector trigger_gpi_port, TempControlMode startup_temp_control_mode, double startup_target_temp)
+Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger_timeout, TempControlMode startup_temp_control_mode, double startup_target_temp)
 	: xiH(nullptr),
 	  xi_status(XI_OK),
 	  m_status(Camera::Ready),
@@ -40,7 +40,8 @@ Camera::Camera(int camera_id, GPISelector trigger_gpi_port, TempControlMode star
 	  m_buffer_size(0),
 	  m_acq_thread(nullptr),
 	  m_trig_polarity(Camera::TriggerPolarity_High_Rising),
-	  m_trigger_gpi_port(trigger_gpi_port)
+	  m_trigger_gpi_port(trigger_gpi_port),
+	  m_trig_timeout(trigger_timeout)
 {
 	DEB_CONSTRUCTOR();
 

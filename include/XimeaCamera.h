@@ -25,6 +25,8 @@
 #ifndef XIMEACAMERA_H
 #define XIMEACAMERA_H
 
+#include <limits.h>
+
 #include "lima/Debug.h"
 #include "lima/Exceptions.h"
 #include "lima/HwMaxImageSizeCallback.h"
@@ -54,6 +56,8 @@ namespace lima
 			friend class AcqThread;
 
 		public:
+			static const unsigned int TIMEOUT_MAX = UINT_MAX;	// from limits.h
+
 			enum Status {
 				Ready, Exposure, Readout, Latency, Fault
 			};
@@ -330,7 +334,7 @@ namespace lima
 
 			Camera(
 				int camera_id,
-				GPISelector trigger_gpi_port, 
+				GPISelector trigger_gpi_port, unsigned int trigger_timeout,
 				TempControlMode startup_temp_control_mode, double startup_target_temp
 			);
 			~Camera();
@@ -525,6 +529,7 @@ namespace lima
 			// internal
 			TriggerPolarity m_trig_polarity;
 			GPISelector m_trigger_gpi_port;
+			unsigned int m_trig_timeout;
 
 			int _get_param_int(const char* param);
 			double _get_param_dbl(const char* param);
