@@ -33,10 +33,18 @@ AcqThread::AcqThread(Camera& cam)
 	pthread_attr_setscope(&m_thread_attr, PTHREAD_SCOPE_PROCESS);
 	memset((void*)&this->m_buffer, 0, sizeof(XI_IMG));
 
-	// use timeout of 2 * exposure time
-	double exp_time = 0;
-	this->m_cam.getExpTime(exp_time);
-	this->m_timeout = int(2 * exp_time * TIME_HW);
+	TrigMode t_m;
+	this->m_cam.getTrigMode(t_m);
+	if(t_m == IntTrig || t_m == IntTrigMult)
+	{
+		// use timeout of 2 * exposure time for internal trigger
+		double exp_time = 0;
+		this->m_cam.getExpTime(exp_time);
+		this->m_timeout = int(2 * exp_time * TIME_HW / 1e3);	// convert to ms
+	}
+	else
+		// use user provided timeout for external trigger
+		this->m_timeout = this->m_cam.m_trig_timeout;
 }
 
 AcqThread::~AcqThread()
