@@ -31,6 +31,8 @@ namespace Ximea
 %End
 
 	public:
+		static const unsigned int TIMEOUT_MAX;
+
 		enum Status {
 			Ready, Exposure, Readout, Latency, Fault
 		};
@@ -305,7 +307,7 @@ namespace Ximea
 			LEDMode_Blink = XI_LED_BLINK
 		};
 
-		Camera(int camera_id);
+		Camera(int camera_id, unsigned int trigger_timeout);
 		~Camera();
 
 		void prepareAcq();

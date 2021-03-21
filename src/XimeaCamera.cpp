@@ -32,14 +32,15 @@ using namespace std;
 //---------------------------
 //- Ctor
 //---------------------------
-Camera::Camera(int camera_id)
+Camera::Camera(int camera_id, unsigned int trigger_timeout)
 	: xiH(nullptr),
 	  xi_status(XI_OK),
 	  m_status(Camera::Ready),
 	  m_image_number(0),
 	  m_buffer_size(0),
 	  m_acq_thread(nullptr),
-	  m_trig_polarity(Camera::TriggerPolarity_High_Rising)
+	  m_trig_polarity(Camera::TriggerPolarity_High_Rising),
+	  m_trig_timeout(trigger_timeout)
 {
 	DEB_CONSTRUCTOR();
 
