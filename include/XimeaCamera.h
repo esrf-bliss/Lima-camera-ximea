@@ -25,7 +25,7 @@
 #ifndef XIMEACAMERA_H
 #define XIMEACAMERA_H
 
-#include <limits.h>
+#include <limits>
 
 #include "lima/Debug.h"
 #include "lima/Exceptions.h"
@@ -56,7 +56,7 @@ namespace lima
 			friend class AcqThread;
 
 		public:
-			static const unsigned int TIMEOUT_MAX = UINT_MAX;	// from limits.h
+			static const unsigned int TIMEOUT_MAX = std::numeric_limits<unsigned int>::max();
 
 			enum Status {
 				Ready, Exposure, Readout, Latency, Fault
