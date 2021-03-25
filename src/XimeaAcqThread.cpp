@@ -75,7 +75,7 @@ void AcqThread::threadFunction()
 			this->m_cam.reportException(e, "Ximea/AcqThread/newFrameReady");
 			break;
 		}
-		if(this->m_cam.xi_status == XI_OK)
+		if(this->m_cam.xi_status != XI_OK)
 		{
 			this->m_cam._set_status(Camera::Fault);
 			Exception e = LIMA_HW_EXC(Error, "Image read failed");
