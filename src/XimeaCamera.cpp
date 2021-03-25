@@ -78,7 +78,20 @@ void Camera::prepareAcq()
 	this->_stop_acq_thread();
 	this->m_image_number = 0;
 	this->m_buffer_size = this->m_buffer_ctrl_obj.getBuffer().getFrameDim().getMemSize();
-	this->m_acq_thread = new AcqThread(*this);
+	
+	int timeout = 0;
+	if(this->m_trigger_mode == IntTrig || this->m_trigger_mode == IntTrigMult)
+	{
+		// use timeout of 2 * exposure time for internal trigger
+		double exp_time = 0;
+		this->getExpTime(exp_time);
+		timeout = int(2 * exp_time * TIME_HW / 1e3);	// convert to ms
+	}
+	else
+		// use user provided timeout for external trigger
+		timeout = this->m_trig_timeout;
+
+	this->m_acq_thread = new AcqThread(*this, timeout);
 	this->_set_status(Camera::Ready);
 }
 
