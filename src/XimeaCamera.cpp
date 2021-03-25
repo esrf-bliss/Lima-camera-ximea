@@ -1088,3 +1088,16 @@ void Camera::setFeatureValue(int v)
 {
 	this->_set_param_int(XI_PRM_SENSOR_FEATURE_VALUE, v);
 }
+
+void Camera::reportException(Exception& e, std::string name)
+{
+	DEB_MEMBER_FUNCT();
+
+	ostringstream err_msg;
+	err_msg << name << " failed: " << e;
+	Event::Code err_code = Event::CamCommError;
+	Event *event = new Event(Hardware, Event::Error, Event::Camera, 
+				 err_code, err_msg.str());
+	DEB_EVENT(*event) << DEB_VAR1(*event);
+	reportEvent(event);
+}

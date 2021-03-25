@@ -38,6 +38,7 @@ namespace lima
 		class SyncCtrlObj;
 		class BinCtrlObj;
 		class RoiCtrlObj;
+		class EventCtrlObj;
 		class XIMEA_EXPORT Interface : public HwInterface
 		{
 			DEB_CLASS_NAMESPC(DebModCamera, "XimeaInterface", "Ximea");
@@ -65,6 +66,7 @@ namespace lima
 			SyncCtrlObj* m_sync;
 			BinCtrlObj*	m_bin;
 			RoiCtrlObj*	m_roi;
+			EventCtrlObj* m_event;
 		};
 
 	} // namespace Ximea

@@ -31,6 +31,7 @@
 #include "lima/Exceptions.h"
 #include "lima/HwMaxImageSizeCallback.h"
 #include "lima/HwBufferMgr.h"
+#include "lima/Event.h"
 
 #ifdef WIN32
 #	include "xiApi.h"
@@ -47,7 +48,7 @@ namespace lima
 	namespace Ximea
 	{
 		class AcqThread;
-		class XIMEA_EXPORT Camera
+		class XIMEA_EXPORT Camera : public EventCallbackGen
 		{
 			DEB_CLASS_NAMESPC(DebModCamera, "Camera", "Ximea");
 
@@ -547,6 +548,8 @@ namespace lima
 			void _stop_acq_thread();
 
 			void _set_status(Camera::Status status);
+
+			void reportException(Exception& e, std::string name);
 		};
 
 	} // namespace Ximea

@@ -28,6 +28,7 @@
 #include "XimeaSyncCtrlObj.h"
 #include "XimeaBinCtrlObj.h"
 #include "XimeaRoiCtrlObj.h"
+#include "XimeaEventCtrlObj.h"
 
 using namespace lima;
 using namespace lima::Ximea;
@@ -39,6 +40,7 @@ Interface::Interface(Camera& cam) : m_cam(cam)
 	this->m_sync = new SyncCtrlObj(cam);
 	this->m_bin = new BinCtrlObj(cam);
 	this->m_roi = new RoiCtrlObj(cam);
+	this->m_event = new EventCtrlObj(cam);
 }
 
 Interface::~Interface()
@@ -48,6 +50,7 @@ Interface::~Interface()
 	delete this->m_sync;
 	delete this->m_bin;
 	delete this->m_roi;
+	delete this->m_event;
 }
 
 void Interface::getCapList(CapList &cap_list) const
@@ -57,6 +60,7 @@ void Interface::getCapList(CapList &cap_list) const
 	cap_list.push_back(HwCap(this->m_cam.getBufferCtrlObj()));
 	cap_list.push_back(HwCap(this->m_bin));
 	cap_list.push_back(HwCap(this->m_roi));
+	cap_list.push_back(HwCap(this->m_event));
 }
 
 void Interface::reset(ResetLevel reset_level)
