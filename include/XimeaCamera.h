@@ -328,7 +328,11 @@ namespace lima
 				LEDMode_Blink = XI_LED_BLINK
 			};
 
-			Camera(int camera_id, GPISelector trigger_gpi_port);
+			Camera(
+				int camera_id,
+				GPISelector trigger_gpi_port, 
+				TempControlMode startup_temp_control_mode, double startup_target_temp
+			);
 			~Camera();
 
 			void prepareAcq();

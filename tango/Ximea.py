@@ -49,6 +49,12 @@ _GpiSelector = {
 	"PORT_12": Xi.Camera.GPISelector_Port_12,
 }
 
+_TempControlMode = {
+	"OFF": Xi.Camera.TempControlMode_Off,
+	"AUTO": Xi.Camera.TempControlMode_Auto,
+	"MANUAL": Xi.Camera.TempControlMode_Manual,
+}
+
 
 class Ximea(PyTango.Device_4Impl):
 	Core.DEB_CLASS(Core.DebModApplication, 'LimaCCDs')
@@ -95,11 +101,7 @@ class Ximea(PyTango.Device_4Impl):
 			"ANALOG_SOUTH": Xi.Camera.GainSelector_Analog_South,
 		}
 
-		self.__TempControlMode = {
-			"OFF": Xi.Camera.TempControlMode_Off,
-			"AUTO": Xi.Camera.TempControlMode_Auto,
-			"MANUAL": Xi.Camera.TempControlMode_Manual,
-		}
+		self.__TempControlMode = _TempControlMode
 
 		self.__Thermometer = {
 			"DIE_RAW": Xi.Camera.Thermometer_Die_Raw,
@@ -374,6 +376,16 @@ class XimeaClass(PyTango.DeviceClass):
 			"GPI port used by default for trigger input",
 			"PORT_2"
 		],
+		"startup_temp_control_mode": [
+			PyTango.DevString,
+			"Startup temperature control mode",
+			"AUTO"
+		],
+		"startup_target_temp": [
+			PyTango.DevDouble,
+			"Startup target temperature",
+			25.0
+		],
 	}
 
 	cmd_list = {
@@ -518,6 +530,7 @@ class XimeaClass(PyTango.DeviceClass):
 				'unit': 'N/A',
 				'format': '',
 				'description': 'Temperature control mode',
+				'memorized': 'true',
 			}
 		],
 		"temp_target": [
@@ -526,6 +539,7 @@ class XimeaClass(PyTango.DeviceClass):
 				'unit': '*C',
 				'format': '',
 				'description': 'Target temperature',
+				'memorized': 'true',
 			}
 		],
 		"thermometer": [
@@ -902,7 +916,12 @@ _XimeaCam = None
 _XimeaInterface = None
 
 
-def get_control(camera_id, trigger_gpi_port="PORT_2", **keys):
+def get_control(
+	camera_id,
+	trigger_gpi_port="PORT_2",
+	startup_temp_control_mode="AUTO", startup_target_temp=25.0,
+	**keys
+):
 	global _XimeaCam
 	global _XimeaInterface
 
@@ -913,7 +932,8 @@ def get_control(camera_id, trigger_gpi_port="PORT_2", **keys):
 	if _XimeaCam is None:
 		_XimeaCam = Xi.Camera(
 			int(camera_id),
-			_GpiSelector[trigger_gpi_port.upper()]
+			_GpiSelector[trigger_gpi_port.upper()],
+			_TempControlMode[startup_temp_control_mode.upper()], float(startup_target_temp)
 		)
 		_XimeaInterface = Xi.Interface(_XimeaCam)
 	return Core.CtControl(_XimeaInterface)
