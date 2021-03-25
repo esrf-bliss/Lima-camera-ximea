@@ -305,7 +305,7 @@ namespace Ximea
 			LEDMode_Blink = XI_LED_BLINK
 		};
 
-		Camera(int camera_id);
+		Camera(int camera_id, GPISelector trigger_gpi_port);
 		~Camera();
 
 		void prepareAcq();

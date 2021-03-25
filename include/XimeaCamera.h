@@ -328,7 +328,7 @@ namespace lima
 				LEDMode_Blink = XI_LED_BLINK
 			};
 
-			Camera(int camera_id);
+			Camera(int camera_id, GPISelector trigger_gpi_port);
 			~Camera();
 
 			void prepareAcq();
@@ -517,7 +517,10 @@ namespace lima
 			AcqThread* m_acq_thread;
 			SoftBufferCtrlObj m_buffer_ctrl_obj;
 			TrigMode m_trigger_mode;
+			
+			// internal
 			TriggerPolarity m_trig_polarity;
+			GPISelector m_trigger_gpi_port;
 
 			int _get_param_int(const char* param);
 			double _get_param_dbl(const char* param);
@@ -529,6 +532,8 @@ namespace lima
 
 			void _read_image(XI_IMG* image, int timeout);
 			void _generate_soft_trigger(void);
+
+			void _setup_gpio_trigger(void);
 
 			void _stop_acq_thread();
 

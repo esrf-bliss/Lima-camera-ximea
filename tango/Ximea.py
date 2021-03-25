@@ -33,6 +33,23 @@ from Lima import Ximea as Xi
 from Lima.Server import AttrHelper
 
 
+# this is needed by get_control, so needs to be outside class Ximea
+_GpiSelector = {
+	"PORT_1": Xi.Camera.GPISelector_Port_1,
+	"PORT_2": Xi.Camera.GPISelector_Port_2,
+	"PORT_3": Xi.Camera.GPISelector_Port_3,
+	"PORT_4": Xi.Camera.GPISelector_Port_4,
+	"PORT_5": Xi.Camera.GPISelector_Port_5,
+	"PORT_6": Xi.Camera.GPISelector_Port_6,
+	"PORT_7": Xi.Camera.GPISelector_Port_7,
+	"PORT_8": Xi.Camera.GPISelector_Port_8,
+	"PORT_9": Xi.Camera.GPISelector_Port_9,
+	"PORT_10": Xi.Camera.GPISelector_Port_10,
+	"PORT_11": Xi.Camera.GPISelector_Port_11,
+	"PORT_12": Xi.Camera.GPISelector_Port_12,
+}
+
+
 class Ximea(PyTango.Device_4Impl):
 	Core.DEB_CLASS(Core.DebModApplication, 'LimaCCDs')
 
@@ -235,20 +252,7 @@ class Ximea(PyTango.Device_4Impl):
 			"HIGH / RISING": Xi.Camera.TriggerPolarity_High_Rising
 		}
 
-		self.__GpiSelector = {
-			"PORT_1": Xi.Camera.GPISelector_Port_1,
-			"PORT_2": Xi.Camera.GPISelector_Port_2,
-			"PORT_3": Xi.Camera.GPISelector_Port_3,
-			"PORT_4": Xi.Camera.GPISelector_Port_4,
-			"PORT_5": Xi.Camera.GPISelector_Port_5,
-			"PORT_6": Xi.Camera.GPISelector_Port_6,
-			"PORT_7": Xi.Camera.GPISelector_Port_7,
-			"PORT_8": Xi.Camera.GPISelector_Port_8,
-			"PORT_9": Xi.Camera.GPISelector_Port_9,
-			"PORT_10": Xi.Camera.GPISelector_Port_10,
-			"PORT_11": Xi.Camera.GPISelector_Port_11,
-			"PORT_12": Xi.Camera.GPISelector_Port_12,
-		}
+		self.__GpiSelector = _GpiSelector
 
 		self.__GpiMode = {
 			"OFF": Xi.Camera.GPIMode_Off,
@@ -364,6 +368,11 @@ class XimeaClass(PyTango.DeviceClass):
 			PyTango.DevString,
 			"Camera ID",
 			None
+		],
+		"trigger_gpi_port": [
+			PyTango.DevString,
+			"GPI port used by default for trigger input",
+			"PORT_2"
 		],
 	}
 
@@ -893,22 +902,19 @@ _XimeaCam = None
 _XimeaInterface = None
 
 
-def get_control(**keys):
+def get_control(camera_id, trigger_gpi_port="PORT_2", **keys):
 	global _XimeaCam
 	global _XimeaInterface
-
-	if 'camera_id' in keys:
-		camera_id = keys['camera_id']
-	else:
-		# TODO: probably want to throw an exception here
-		pass
 
 	print("Ximea camera_id:", camera_id)
 
 	# all properties are passed as string from LimaCCDs device get_control helper
 	# so need to be converted to correct type
 	if _XimeaCam is None:
-		_XimeaCam = Xi.Camera(int(camera_id))
+		_XimeaCam = Xi.Camera(
+			int(camera_id),
+			_GpiSelector[trigger_gpi_port.upper()]
+		)
 		_XimeaInterface = Xi.Interface(_XimeaCam)
 	return Core.CtControl(_XimeaInterface)
 
