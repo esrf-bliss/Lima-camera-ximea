@@ -923,7 +923,7 @@ _XimeaInterface = None
 
 def get_control(
 	camera_id,
-	trigger_gpi_port="PORT_2", trigger_timeout,
+	trigger_gpi_port="PORT_2", trigger_timeout=Xi.Camera.TIMEOUT_MAX,
 	startup_temp_control_mode="AUTO", startup_target_temp=25.0,
 	**keys
 ):
