@@ -25,18 +25,13 @@
 using namespace lima;
 using namespace lima::Ximea;
 
-AcqThread::AcqThread(Camera& cam)
+AcqThread::AcqThread(Camera& cam, int timeout)
 	: m_cam(cam),
 	  m_quit(false),
-	  m_timeout(0)
+	  m_timeout(timeout)
 {
 	pthread_attr_setscope(&m_thread_attr, PTHREAD_SCOPE_PROCESS);
 	memset((void*)&this->m_buffer, 0, sizeof(XI_IMG));
-
-	// use timeout of 2 * exposure time
-	double exp_time = 0;
-	this->m_cam.getExpTime(exp_time);
-	this->m_timeout = int(2 * exp_time * TIME_HW);
 }
 
 AcqThread::~AcqThread()

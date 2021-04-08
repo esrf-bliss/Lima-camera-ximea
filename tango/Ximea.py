@@ -376,6 +376,11 @@ class XimeaClass(PyTango.DeviceClass):
 			"GPI port used by default for trigger input",
 			"PORT_2"
 		],
+		"trigger_timeout": [
+			PyTango.DevLong,
+			"Timeout for external trigger",
+			Xi.Camera.TIMEOUT_MAX
+		],
 		"startup_temp_control_mode": [
 			PyTango.DevString,
 			"Startup temperature control mode",
@@ -385,7 +390,7 @@ class XimeaClass(PyTango.DeviceClass):
 			PyTango.DevDouble,
 			"Startup target temperature",
 			25.0
-		],
+		]
 	}
 
 	cmd_list = {
@@ -918,7 +923,7 @@ _XimeaInterface = None
 
 def get_control(
 	camera_id,
-	trigger_gpi_port="PORT_2",
+	trigger_gpi_port="PORT_2", trigger_timeout,
 	startup_temp_control_mode="AUTO", startup_target_temp=25.0,
 	**keys
 ):
@@ -932,7 +937,7 @@ def get_control(
 	if _XimeaCam is None:
 		_XimeaCam = Xi.Camera(
 			int(camera_id),
-			_GpiSelector[trigger_gpi_port.upper()],
+			_GpiSelector[trigger_gpi_port.upper()], int(trigger_timeout),
 			_TempControlMode[startup_temp_control_mode.upper()], float(startup_target_temp)
 		)
 		_XimeaInterface = Xi.Interface(_XimeaCam)

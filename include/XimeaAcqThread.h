@@ -40,7 +40,7 @@ namespace lima
 			friend class Camera;
 
 			public:
-				AcqThread(Camera& cam);
+				AcqThread(Camera& cam, int timeout);
 				virtual ~AcqThread();
 			
 			protected:
