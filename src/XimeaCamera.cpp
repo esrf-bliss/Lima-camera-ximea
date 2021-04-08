@@ -53,7 +53,7 @@ Camera::Camera(int camera_id, GPISelector trigger_gpi_port, TempControlMode star
 
 	// set startup temperature control values
 	this->setTempControlMode(startup_temp_control_mode);
-	this->setTargetTemp(startup_target_temp);
+	this->setTempTarget(startup_target_temp);
 
 	DEB_TRACE() << "Camera " << camera_id << " opened; xi_status: " << this->xi_status;
 }
