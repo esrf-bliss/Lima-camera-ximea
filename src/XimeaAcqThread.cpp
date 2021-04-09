@@ -63,10 +63,22 @@ void AcqThread::threadFunction()
 		DEB_TRACE() << DEB_VAR1(continueAcq);
 		++this->m_cam.m_image_number;
 
-		if(continueAcq && this->m_cam.xi_status == XI_OK)
-			this->m_cam._set_status(Camera::Ready);
-		else
+		if(!continueAcq)
+		{
 			this->m_cam._set_status(Camera::Fault);
-
+			Exception e = LIMA_CTL_EXC(Error, "Frame not ready");
+			this->m_cam.reportException(e, "Ximea/AcqThread/newFrameReady");
+			break;
+		}
+		if(this->m_cam.xi_status != XI_OK)
+		{
+			this->m_cam._set_status(Camera::Fault);
+			Exception e = LIMA_HW_EXC(Error, "Image read failed");
+			this->m_cam.reportException(e, "Ximea/Camera/_read_image");
+			continue;
+		}
+		this->m_cam._set_status(Camera::Ready);
 	}
+	// when leaving the thread stop acqusition no matter what
+	xiStopAcquisition(this->m_cam.xiH);
 }
