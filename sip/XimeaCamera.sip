@@ -31,6 +31,8 @@ namespace Ximea
 %End
 
 	public:
+		static const unsigned int TIMEOUT_MAX;
+
 		enum Status {
 			Ready, Exposure, Readout, Latency, Fault
 		};
@@ -307,7 +309,7 @@ namespace Ximea
 
 		Camera(
 			int camera_id,
-			GPISelector trigger_gpi_port,
+			GPISelector trigger_gpi_port, unsigned int trigger_timeout,
 			TempControlMode startup_temp_control_mode, double startup_target_temp
 		);
 		~Camera();

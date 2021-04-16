@@ -3,7 +3,7 @@
 //
 // Copyright (C) : 2009-2020
 // European Synchrotron Radiation Facility
-// CS40220 38043 Grenoble Cedex 9 
+// CS40220 38043 Grenoble Cedex 9
 // FRANCE
 //
 // Contact: lima@esrf.fr
@@ -22,39 +22,17 @@
 // along with this program; if not, see <http://www.gnu.org/licenses/>.
 //###########################################################################
 
-#ifndef XIMEAACQTHREAD_H
-#define XIMEAACQTHREAD_H
+#include "XimeaEventCtrlObj.h"
 
-#include <ximea_export.h>
+using namespace lima;
+using namespace lima::Ximea;
 
-#include "XimeaCamera.h"
-
-namespace lima
+EventCtrlObj::EventCtrlObj(Camera& cam) : m_cam(cam)
 {
-	namespace Ximea
-	{
-		class AcqThread : public Thread
-		{
-			DEB_CLASS_NAMESPC(DebModCamera, "AcqThread", "Ximea");
 
-			friend class Camera;
+}
 
-			public:
-				AcqThread(Camera& cam, int timeout);
-				virtual ~AcqThread();
-			
-			protected:
-				virtual void threadFunction();
-			
-			private:
-				Camera& m_cam;
+EventCtrlObj::~EventCtrlObj()
+{
 
-				bool m_quit;
-				XI_IMG m_buffer;
-				int m_timeout;
-		};
-	} // namespace Ximea
-} // namespace lima
-
-
-#endif // XIMEAACQTHREAD_H
+}

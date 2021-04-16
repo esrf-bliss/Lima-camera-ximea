@@ -32,7 +32,7 @@ using namespace std;
 //---------------------------
 //- Ctor
 //---------------------------
-Camera::Camera(int camera_id, GPISelector trigger_gpi_port, TempControlMode startup_temp_control_mode, double startup_target_temp)
+Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger_timeout, TempControlMode startup_temp_control_mode, double startup_target_temp)
 	: xiH(nullptr),
 	  xi_status(XI_OK),
 	  m_status(Camera::Ready),
@@ -40,7 +40,8 @@ Camera::Camera(int camera_id, GPISelector trigger_gpi_port, TempControlMode star
 	  m_buffer_size(0),
 	  m_acq_thread(nullptr),
 	  m_trig_polarity(Camera::TriggerPolarity_High_Rising),
-	  m_trigger_gpi_port(trigger_gpi_port)
+	  m_trigger_gpi_port(trigger_gpi_port),
+	  m_trig_timeout(trigger_timeout)
 {
 	DEB_CONSTRUCTOR();
 
@@ -53,7 +54,7 @@ Camera::Camera(int camera_id, GPISelector trigger_gpi_port, TempControlMode star
 
 	// set startup temperature control values
 	this->setTempControlMode(startup_temp_control_mode);
-	this->setTargetTemp(startup_target_temp);
+	this->setTempTarget(startup_target_temp);
 
 	DEB_TRACE() << "Camera " << camera_id << " opened; xi_status: " << this->xi_status;
 }
@@ -77,7 +78,20 @@ void Camera::prepareAcq()
 	this->_stop_acq_thread();
 	this->m_image_number = 0;
 	this->m_buffer_size = this->m_buffer_ctrl_obj.getBuffer().getFrameDim().getMemSize();
-	this->m_acq_thread = new AcqThread(*this);
+	
+	int timeout = 0;
+	if(this->m_trigger_mode == IntTrig || this->m_trigger_mode == IntTrigMult)
+	{
+		// use timeout of 2 * exposure time for internal trigger
+		double exp_time = 0;
+		this->getExpTime(exp_time);
+		timeout = int(2 * exp_time * TIME_HW / 1e3);	// convert to ms
+	}
+	else
+		// use user provided timeout for external trigger
+		timeout = this->m_trig_timeout;
+
+	this->m_acq_thread = new AcqThread(*this, timeout);
 	this->_set_status(Camera::Ready);
 }
 
@@ -1073,4 +1087,17 @@ void Camera::getFeatureValue(int& v)
 void Camera::setFeatureValue(int v)
 {
 	this->_set_param_int(XI_PRM_SENSOR_FEATURE_VALUE, v);
+}
+
+void Camera::reportException(Exception& e, std::string name)
+{
+	DEB_MEMBER_FUNCT();
+
+	ostringstream err_msg;
+	err_msg << name << " failed: " << e;
+	Event::Code err_code = Event::CamCommError;
+	Event *event = new Event(Hardware, Event::Error, Event::Camera, 
+				 err_code, err_msg.str());
+	DEB_EVENT(*event) << DEB_VAR1(*event);
+	reportEvent(event);
 }

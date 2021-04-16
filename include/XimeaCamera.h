@@ -25,10 +25,13 @@
 #ifndef XIMEACAMERA_H
 #define XIMEACAMERA_H
 
+#include <limits>
+
 #include "lima/Debug.h"
 #include "lima/Exceptions.h"
 #include "lima/HwMaxImageSizeCallback.h"
 #include "lima/HwBufferMgr.h"
+#include "lima/Event.h"
 
 #ifdef WIN32
 #	include "xiApi.h"
@@ -45,7 +48,7 @@ namespace lima
 	namespace Ximea
 	{
 		class AcqThread;
-		class XIMEA_EXPORT Camera
+		class XIMEA_EXPORT Camera : public EventCallbackGen
 		{
 			DEB_CLASS_NAMESPC(DebModCamera, "Camera", "Ximea");
 
@@ -54,6 +57,8 @@ namespace lima
 			friend class AcqThread;
 
 		public:
+			static const unsigned int TIMEOUT_MAX = std::numeric_limits<unsigned int>::max();
+
 			enum Status {
 				Ready, Exposure, Readout, Latency, Fault
 			};
@@ -330,7 +335,7 @@ namespace lima
 
 			Camera(
 				int camera_id,
-				GPISelector trigger_gpi_port, 
+				GPISelector trigger_gpi_port, unsigned int trigger_timeout,
 				TempControlMode startup_temp_control_mode, double startup_target_temp
 			);
 			~Camera();
@@ -525,6 +530,7 @@ namespace lima
 			// internal
 			TriggerPolarity m_trig_polarity;
 			GPISelector m_trigger_gpi_port;
+			unsigned int m_trig_timeout;
 
 			int _get_param_int(const char* param);
 			double _get_param_dbl(const char* param);
@@ -542,6 +548,8 @@ namespace lima
 			void _stop_acq_thread();
 
 			void _set_status(Camera::Status status);
+
+			void reportException(Exception& e, std::string name);
 		};
 
 	} // namespace Ximea

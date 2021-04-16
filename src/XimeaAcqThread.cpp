@@ -25,18 +25,13 @@
 using namespace lima;
 using namespace lima::Ximea;
 
-AcqThread::AcqThread(Camera& cam)
+AcqThread::AcqThread(Camera& cam, int timeout)
 	: m_cam(cam),
 	  m_quit(false),
-	  m_timeout(0)
+	  m_timeout(timeout)
 {
 	pthread_attr_setscope(&m_thread_attr, PTHREAD_SCOPE_PROCESS);
 	memset((void*)&this->m_buffer, 0, sizeof(XI_IMG));
-
-	// use timeout of 2 * exposure time
-	double exp_time = 0;
-	this->m_cam.getExpTime(exp_time);
-	this->m_timeout = int(2 * exp_time * TIME_HW);
 }
 
 AcqThread::~AcqThread()
@@ -68,10 +63,22 @@ void AcqThread::threadFunction()
 		DEB_TRACE() << DEB_VAR1(continueAcq);
 		++this->m_cam.m_image_number;
 
-		if(continueAcq && this->m_cam.xi_status == XI_OK)
-			this->m_cam._set_status(Camera::Ready);
-		else
+		if(!continueAcq)
+		{
 			this->m_cam._set_status(Camera::Fault);
-
+			Exception e = LIMA_CTL_EXC(Error, "Frame not ready");
+			this->m_cam.reportException(e, "Ximea/AcqThread/newFrameReady");
+			break;
+		}
+		if(this->m_cam.xi_status != XI_OK)
+		{
+			this->m_cam._set_status(Camera::Fault);
+			Exception e = LIMA_HW_EXC(Error, "Image read failed");
+			this->m_cam.reportException(e, "Ximea/Camera/_read_image");
+			continue;
+		}
+		this->m_cam._set_status(Camera::Ready);
 	}
+	// when leaving the thread stop acqusition no matter what
+	xiStopAcquisition(this->m_cam.xiH);
 }
