@@ -232,6 +232,8 @@ void Camera::setTrigMode(TrigMode mode)
 	}
 	else if(mode == ExtTrigSingle)
 	{
+		// this trigger configuration is not supported -
+		// - lack of camera support for XI_PRM_EXPOSURE_BURST_COUNT
 		this->_setup_gpio_trigger();
 		if(this->m_trig_polarity == TriggerPolarity_Low_Falling)
 			this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_EDGE_FALLING);
@@ -252,7 +254,8 @@ void Camera::setTrigMode(TrigMode mode)
 	}
 	else if(mode == ExtGate)
 	{
-		this->_setup_gpio_trigger();
+		// this trigger configuration is not supported -
+		// - lack of camera support for XI_TRG_SEL_EXPOSURE_ACTIVE
 		if(this->m_trig_polarity == TriggerPolarity_Low_Falling)
 			this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_LEVEL_LOW);
 		else if(this->m_trig_polarity == TriggerPolarity_High_Rising)
