@@ -59,6 +59,11 @@ Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger
 	this->setTempControlMode(startup_temp_control_mode);
 	this->setTempTarget(startup_target_temp);
 
+	// set startup acquisition configuration
+	this->setTrigMode(IntTrig);
+	this->setNbFrames(1);
+
+
 	DEB_TRACE() << "Camera " << camera_id << " opened; xi_status: " << this->xi_status;
 }
 
