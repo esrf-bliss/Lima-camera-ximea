@@ -49,6 +49,9 @@ Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger
 	if(this->xi_status != XI_OK)
 		THROW_HW_ERROR(Error) << "Could not open camera " << camera_id << "; status: " << this->xi_status;
 
+	// set debug level
+	this->_set_param_int(XI_PRM_DEBUG_LEVEL, XI_DL_DISABLED);
+
 	// set buffer policy to managed by application
 	this->_set_param_int(XI_PRM_BUFFER_POLICY, XI_BP_SAFE);
 
