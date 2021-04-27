@@ -577,6 +577,27 @@ void Camera::_set_param_str(const char* param, std::string value, int size)
 		THROW_HW_ERROR(Error) << "Could not set parameter " << param << " to " << value << "; xi_status: " << this->xi_status;
 }
 
+int Camera::_get_param_min(const char* param)
+{
+	string param_str(param);
+	string info_str(XI_PRM_INFO_MIN);
+	return this->_get_param_int((param_str + info_str).c_str());
+}
+
+int Camera::_get_param_max(const char* param)
+{
+	string param_str(param);
+	string info_str(XI_PRM_INFO_MAX);
+	return this->_get_param_int((param_str + info_str).c_str());
+}
+
+int Camera::_get_param_inc(const char* param)
+{
+	string param_str(param);
+	string info_str(XI_PRM_INFO_INCREMENT);
+	return this->_get_param_int((param_str + info_str).c_str());
+}
+
 void Camera::_read_image(XI_IMG* image, int timeout)
 {
 	DEB_MEMBER_FUNCT();
