@@ -547,6 +547,10 @@ void Camera::checkBin(Bin &aBin)
 	h = min(h_max, max(h_min, h));
 	v = min(v_max, max(v_min, v));
 
+	// 3x3 binning is not supported by camera, use 2x2 instead
+	if(h == 3) h = 2;
+	if(v == 3) v = 2;
+
 	aBin = Bin(h, v);
 
 	DEB_RETURN() << DEB_VAR1(aBin);
