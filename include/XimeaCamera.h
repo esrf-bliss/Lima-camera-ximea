@@ -336,7 +336,8 @@ namespace lima
 			Camera(
 				int camera_id,
 				GPISelector trigger_gpi_port, unsigned int trigger_timeout,
-				TempControlMode startup_temp_control_mode, double startup_target_temp
+				TempControlMode startup_temp_control_mode, double startup_target_temp,
+				Mode startup_mode
 			);
 			~Camera();
 
