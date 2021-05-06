@@ -497,7 +497,27 @@ void Camera::setLedMode(LEDMode m)
 void Camera::checkBin(Bin &aBin)
 {
 	DEB_MEMBER_FUNCT();
-	// TODO: What to do here?
+	
+	// get binning parameters info
+	int h_min = this->_get_param_min(XI_PRM_BINNING_HORIZONTAL);
+	int h_max = this->_get_param_max(XI_PRM_BINNING_HORIZONTAL);
+	int h_inc = this->_get_param_inc(XI_PRM_BINNING_HORIZONTAL);
+	int v_min = this->_get_param_min(XI_PRM_BINNING_VERTICAL);
+	int v_max = this->_get_param_max(XI_PRM_BINNING_VERTICAL);
+	int v_inc = this->_get_param_inc(XI_PRM_BINNING_VERTICAL);
+
+	// fit bin into limits
+	int h = ceil(double(aBin.getX()) / h_inc) * h_inc;
+	int v = ceil(double(aBin.getY()) / v_inc) * v_inc;
+	h = min(h_max, max(h_min, h));
+	v = min(v_max, max(v_min, v));
+
+	// 3x3 binning is not supported by camera, use 2x2 instead
+	if(h == 3) h = 2;
+	if(v == 3) v = 2;
+
+	aBin = Bin(h, v);
+
 	DEB_RETURN() << DEB_VAR1(aBin);
 }
 
@@ -587,6 +607,27 @@ void Camera::_set_param_str(const char* param, std::string value, int size)
 	this->xi_status = xiSetParamString(this->xiH, param, (void*)value.c_str(), size);
 	if(this->xi_status != XI_OK)
 		THROW_HW_ERROR(Error) << "Could not set parameter " << param << " to " << value << "; xi_status: " << this->xi_status;
+}
+
+int Camera::_get_param_min(const char* param)
+{
+	string param_str(param);
+	string info_str(XI_PRM_INFO_MIN);
+	return this->_get_param_int((param_str + info_str).c_str());
+}
+
+int Camera::_get_param_max(const char* param)
+{
+	string param_str(param);
+	string info_str(XI_PRM_INFO_MAX);
+	return this->_get_param_int((param_str + info_str).c_str());
+}
+
+int Camera::_get_param_inc(const char* param)
+{
+	string param_str(param);
+	string info_str(XI_PRM_INFO_INCREMENT);
+	return this->_get_param_int((param_str + info_str).c_str());
 }
 
 void Camera::_read_image(XI_IMG* image, int timeout)

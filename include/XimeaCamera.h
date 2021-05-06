@@ -541,6 +541,10 @@ namespace lima
 			void _set_param_dbl(const char* param, double value);
 			void _set_param_str(const char* param, std::string value, int size=-1);
 
+			int _get_param_min(const char* param);
+			int _get_param_max(const char* param);
+			int _get_param_inc(const char* param);
+
 			void _read_image(XI_IMG* image, int timeout);
 			void _generate_soft_trigger(void);
 
