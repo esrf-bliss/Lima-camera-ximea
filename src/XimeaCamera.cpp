@@ -32,7 +32,7 @@ using namespace std;
 //---------------------------
 //- Ctor
 //---------------------------
-Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger_timeout, TempControlMode startup_temp_control_mode, double startup_target_temp)
+Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger_timeout, TempControlMode startup_temp_control_mode, double startup_target_temp, Mode startup_mode)
 	: xiH(nullptr),
 	  xi_status(XI_OK),
 	  m_status(Camera::Ready),
@@ -49,12 +49,24 @@ Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger
 	if(this->xi_status != XI_OK)
 		THROW_HW_ERROR(Error) << "Could not open camera " << camera_id << "; status: " << this->xi_status;
 
+	// set debug level
+	this->_set_param_int(XI_PRM_DEBUG_LEVEL, XI_DL_DISABLED);
+
 	// set buffer policy to managed by application
 	this->_set_param_int(XI_PRM_BUFFER_POLICY, XI_BP_SAFE);
 
 	// set startup temperature control values
 	this->setTempControlMode(startup_temp_control_mode);
 	this->setTempTarget(startup_target_temp);
+
+	// set startup acquisition configuration
+	this->setTrigMode(IntTrig);
+	this->setNbFrames(1);
+
+	// set startup and default mode
+	this->setMode(startup_mode);
+	this->_set_param_int(XI_PRM_USER_SET_DEFAULT, startup_mode);
+
 
 	DEB_TRACE() << "Camera " << camera_id << " opened; xi_status: " << this->xi_status;
 }
