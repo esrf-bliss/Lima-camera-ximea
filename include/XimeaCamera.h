@@ -26,6 +26,7 @@
 #define XIMEACAMERA_H
 
 #include <limits>
+#include <math.h>
 
 #include "lima/Debug.h"
 #include "lima/Exceptions.h"
