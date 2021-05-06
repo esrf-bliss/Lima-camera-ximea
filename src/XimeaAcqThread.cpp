@@ -28,7 +28,8 @@ using namespace lima::Ximea;
 AcqThread::AcqThread(Camera& cam, int timeout)
 	: m_cam(cam),
 	  m_quit(false),
-	  m_timeout(timeout)
+	  m_timeout(timeout),
+	  m_thread_started(false)
 {
 	pthread_attr_setscope(&m_thread_attr, PTHREAD_SCOPE_PROCESS);
 	memset((void*)&this->m_buffer, 0, sizeof(XI_IMG));
@@ -43,6 +44,7 @@ AcqThread::~AcqThread()
 void AcqThread::threadFunction()
 {
 	DEB_MEMBER_FUNCT();
+	this->m_thread_started = true;
 
 	StdBufferCbMgr& buffer_mgr = this->m_cam.m_buffer_ctrl_obj.getBuffer();
 
@@ -78,6 +80,9 @@ void AcqThread::threadFunction()
 			continue;
 		}
 		this->m_cam._set_status(Camera::Ready);
+		if(this->m_cam.getTrigMode() == Camera::IntTrigMult)
+			// exit acquisition loop in order to allow for nex startAcq
+			this->m_quit = true;
 	}
 	// when leaving the thread stop acqusition no matter what
 	xiStopAcquisition(this->m_cam.xiH);
