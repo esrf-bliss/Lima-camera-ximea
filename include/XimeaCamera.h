@@ -520,8 +520,13 @@ namespace lima
 			void setFeatureValue(int v);
 
 		private:
+			int cam_id;
 			HANDLE xiH;
 			XI_RETURN xi_status;
+
+			TempControlMode m_startup_temp_control_mode;
+			double m_startup_target_temp;
+			Mode m_startup_mode;
 
 			Camera::Status m_status;
 			int m_nb_frames;
@@ -535,6 +540,8 @@ namespace lima
 			TriggerPolarity m_trig_polarity;
 			GPISelector m_trigger_gpi_port;
 			unsigned int m_trig_timeout;
+
+			void _startup(void);
 
 			int _get_param_int(const char* param);
 			double _get_param_dbl(const char* param);
