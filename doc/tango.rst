@@ -10,10 +10,10 @@ Properties
 ----------
 
 ========================= ========== ========================================== ===========================================
-Property name	          Mandatory	 Default value                              Description
+Property name             Mandatory  Default value                              Description
 ========================= ========== ========================================== ===========================================
-camera_id	              Yes        N/A                                        Camera ID
-trigger_gpi_port	      No         PORT_2	                                    GPI port used by default for trigger input
+camera_id                 Yes        N/A                                        Camera ID
+trigger_gpi_port          No         PORT_2	                                    GPI port used by default for trigger input
 trigger_timeout           No         `std::numeric_limits<unsigned int>::max()` Timeout for external trigger
 startup_temp_control_mode No         AUTO                                       Startup temperature control mode
 startup_target_temp	      No         25.0                                       Startup target temperature
@@ -24,7 +24,7 @@ Attributes
 ----------
 
 ============================= ==== ========== ================================================================
-Attribute name		          RW   Type       Description
+Attribute name                RW   Type       Description
 ============================= ==== ========== ================================================================
 trigger_polarity              rw   DevString  Select trigger polarity
 software_trigger               w   DevBoolean Software trigger; write to generate trigger, reads always false
@@ -96,11 +96,11 @@ Commands
 --------
 
 =======================	=============== ================== ============================================
-Command name            Arg. in         Arg. out		   Description
+Command name            Arg. in         Arg. out           Description
 =======================	=============== ================== ============================================
-Init			        DevVoid 	    DevVoid			   Do not use
-State			        DevVoid		    DevLong			   Return the device state
-Status			        DevVoid		    DevString		   Return the device state as a string
-getAttrStringValueList	DevString:	    DevVarStringArray: Return the authorized string value list for
-                        Attribute name	String value list  a given attribute name
+Init                    DevVoid         DevVoid	           Do not use
+State                   DevVoid         DevLong            Return the device state
+Status                  DevVoid         DevString          Return the device state as a string
+getAttrStringValueList  DevString:      DevVarStringArray: Return the authorized string value list for
+                        Attribute name  String value list  a given attribute name
 =======================	=============== ================== ============================================
