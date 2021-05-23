@@ -33,7 +33,8 @@ using namespace std;
 //- Ctor
 //---------------------------
 Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger_timeout, TempControlMode startup_temp_control_mode, double startup_target_temp)
-	: xiH(nullptr),
+	: cam_id(camera_id),
+	  xiH(nullptr),
 	  xi_status(XI_OK),
 	  m_status(Camera::Ready),
 	  m_image_number(0),
@@ -41,21 +42,12 @@ Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger
 	  m_acq_thread(nullptr),
 	  m_trig_polarity(Camera::TriggerPolarity_High_Rising),
 	  m_trigger_gpi_port(trigger_gpi_port),
-	  m_trig_timeout(trigger_timeout)
+	  m_trig_timeout(trigger_timeout),
+	  m_startup_temp_control_mode(startup_temp_control_mode),
+	  m_startup_target_temp(startup_target_temp)
 {
 	DEB_CONSTRUCTOR();
-
-	this->xi_status = xiOpenDevice(camera_id, &this->xiH);
-	if(this->xi_status != XI_OK)
-		THROW_HW_ERROR(Error) << "Could not open camera " << camera_id << "; status: " << this->xi_status;
-
-	// set buffer policy to managed by application
-	this->_set_param_int(XI_PRM_BUFFER_POLICY, XI_BP_SAFE);
-
-	// set startup temperature control values
-	this->setTempControlMode(startup_temp_control_mode);
-	this->setTempTarget(startup_target_temp);
-
+	this->_startup();
 	DEB_TRACE() << "Camera " << camera_id << " opened; xi_status: " << this->xi_status;
 }
 
@@ -69,6 +61,22 @@ Camera::~Camera()
 	this->_stop_acq_thread();
 	if(this->xiH)
 		xiCloseDevice(this->xiH);
+}
+
+void Camera::_startup()
+{
+	DEB_MEMBER_FUNCT();
+
+	this->xi_status = xiOpenDevice(this->cam_id, &this->xiH);
+	if(this->xi_status != XI_OK)
+		THROW_HW_ERROR(Error) << "Could not open camera " << this->cam_id << "; status: " << this->xi_status;
+
+	// set buffer policy to managed by application
+	this->_set_param_int(XI_PRM_BUFFER_POLICY, XI_BP_SAFE);
+
+	// set startup temperature control values
+	this->setTempControlMode(this->m_startup_temp_control_mode);
+	this->setTempTarget(this->m_startup_target_temp);
 }
 
 void Camera::prepareAcq()
@@ -119,8 +127,11 @@ void Camera::stopAcq()
 void Camera::reset()
 {
 	DEB_MEMBER_FUNCT();
-
+	this->stopAcq();
 	this->_set_param_int(XI_PRM_DEVICE_RESET, XI_ON);
+	xiCloseDevice(this->xiH);
+	this->xiH = nullptr;
+	this->_startup();
 }
 
 void Camera::getImageType(ImageType& type)
