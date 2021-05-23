@@ -92,7 +92,7 @@ void Camera::startAcq()
 
 	if(this->m_trigger_mode == IntTrigMult && this->m_acq_thread->m_thread_started)
 	{
-		this->_stop_acq_thread()
+		this->_stop_acq_thread();
 		this->m_acq_thread = new AcqThread(*this, this->_get_trigger_timeout());
 	}
 	xiStartAcquisition(this->xiH);
