@@ -57,7 +57,7 @@ are supported by this detector. A Shutter control.
   Supported modes: 1x1, 2x2, 4x4
 
 * HwRoi
-* HWEvent
+* HwEvent
 
 How to use
 ````````````
