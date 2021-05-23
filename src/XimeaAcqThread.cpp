@@ -80,7 +80,9 @@ void AcqThread::threadFunction()
 			continue;
 		}
 		this->m_cam._set_status(Camera::Ready);
-		if(this->m_cam.getTrigMode() == Camera::IntTrigMult)
+		TrigMode tm;
+		this->m_cam.getTrigMode(tm);
+		if(tm == IntTrigMult)
 			// exit acquisition loop in order to allow for nex startAcq
 			this->m_quit = true;
 	}
