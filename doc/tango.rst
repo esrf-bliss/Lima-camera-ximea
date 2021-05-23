@@ -23,9 +23,9 @@ startup_target_temp	      No         25.0                                       
 Attributes
 ----------
 
-================================= ========== ================================================================
+============================= === ========== ================================================================
 Attribute name		          RW  Type       Description
-================================= ========== ================================================================
+============================= === ========== ================================================================
 trigger_polarity              rw  DevString  Select trigger polarity
 software_trigger               w  DevBoolean Software trigger; write to generate trigger, reads always false
 gpi_selector                  rw  DevString  Select GPI to configure
@@ -89,7 +89,7 @@ trigger_delay                 rw  DevLong    Trigger delay
 acq_status                    r   DevBoolean Acquisition status
 feature_selector              rw  DevString  Sensor additional features
 feature_value                 rw  DevLong    Selected feature value
-================================= ========== ================================================================
+============================= === ========== ================================================================
 
 
 Commands
