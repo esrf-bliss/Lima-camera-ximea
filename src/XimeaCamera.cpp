@@ -532,7 +532,27 @@ void Camera::setLedMode(LEDMode m)
 void Camera::checkBin(Bin &aBin)
 {
 	DEB_MEMBER_FUNCT();
-	// TODO: What to do here?
+	
+	// get binning parameters info
+	int h_min = this->_get_param_min(XI_PRM_BINNING_HORIZONTAL);
+	int h_max = this->_get_param_max(XI_PRM_BINNING_HORIZONTAL);
+	int h_inc = this->_get_param_inc(XI_PRM_BINNING_HORIZONTAL);
+	int v_min = this->_get_param_min(XI_PRM_BINNING_VERTICAL);
+	int v_max = this->_get_param_max(XI_PRM_BINNING_VERTICAL);
+	int v_inc = this->_get_param_inc(XI_PRM_BINNING_VERTICAL);
+
+	// fit bin into limits
+	int h = ceil(double(aBin.getX()) / h_inc) * h_inc;
+	int v = ceil(double(aBin.getY()) / v_inc) * v_inc;
+	h = min(h_max, max(h_min, h));
+	v = min(v_max, max(v_min, v));
+
+	// 3x3 binning is not supported by camera, use 2x2 instead
+	if(h == 3) h = 2;
+	if(v == 3) v = 2;
+
+	aBin = Bin(h, v);
+
 	DEB_RETURN() << DEB_VAR1(aBin);
 }
 
