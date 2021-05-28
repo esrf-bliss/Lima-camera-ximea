@@ -332,8 +332,42 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 	DEB_MEMBER_FUNCT();
 	DEB_PARAM() << DEB_VAR1(set_roi);
 
-	// TODO: What should be done here?
-	hw_roi = set_roi;
+	// get ROI parameters info
+	int w_min = this->_get_param_min(XI_PRM_WIDTH);
+	int w_max = this->_get_param_max(XI_PRM_WIDTH);
+	int w_inc = this->_get_param_inc(XI_PRM_WIDTH);
+	int h_min = this->_get_param_min(XI_PRM_HEIGHT);
+	int h_max = this->_get_param_max(XI_PRM_HEIGHT);
+	int h_inc = this->_get_param_inc(XI_PRM_HEIGHT);
+	int x_min = this->_get_param_min(XI_PRM_OFFSET_X);
+	int x_max = this->_get_param_max(XI_PRM_OFFSET_X);
+	int x_inc = this->_get_param_inc(XI_PRM_OFFSET_X);
+	int y_min = this->_get_param_min(XI_PRM_OFFSET_Y);
+	int y_max = this->_get_param_max(XI_PRM_OFFSET_Y);
+	int y_inc = this->_get_param_inc(XI_PRM_OFFSET_Y);
+
+	int w = set_roi.getSize().getWidth();
+	int h = set_roi.getSize().getHeight();
+	int x = set_roi.getTopLeft().x;
+	int y = set_roi.getTopLeft().y;
+
+	// if cannot set precise ROI, use closest divisible by increment
+	w = ceil(double(w) / w_inc) * w_inc;
+	h = ceil(double(h) / h_inc) * h_inc;
+	x = ceil(double(x) / x_inc) * x_inc;
+	y = ceil(double(y) / y_inc) * y_inc;
+
+	// check min-max
+	// TODO: the quirk is that we should set W/H first, then read limits
+	// for X/Y  to get the correct value. However setting anything in check
+	// method seems sketchy. Some workaround is needed.
+	w = min(w_max, max(w_min, w));
+	h = min(h_max, max(h_min, h));
+	x = min(x_max, max(x_min, x));
+	y = min(y_max, max(y_min, y));
+
+	Roi r(x, y, w, h);
+	hw_roi = r;
 
 	DEB_RETURN() << DEB_VAR1(hw_roi);
 }
@@ -351,10 +385,11 @@ void Camera::setRoi(const Roi& ask_roi)
 	if(ask_roi.isActive())
 	{
 		// then set the new ROI
-		this->_set_param_int(XI_PRM_OFFSET_X, ask_roi.getTopLeft().x);
-		this->_set_param_int(XI_PRM_OFFSET_Y, ask_roi.getTopLeft().y);
+		// order is important, first we need to set w/h and only then the offsets
 		this->_set_param_int(XI_PRM_WIDTH, ask_roi.getSize().getWidth());
 		this->_set_param_int(XI_PRM_HEIGHT, ask_roi.getSize().getHeight());
+		this->_set_param_int(XI_PRM_OFFSET_X, ask_roi.getTopLeft().x);
+		this->_set_param_int(XI_PRM_OFFSET_Y, ask_roi.getTopLeft().y);
 	}
 }
 
@@ -587,6 +622,27 @@ void Camera::_set_param_str(const char* param, std::string value, int size)
 	this->xi_status = xiSetParamString(this->xiH, param, (void*)value.c_str(), size);
 	if(this->xi_status != XI_OK)
 		THROW_HW_ERROR(Error) << "Could not set parameter " << param << " to " << value << "; xi_status: " << this->xi_status;
+}
+
+int Camera::_get_param_min(const char* param)
+{
+	string param_str(param);
+	string info_str(XI_PRM_INFO_MIN);
+	return this->_get_param_int((param_str + info_str).c_str());
+}
+
+int Camera::_get_param_max(const char* param)
+{
+	string param_str(param);
+	string info_str(XI_PRM_INFO_MAX);
+	return this->_get_param_int((param_str + info_str).c_str());
+}
+
+int Camera::_get_param_inc(const char* param)
+{
+	string param_str(param);
+	string info_str(XI_PRM_INFO_INCREMENT);
+	return this->_get_param_int((param_str + info_str).c_str());
 }
 
 void Camera::_read_image(XI_IMG* image, int timeout)
