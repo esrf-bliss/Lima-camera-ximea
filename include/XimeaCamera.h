@@ -26,6 +26,9 @@
 #define XIMEACAMERA_H
 
 #include <limits>
+#include <string>
+#include <cmath>
+#include <sstream>
 
 #include "lima/Debug.h"
 #include "lima/Exceptions.h"
@@ -336,7 +339,8 @@ namespace lima
 			Camera(
 				int camera_id,
 				GPISelector trigger_gpi_port, unsigned int trigger_timeout,
-				TempControlMode startup_temp_control_mode, double startup_target_temp
+				TempControlMode startup_temp_control_mode, double startup_target_temp,
+				Mode startup_mode
 			);
 			~Camera();
 
@@ -516,8 +520,13 @@ namespace lima
 			void setFeatureValue(int v);
 
 		private:
+			int cam_id;
 			HANDLE xiH;
 			XI_RETURN xi_status;
+
+			TempControlMode m_startup_temp_control_mode;
+			double m_startup_target_temp;
+			Mode m_startup_mode;
 
 			Camera::Status m_status;
 			int m_nb_frames;
@@ -532,6 +541,8 @@ namespace lima
 			GPISelector m_trigger_gpi_port;
 			unsigned int m_trig_timeout;
 
+			void _startup(void);
+
 			int _get_param_int(const char* param);
 			double _get_param_dbl(const char* param);
 			std::string _get_param_str(const char* param);
@@ -539,6 +550,10 @@ namespace lima
 			void _set_param_int(const char* param, int value);
 			void _set_param_dbl(const char* param, double value);
 			void _set_param_str(const char* param, std::string value, int size=-1);
+
+			int _get_param_min(const char* param);
+			int _get_param_max(const char* param);
+			int _get_param_inc(const char* param);
 
 			void _read_image(XI_IMG* image, int timeout);
 			void _generate_soft_trigger(void);

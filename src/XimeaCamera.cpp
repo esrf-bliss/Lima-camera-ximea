@@ -32,8 +32,9 @@ using namespace std;
 //---------------------------
 //- Ctor
 //---------------------------
-Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger_timeout, TempControlMode startup_temp_control_mode, double startup_target_temp)
-	: xiH(nullptr),
+Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger_timeout, TempControlMode startup_temp_control_mode, double startup_target_temp, Mode startup_mode)
+	: cam_id(camera_id),
+	  xiH(nullptr),
 	  xi_status(XI_OK),
 	  m_status(Camera::Ready),
 	  m_image_number(0),
@@ -41,21 +42,13 @@ Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger
 	  m_acq_thread(nullptr),
 	  m_trig_polarity(Camera::TriggerPolarity_High_Rising),
 	  m_trigger_gpi_port(trigger_gpi_port),
-	  m_trig_timeout(trigger_timeout)
+	  m_trig_timeout(trigger_timeout),
+	  m_startup_temp_control_mode(startup_temp_control_mode),
+	  m_startup_target_temp(startup_target_temp),
+	  m_startup_mode(startup_mode)
 {
 	DEB_CONSTRUCTOR();
-
-	this->xi_status = xiOpenDevice(camera_id, &this->xiH);
-	if(this->xi_status != XI_OK)
-		THROW_HW_ERROR(Error) << "Could not open camera " << camera_id << "; status: " << this->xi_status;
-
-	// set buffer policy to managed by application
-	this->_set_param_int(XI_PRM_BUFFER_POLICY, XI_BP_SAFE);
-
-	// set startup temperature control values
-	this->setTempControlMode(startup_temp_control_mode);
-	this->setTempTarget(startup_target_temp);
-
+	this->_startup();
 	DEB_TRACE() << "Camera " << camera_id << " opened; xi_status: " << this->xi_status;
 }
 
@@ -69,6 +62,33 @@ Camera::~Camera()
 	this->_stop_acq_thread();
 	if(this->xiH)
 		xiCloseDevice(this->xiH);
+}
+
+void Camera::_startup()
+{
+	DEB_MEMBER_FUNCT();
+
+	this->xi_status = xiOpenDevice(this->cam_id, &this->xiH);
+	if(this->xi_status != XI_OK)
+		THROW_HW_ERROR(Error) << "Could not open camera " << this->cam_id << "; status: " << this->xi_status;
+
+	// set debug level
+	this->_set_param_int(XI_PRM_DEBUG_LEVEL, XI_DL_DISABLED);
+
+	// set buffer policy to managed by application
+	this->_set_param_int(XI_PRM_BUFFER_POLICY, XI_BP_SAFE);
+
+	// set startup temperature control values
+	this->setTempControlMode(this->m_startup_temp_control_mode);
+	this->setTempTarget(this->m_startup_target_temp);
+
+	// set startup acquisition configuration
+	this->setTrigMode(IntTrig);
+	this->setNbFrames(1);
+
+	// set startup and default mode
+	this->setMode(this->m_startup_mode);
+	this->_set_param_int(XI_PRM_USER_SET_DEFAULT, this->m_startup_mode);
 }
 
 void Camera::prepareAcq()
@@ -119,8 +139,11 @@ void Camera::stopAcq()
 void Camera::reset()
 {
 	DEB_MEMBER_FUNCT();
-
+	this->stopAcq();
 	this->_set_param_int(XI_PRM_DEVICE_RESET, XI_ON);
+	xiCloseDevice(this->xiH);
+	this->xiH = nullptr;
+	this->_startup();
 }
 
 void Camera::getImageType(ImageType& type)
@@ -320,8 +343,42 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 	DEB_MEMBER_FUNCT();
 	DEB_PARAM() << DEB_VAR1(set_roi);
 
-	// TODO: What should be done here?
-	hw_roi = set_roi;
+	// get ROI parameters info
+	int w_min = this->_get_param_min(XI_PRM_WIDTH);
+	int w_max = this->_get_param_max(XI_PRM_WIDTH);
+	int w_inc = this->_get_param_inc(XI_PRM_WIDTH);
+	int h_min = this->_get_param_min(XI_PRM_HEIGHT);
+	int h_max = this->_get_param_max(XI_PRM_HEIGHT);
+	int h_inc = this->_get_param_inc(XI_PRM_HEIGHT);
+	int x_min = this->_get_param_min(XI_PRM_OFFSET_X);
+	int x_max = this->_get_param_max(XI_PRM_OFFSET_X);
+	int x_inc = this->_get_param_inc(XI_PRM_OFFSET_X);
+	int y_min = this->_get_param_min(XI_PRM_OFFSET_Y);
+	int y_max = this->_get_param_max(XI_PRM_OFFSET_Y);
+	int y_inc = this->_get_param_inc(XI_PRM_OFFSET_Y);
+
+	int w = set_roi.getSize().getWidth();
+	int h = set_roi.getSize().getHeight();
+	int x = set_roi.getTopLeft().x;
+	int y = set_roi.getTopLeft().y;
+
+	// if cannot set precise ROI, use closest divisible by increment
+	w = ceil(double(w) / w_inc) * w_inc;
+	h = ceil(double(h) / h_inc) * h_inc;
+	x = ceil(double(x) / x_inc) * x_inc;
+	y = ceil(double(y) / y_inc) * y_inc;
+
+	// check min-max
+	// TODO: the quirk is that we should set W/H first, then read limits
+	// for X/Y  to get the correct value. However setting anything in check
+	// method seems sketchy. Some workaround is needed.
+	w = min(w_max, max(w_min, w));
+	h = min(h_max, max(h_min, h));
+	x = min(x_max, max(x_min, x));
+	y = min(y_max, max(y_min, y));
+
+	Roi r(x, y, w, h);
+	hw_roi = r;
 
 	DEB_RETURN() << DEB_VAR1(hw_roi);
 }
@@ -339,10 +396,11 @@ void Camera::setRoi(const Roi& ask_roi)
 	if(ask_roi.isActive())
 	{
 		// then set the new ROI
-		this->_set_param_int(XI_PRM_OFFSET_X, ask_roi.getTopLeft().x);
-		this->_set_param_int(XI_PRM_OFFSET_Y, ask_roi.getTopLeft().y);
+		// order is important, first we need to set w/h and only then the offsets
 		this->_set_param_int(XI_PRM_WIDTH, ask_roi.getSize().getWidth());
 		this->_set_param_int(XI_PRM_HEIGHT, ask_roi.getSize().getHeight());
+		this->_set_param_int(XI_PRM_OFFSET_X, ask_roi.getTopLeft().x);
+		this->_set_param_int(XI_PRM_OFFSET_Y, ask_roi.getTopLeft().y);
 	}
 }
 
@@ -485,7 +543,27 @@ void Camera::setLedMode(LEDMode m)
 void Camera::checkBin(Bin &aBin)
 {
 	DEB_MEMBER_FUNCT();
-	// TODO: What to do here?
+	
+	// get binning parameters info
+	int h_min = this->_get_param_min(XI_PRM_BINNING_HORIZONTAL);
+	int h_max = this->_get_param_max(XI_PRM_BINNING_HORIZONTAL);
+	int h_inc = this->_get_param_inc(XI_PRM_BINNING_HORIZONTAL);
+	int v_min = this->_get_param_min(XI_PRM_BINNING_VERTICAL);
+	int v_max = this->_get_param_max(XI_PRM_BINNING_VERTICAL);
+	int v_inc = this->_get_param_inc(XI_PRM_BINNING_VERTICAL);
+
+	// fit bin into limits
+	int h = ceil(double(aBin.getX()) / h_inc) * h_inc;
+	int v = ceil(double(aBin.getY()) / v_inc) * v_inc;
+	h = min(h_max, max(h_min, h));
+	v = min(v_max, max(v_min, v));
+
+	// 3x3 binning is not supported by camera, use 2x2 instead
+	if(h == 3) h = 2;
+	if(v == 3) v = 2;
+
+	aBin = Bin(h, v);
+
 	DEB_RETURN() << DEB_VAR1(aBin);
 }
 
@@ -575,6 +653,27 @@ void Camera::_set_param_str(const char* param, std::string value, int size)
 	this->xi_status = xiSetParamString(this->xiH, param, (void*)value.c_str(), size);
 	if(this->xi_status != XI_OK)
 		THROW_HW_ERROR(Error) << "Could not set parameter " << param << " to " << value << "; xi_status: " << this->xi_status;
+}
+
+int Camera::_get_param_min(const char* param)
+{
+	string param_str(param);
+	string info_str(XI_PRM_INFO_MIN);
+	return this->_get_param_int((param_str + info_str).c_str());
+}
+
+int Camera::_get_param_max(const char* param)
+{
+	string param_str(param);
+	string info_str(XI_PRM_INFO_MAX);
+	return this->_get_param_int((param_str + info_str).c_str());
+}
+
+int Camera::_get_param_inc(const char* param)
+{
+	string param_str(param);
+	string info_str(XI_PRM_INFO_INCREMENT);
+	return this->_get_param_int((param_str + info_str).c_str());
 }
 
 void Camera::_read_image(XI_IMG* image, int timeout)

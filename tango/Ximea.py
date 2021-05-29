@@ -34,6 +34,30 @@ from Lima.Server import AttrHelper
 
 
 # this is needed by get_control, so needs to be outside class Ximea
+_Mode = {
+	"12_STD_L": Xi.Camera.Mode_12_STD_L,
+	"12_STD_H": Xi.Camera.Mode_12_STD_H,
+	"14_STD_L": Xi.Camera.Mode_14_STD_L,
+	"NONE": Xi.Camera.Mode_None,
+	"14_STD_H": Xi.Camera.Mode_14_STD_H,
+	"2_12_CMS_S_L": Xi.Camera.Mode_2_12_CMS_S_L,
+	"2_12_CMS_S_H": Xi.Camera.Mode_2_12_CMS_S_H,
+	"2_14_CMS_S_L": Xi.Camera.Mode_2_14_CMS_S_L,
+	"2_14_CMS_S_H": Xi.Camera.Mode_2_14_CMS_S_H,
+	"4_12_CMS_S_L": Xi.Camera.Mode_4_12_CMS_S_L,
+	"4_12_CMS_S_H": Xi.Camera.Mode_4_12_CMS_S_H,
+	"4_14_CMS_S_L": Xi.Camera.Mode_4_14_CMS_S_L,
+	"4_14_CMS_S_H": Xi.Camera.Mode_4_14_CMS_S_H,
+	"2_12_HDR_HL": Xi.Camera.Mode_2_12_HDR_HL,
+	"2_12_HDR_L": Xi.Camera.Mode_2_12_HDR_L,
+	"2_12_HDR_H": Xi.Camera.Mode_2_12_HDR_H,
+	"4_12_CMS_HDR_HL": Xi.Camera.Mode_4_12_CMS_HDR_HL,
+	"2_14_HDR_L": Xi.Camera.Mode_2_14_HDR_L,
+	"2_14_HDR_H": Xi.Camera.Mode_2_14_HDR_H,
+	"2_12_CMS_A_L": Xi.Camera.Mode_2_12_CMS_A_L,
+	"2_12_CMS_A_H": Xi.Camera.Mode_2_12_CMS_A_H
+}
+
 _GpiSelector = {
 	"PORT_1": Xi.Camera.GPISelector_Port_1,
 	"PORT_2": Xi.Camera.GPISelector_Port_2,
@@ -65,29 +89,7 @@ class Ximea(PyTango.Device_4Impl):
 	def __init__(self, *args):
 		PyTango.Device_4Impl.__init__(self, *args)
 
-		self.__Mode = {
-			"12_STD_L": Xi.Camera.Mode_12_STD_L,
-			"12_STD_H": Xi.Camera.Mode_12_STD_H,
-			"14_STD_L": Xi.Camera.Mode_14_STD_L,
-			"NONE": Xi.Camera.Mode_None,
-			"14_STD_H": Xi.Camera.Mode_14_STD_H,
-			"2_12_CMS_S_L": Xi.Camera.Mode_2_12_CMS_S_L,
-			"2_12_CMS_S_H": Xi.Camera.Mode_2_12_CMS_S_H,
-			"2_14_CMS_S_L": Xi.Camera.Mode_2_14_CMS_S_L,
-			"2_14_CMS_S_H": Xi.Camera.Mode_2_14_CMS_S_H,
-			"4_12_CMS_S_L": Xi.Camera.Mode_4_12_CMS_S_L,
-			"4_12_CMS_S_H": Xi.Camera.Mode_4_12_CMS_S_H,
-			"4_14_CMS_S_L": Xi.Camera.Mode_4_14_CMS_S_L,
-			"4_14_CMS_S_H": Xi.Camera.Mode_4_14_CMS_S_H,
-			"2_12_HDR_HL": Xi.Camera.Mode_2_12_HDR_HL,
-			"2_12_HDR_L": Xi.Camera.Mode_2_12_HDR_L,
-			"2_12_HDR_H": Xi.Camera.Mode_2_12_HDR_H,
-			"4_12_CMS_HDR_HL": Xi.Camera.Mode_4_12_CMS_HDR_HL,
-			"2_14_HDR_L": Xi.Camera.Mode_2_14_HDR_L,
-			"2_14_HDR_H": Xi.Camera.Mode_2_14_HDR_H,
-			"2_12_CMS_A_L": Xi.Camera.Mode_2_12_CMS_A_L,
-			"2_12_CMS_A_H": Xi.Camera.Mode_2_12_CMS_A_H
-		}
+		self.__Mode = _Mode
 
 		self.__GainSelector = {
 			"ALL": Xi.Camera.GainSelector_All,
@@ -390,6 +392,11 @@ class XimeaClass(PyTango.DeviceClass):
 			PyTango.DevDouble,
 			"Startup target temperature",
 			25.0
+		],
+		"startup_mode": [
+			PyTango.DevString,
+			"Startup camera mode",
+			"2_12_HDR_HL"
 		]
 	}
 
@@ -925,7 +932,7 @@ def get_control(
 	camera_id,
 	trigger_gpi_port="PORT_2", trigger_timeout=Xi.Camera.TIMEOUT_MAX,
 	startup_temp_control_mode="AUTO", startup_target_temp=25.0,
-	**keys
+	startup_mode="2_12_HDR_HL", **keys
 ):
 	global _XimeaCam
 	global _XimeaInterface
@@ -938,7 +945,8 @@ def get_control(
 		_XimeaCam = Xi.Camera(
 			int(camera_id),
 			_GpiSelector[trigger_gpi_port.upper()], int(trigger_timeout),
-			_TempControlMode[startup_temp_control_mode.upper()], float(startup_target_temp)
+			_TempControlMode[startup_temp_control_mode.upper()], float(startup_target_temp),
+			_Mode[startup_mode.upper()]
 		)
 		_XimeaInterface = Xi.Interface(_XimeaCam)
 	return Core.CtControl(_XimeaInterface)
