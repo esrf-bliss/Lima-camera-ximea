@@ -552,17 +552,24 @@ void Camera::checkBin(Bin &aBin)
 	int v_max = this->_get_param_max(XI_PRM_BINNING_VERTICAL);
 	int v_inc = this->_get_param_inc(XI_PRM_BINNING_VERTICAL);
 
-	// fit bin into limits
-	int h = ceil(double(aBin.getX()) / h_inc) * h_inc;
-	int v = ceil(double(aBin.getY()) / v_inc) * v_inc;
-	h = min(h_max, max(h_min, h));
-	v = min(v_max, max(v_min, v));
-
-	// 3x3 binning is not supported by camera, use 2x2 instead
-	if(h == 3) h = 2;
-	if(v == 3) v = 2;
-
-	aBin = Bin(h, v);
+	// Find the largest multiple bin for horizontal and vertical directions
+	int binX = 1;
+	for (int bin = h_max ; bin > 0 ; bin -= h_inc)
+		if ((aBin.getX() % bin) == 0)
+		{
+			binX = bin;
+			break;
+		}
+			
+	int binY = 1;
+	for (int bin = v_max ; bin > 0 ; bin -= v_inc)
+		if ((aBin.getY() % bin) == 0)
+		{
+			binY = bin;
+			break;
+		}
+	
+	aBin = Bin(binX, binY);
 
 	DEB_RETURN() << DEB_VAR1(aBin);
 }
