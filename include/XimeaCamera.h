@@ -556,9 +556,10 @@ namespace lima
 			int _get_param_inc(const char* param);
 
 			void _read_image(XI_IMG* image, int timeout);
+			
 			void _generate_soft_trigger(void);
-
 			void _setup_gpio_trigger(void);
+			int _get_trigger_timeout(void);
 
 			void _stop_acq_thread();
 

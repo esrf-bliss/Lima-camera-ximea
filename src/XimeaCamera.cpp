@@ -99,19 +99,7 @@ void Camera::prepareAcq()
 	this->m_image_number = 0;
 	this->m_buffer_size = this->m_buffer_ctrl_obj.getBuffer().getFrameDim().getMemSize();
 	
-	int timeout = 0;
-	if(this->m_trigger_mode == IntTrig || this->m_trigger_mode == IntTrigMult)
-	{
-		// use timeout of 2 * exposure time for internal trigger
-		double exp_time = 0;
-		this->getExpTime(exp_time);
-		timeout = int(2 * exp_time * TIME_HW / 1e3);	// convert to ms
-	}
-	else
-		// use user provided timeout for external trigger
-		timeout = this->m_trig_timeout;
-
-	this->m_acq_thread = new AcqThread(*this, timeout);
+	this->m_acq_thread = new AcqThread(*this, this->_get_trigger_timeout());
 	this->_set_status(Camera::Ready);
 }
 
@@ -122,6 +110,11 @@ void Camera::startAcq()
 	if(!this->m_image_number)
 		this->m_buffer_ctrl_obj.getBuffer().setStartTimestamp(Timestamp::now());
 
+	if(this->m_trigger_mode == IntTrigMult && this->m_acq_thread->m_thread_started)
+	{
+		this->_stop_acq_thread();
+		this->m_acq_thread = new AcqThread(*this, this->_get_trigger_timeout());
+	}
 	xiStartAcquisition(this->xiH);
 	this->m_acq_thread->m_quit = false;
 	this->m_acq_thread->start();
@@ -255,6 +248,8 @@ void Camera::setTrigMode(TrigMode mode)
 	}
 	else if(mode == ExtTrigSingle)
 	{
+		// this trigger configuration is not supported -
+		// - lack of camera support for XI_PRM_EXPOSURE_BURST_COUNT
 		this->_setup_gpio_trigger();
 		if(this->m_trig_polarity == TriggerPolarity_Low_Falling)
 			this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_EDGE_FALLING);
@@ -275,7 +270,8 @@ void Camera::setTrigMode(TrigMode mode)
 	}
 	else if(mode == ExtGate)
 	{
-		this->_setup_gpio_trigger();
+		// this trigger configuration is not supported -
+		// - lack of camera support for XI_TRG_SEL_EXPOSURE_ACTIVE
 		if(this->m_trig_polarity == TriggerPolarity_Low_Falling)
 			this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_LEVEL_LOW);
 		else if(this->m_trig_polarity == TriggerPolarity_High_Rising)
@@ -700,6 +696,22 @@ void Camera::_setup_gpio_trigger(void)
 	this->setGpiMode(Camera::GPIMode_Trigger);
 
 	this->setGpiSelector(selected_gpi);
+}
+
+int Camera::_get_trigger_timeout(void)
+{
+	int timeout = 0;
+	if(this->m_trigger_mode == IntTrig || this->m_trigger_mode == IntTrigMult)
+	{
+		// use timeout of 2 * exposure time for internal trigger
+		double exp_time = 0;
+		this->getExpTime(exp_time);
+		timeout = int(2 * exp_time * TIME_HW / 1e3);	// convert to ms
+	}
+	else
+		// use user provided timeout for external trigger
+		timeout = this->m_trig_timeout;
+	return timeout;
 }
 
 void Camera::_stop_acq_thread()
