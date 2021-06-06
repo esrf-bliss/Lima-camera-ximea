@@ -678,8 +678,12 @@ void Camera::_read_image(XI_IMG* image, int timeout)
 
 	image->size = sizeof(XI_IMG);
 	this->xi_status = xiGetImage(this->xiH, timeout, image);
-	if(this->xi_status != XI_OK)
-		THROW_HW_ERROR(Error) << "Image readout failed; xi_status: " << this->xi_status;
+	
+	// The following seems to be not necessary since AcqThread checks for
+	// xi_status anyway. And throwing exceptions here breaks Lima...
+
+	// if(this->xi_status != XI_OK)
+	// 	THROW_HW_ERROR(Error) << "Image readout failed; xi_status: " << this->xi_status;
 }
 
 void Camera::_generate_soft_trigger(void)
