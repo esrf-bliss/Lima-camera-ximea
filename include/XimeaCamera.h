@@ -50,6 +50,7 @@ namespace lima
 {
 	namespace Ximea
 	{
+		struct FrameGetter;
 		class AcqThread;
 		class XIMEA_EXPORT Camera : public EventCallbackGen
 		{
@@ -357,6 +358,9 @@ namespace lima
 			void getDetectorType(std::string& type);
 			void getDetectorModel(std::string& model);
 			void getDetectorImageSize(Size& size);
+			void setHwMaxImageSizeCallback(HwMaxImageSizeCallback *cb);
+
+			FrameGetter* getFrameGetter();
 
 			// SyncCtrlObj
 			void setTrigMode(TrigMode mode);
@@ -535,6 +539,9 @@ namespace lima
 			AcqThread* m_acq_thread;
 			SoftBufferCtrlObj m_buffer_ctrl_obj;
 			TrigMode m_trigger_mode;
+			FrameGetter* m_frame_getter;
+			HwMaxImageSizeCallback* m_cb;
+
 			
 			// internal
 			TriggerPolarity m_trig_polarity;

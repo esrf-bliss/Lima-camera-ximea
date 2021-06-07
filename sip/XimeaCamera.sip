@@ -328,6 +328,9 @@ namespace Ximea
 		void getDetectorType(std::string& type);
 		void getDetectorModel(std::string& model);
 		void getDetectorImageSize(Size& size);
+		void setHwMaxImageSizeCallback(HwMaxImageSizeCallback *cb);
+
+		FrameGetter* getFrameGetter();
 
 		// SyncCtrlObj
 		void setExpTime(double exp_time);

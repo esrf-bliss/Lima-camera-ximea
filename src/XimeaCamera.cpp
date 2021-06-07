@@ -238,6 +238,22 @@ void Camera::getDetectorImageSize(Size& size)
 	size = Size(this->_get_param_int(XI_PRM_WIDTH), this->_get_param_int(XI_PRM_HEIGHT));
 }
 
+void Camera::setHwMaxImageSizeCallback(HwMaxImageSizeCallback *cb)
+{
+	DEB_MEMBER_FUNCT();
+
+	if(this->m_cb && !cb)
+		this->m_frame_getter->unregisterMaxImageSizeCallback(*this->m_cb);
+	else if(!this->m_cb && cb)
+		this->m_frame_getter->registerMaxImageSizeCallback(*cb);
+	this->m_cb = cb;
+}
+
+FrameGetter* Camera::getFrameGetter()
+{
+	return this->m_frame_getter;
+}
+
 void Camera::setTrigMode(TrigMode mode)
 {
 	DEB_MEMBER_FUNCT();
