@@ -523,6 +523,7 @@ namespace lima
 			int cam_id;
 			HANDLE xiH;
 			XI_RETURN xi_status;
+			std::string m_camera_model;
 
 			TempControlMode m_startup_temp_control_mode;
 			double m_startup_target_temp;
