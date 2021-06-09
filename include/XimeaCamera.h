@@ -357,6 +357,7 @@ namespace lima
 			void getDetectorType(std::string& type);
 			void getDetectorModel(std::string& model);
 			void getDetectorImageSize(Size& size);
+			void getPixelSize(double& x_size, double& y_size);
 
 			// SyncCtrlObj
 			void setTrigMode(TrigMode mode);

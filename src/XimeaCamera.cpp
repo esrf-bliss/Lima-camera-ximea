@@ -240,6 +240,26 @@ void Camera::getDetectorModel(std::string& model)
 	model = this->m_camera_model;
 }
 
+void Camera::getPixelSize(double& x_size, double& y_size)
+{
+	// Return pixel size based on camera model
+	// This does not make much sense as for now, since the only "officially"
+	// supported camera happens to have the same pixel size as the default.
+	// The check is however done for demonstration purposes as well as to
+	// simplify integration of future cameras.
+	if(this->_check_model("MX377MR"))
+	{
+		x_size = 1e-5;
+		y_size = 1e-5;
+	}
+	else
+	{
+		printf("!!! Unknown pixel size for this camera model! Defaults used !!!\n");
+		x_size = 1e-5;
+		y_size = 1e-5;
+	}
+}
+
 void Camera::getDetectorImageSize(Size& size)
 {
 	size = Size(this->_get_param_int(XI_PRM_WIDTH), this->_get_param_int(XI_PRM_HEIGHT));
