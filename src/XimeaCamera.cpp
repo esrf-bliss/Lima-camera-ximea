@@ -93,6 +93,11 @@ void Camera::_startup()
 	this->_set_param_int(XI_PRM_USER_SET_DEFAULT, this->m_startup_mode);
 }
 
+bool Camera::_check_model(std::string model)
+{
+	return (this->m_camera_model.rfind(model, 0) == 0);
+}
+
 void Camera::prepareAcq()
 {
 	DEB_MEMBER_FUNCT();

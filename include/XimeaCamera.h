@@ -543,6 +543,7 @@ namespace lima
 			unsigned int m_trig_timeout;
 
 			void _startup(void);
+			bool _check_model(std::string model);
 
 			int _get_param_int(const char* param);
 			double _get_param_dbl(const char* param);
