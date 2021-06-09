@@ -584,6 +584,7 @@ void Camera::checkBin(Bin &aBin)
 	for (int bin = h_max ; bin > 0 ; bin -= h_inc)
 		if ((aBin.getX() % bin) == 0)
 		{
+			if(bin == 3 and this->_check_model("MX377MR")) continue;
 			binX = bin;
 			break;
 		}
@@ -592,6 +593,7 @@ void Camera::checkBin(Bin &aBin)
 	for (int bin = v_max ; bin > 0 ; bin -= v_inc)
 		if ((aBin.getY() % bin) == 0)
 		{
+			if(bin == 3 and this->_check_model("MX377MR")) continue;
 			binY = bin;
 			break;
 		}
