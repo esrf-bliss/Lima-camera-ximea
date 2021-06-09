@@ -72,6 +72,8 @@ void Camera::_startup()
 	if(this->xi_status != XI_OK)
 		THROW_HW_ERROR(Error) << "Could not open camera " << this->cam_id << "; status: " << this->xi_status;
 
+	this->m_camera_model = this->_get_param_str(XI_PRM_DEVICE_NAME);
+
 	// set debug level
 	this->_set_param_int(XI_PRM_DEBUG_LEVEL, XI_DL_DISABLED);
 
@@ -89,6 +91,11 @@ void Camera::_startup()
 	// set startup and default mode
 	this->setMode(this->m_startup_mode);
 	this->_set_param_int(XI_PRM_USER_SET_DEFAULT, this->m_startup_mode);
+}
+
+bool Camera::_check_model(std::string model)
+{
+	return (this->m_camera_model.rfind(model, 0) == 0);
 }
 
 void Camera::prepareAcq()
@@ -230,7 +237,27 @@ void Camera::getDetectorType(std::string& type)
 
 void Camera::getDetectorModel(std::string& model)
 {
-	model = this->_get_param_str(XI_PRM_DEVICE_MODEL_ID);
+	model = this->m_camera_model;
+}
+
+void Camera::getPixelSize(double& x_size, double& y_size)
+{
+	// Return pixel size based on camera model
+	// This does not make much sense as for now, since the only "officially"
+	// supported camera happens to have the same pixel size as the default.
+	// The check is however done for demonstration purposes as well as to
+	// simplify integration of future cameras.
+	if(this->_check_model("MX377MR"))
+	{
+		x_size = 1e-5;
+		y_size = 1e-5;
+	}
+	else
+	{
+		printf("!!! Unknown pixel size for this camera model! Defaults used !!!\n");
+		x_size = 1e-5;
+		y_size = 1e-5;
+	}
 }
 
 void Camera::getDetectorImageSize(Size& size)
