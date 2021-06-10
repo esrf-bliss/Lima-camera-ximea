@@ -357,6 +357,7 @@ namespace lima
 			void getDetectorType(std::string& type);
 			void getDetectorModel(std::string& model);
 			void getDetectorImageSize(Size& size);
+			void getPixelSize(double& x_size, double& y_size);
 
 			// SyncCtrlObj
 			void setTrigMode(TrigMode mode);
@@ -523,6 +524,7 @@ namespace lima
 			int cam_id;
 			HANDLE xiH;
 			XI_RETURN xi_status;
+			std::string m_camera_model;
 
 			TempControlMode m_startup_temp_control_mode;
 			double m_startup_target_temp;
@@ -542,6 +544,7 @@ namespace lima
 			unsigned int m_trig_timeout;
 
 			void _startup(void);
+			bool _check_model(std::string model);
 
 			int _get_param_int(const char* param);
 			double _get_param_dbl(const char* param);

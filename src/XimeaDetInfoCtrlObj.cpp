@@ -63,9 +63,7 @@ void DetInfoCtrlObj::setCurrImageType(ImageType curr_image_type)
 
 void DetInfoCtrlObj::getPixelSize(double& x_size, double& y_size)
 {
-	// TODO: Avoid hardcoded values, this is only valid for MX377MR camera
-	x_size = 1e-5;
-	y_size = 1e-5;
+	this->m_cam.getPixelSize(x_size, y_size);
 }
 
 void DetInfoCtrlObj::getDetectorType(std::string& det_type)
