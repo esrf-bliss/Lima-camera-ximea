@@ -41,7 +41,7 @@ This plugin has been implemented in respect of the mandatory capabilites but wit
 
 * HwDetInfo
 
-  getPixelSize(): Will always return 10um x 10 um pixel size.
+  getPixelSize(): Will always return 10um x 10um pixel size for unknown cameras. (The only camera known at the moment is MX377MR which pixel size is also 10um x 10um)
 
 * HwSync
 
