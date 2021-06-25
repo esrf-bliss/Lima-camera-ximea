@@ -572,31 +572,51 @@ void Camera::checkBin(Bin &aBin)
 	DEB_MEMBER_FUNCT();
 	
 	// get binning parameters info
-	int h_min = this->_get_param_min(XI_PRM_BINNING_HORIZONTAL);
+	// int h_min = this->_get_param_min(XI_PRM_BINNING_HORIZONTAL);
 	int h_max = this->_get_param_max(XI_PRM_BINNING_HORIZONTAL);
 	int h_inc = this->_get_param_inc(XI_PRM_BINNING_HORIZONTAL);
-	int v_min = this->_get_param_min(XI_PRM_BINNING_VERTICAL);
+	// int v_min = this->_get_param_min(XI_PRM_BINNING_VERTICAL);
 	int v_max = this->_get_param_max(XI_PRM_BINNING_VERTICAL);
 	int v_inc = this->_get_param_inc(XI_PRM_BINNING_VERTICAL);
 
 	// Find the largest multiple bin for horizontal and vertical directions
-	int binX = 1;
-	for (int bin = h_max ; bin > 0 ; bin -= h_inc)
-		if ((aBin.getX() % bin) == 0)
-		{
-			if(bin == 3 and this->_check_model("MX377MR")) continue;
-			binX = bin;
-			break;
-		}
+	// int binX = 1;
+	// for (int bin = h_max ; bin > 0 ; bin -= h_inc)
+	// 	if ((aBin.getX() % bin) == 0)
+	// 	{
+	// 		if(bin == 3 and this->_check_model("MX377MR")) continue;
+	// 		binX = bin;
+	// 		break;
+	// 	}
 			
-	int binY = 1;
-	for (int bin = v_max ; bin > 0 ; bin -= v_inc)
-		if ((aBin.getY() % bin) == 0)
-		{
-			if(bin == 3 and this->_check_model("MX377MR")) continue;
-			binY = bin;
-			break;
-		}
+	// int binY = 1;
+	// for (int bin = v_max ; bin > 0 ; bin -= v_inc)
+	// 	if ((aBin.getY() % bin) == 0)
+	// 	{
+	// 		if(bin == 3 and this->_check_model("MX377MR")) continue;
+	// 		binY = bin;
+	// 		break;
+	// 	}
+
+	int binX, binY, expo, max_expo;
+
+	max_expo = log2l(h_max);
+	printf("binHX: max=%d; max expo=%d; step=%d\n", h_max, max_expo, h_inc);
+	for(expo = max_expo; expo >= 0; expo -= h_inc)
+	{
+		binX = pow(2, expo);
+		printf("binHX: expo=%d; bin=%d\n", expo, binX);
+	}
+
+	max_expo = log2l(v_max);
+	printf("binVY: max=%d; max expo=%d; step=%d\n", v_max, max_expo, v_inc);
+	for(expo = max_expo; expo >= 0; expo -= v_inc)
+	{
+		binY = pow(2, expo);
+		printf("binVY: expo=%d; bin=%d\n", expo, binY);
+	}
+
+	printf("CHECK BIN: requested(HxV): %dx%d; got(HxV): %dx%d\n", aBin.getX(), aBin.getY(), binX, binY);
 	
 	aBin = Bin(binX, binY);
 
