@@ -599,6 +599,8 @@ void Camera::checkBin(Bin &aBin)
 	// 	}
 
 	int binX, binY, expo, max_expo;
+	int requestedX = aBin.getX();
+	int requestedY = aBin.getY();
 
 	max_expo = log2l(h_max);
 	printf("binHX: max=%d; max expo=%d; step=%d\n", h_max, max_expo, h_inc);
@@ -606,6 +608,11 @@ void Camera::checkBin(Bin &aBin)
 	{
 		binX = pow(2, expo);
 		printf("binHX: expo=%d; bin=%d\n", expo, binX);
+		if(requestedX % binX == 0)
+		{
+			printf("binHX: break!\n");
+			break;
+		}
 	}
 
 	max_expo = log2l(v_max);
@@ -614,9 +621,14 @@ void Camera::checkBin(Bin &aBin)
 	{
 		binY = pow(2, expo);
 		printf("binVY: expo=%d; bin=%d\n", expo, binY);
+		if(requestedY % binY == 0)
+		{
+			printf("binVY: break!\n");
+			break;
+		}
 	}
 
-	printf("CHECK BIN: requested(HxV): %dx%d; got(HxV): %dx%d\n", aBin.getX(), aBin.getY(), binX, binY);
+	printf("CHECK BIN: requested(HxV): %dx%d; got(HxV): %dx%d\n", requestedX, requestedY, binX, binY);
 	
 	aBin = Bin(binX, binY);
 
