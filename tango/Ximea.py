@@ -922,7 +922,7 @@ class XimeaClass(PyTango.DeviceClass):
 		"internal_timeout": [
 			[PyTango.DevLong, PyTango.SCALAR, PyTango.READ_WRITE],
 			{
-				'unit': 'N/A',
+				'unit': 'ms',
 				'format': '',
 				'description': 'Timeout for internal trigger',
 				'memorized': 'true',
