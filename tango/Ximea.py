@@ -914,6 +914,14 @@ class XimeaClass(PyTango.DeviceClass):
 				'description': 'Selected feature value',
 			}
 		],
+		"plugin_version": [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Ximea plugin version number',
+			}
+		]
 	}
 
 	def __init__(self, name):
