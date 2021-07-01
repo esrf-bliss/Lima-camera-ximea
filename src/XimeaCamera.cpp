@@ -32,7 +32,7 @@ using namespace std;
 //---------------------------
 //- Ctor
 //---------------------------
-Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger_timeout, TempControlMode startup_temp_control_mode, double startup_target_temp, Mode startup_mode)
+Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger_timeout, unsigned int internal_timeout, TempControlMode startup_temp_control_mode, double startup_target_temp, Mode startup_mode)
 	: cam_id(camera_id),
 	  xiH(nullptr),
 	  xi_status(XI_OK),
@@ -43,6 +43,7 @@ Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger
 	  m_trig_polarity(Camera::TriggerPolarity_High_Rising),
 	  m_trigger_gpi_port(trigger_gpi_port),
 	  m_trig_timeout(trigger_timeout),
+	  m_internal_timeout(internal_timeout),
 	  m_startup_temp_control_mode(startup_temp_control_mode),
 	  m_startup_target_temp(startup_target_temp),
 	  m_startup_mode(startup_mode)
@@ -756,12 +757,8 @@ int Camera::_get_trigger_timeout(void)
 {
 	int timeout = 0;
 	if(this->m_trigger_mode == IntTrig || this->m_trigger_mode == IntTrigMult)
-	{
-		// use timeout of 2 * exposure time for internal trigger
-		double exp_time = 0;
-		this->getExpTime(exp_time);
-		timeout = int(2 * exp_time * TIME_HW / 1e3);	// convert to ms
-	}
+		// use internal trigger timeout
+		timeout = this->m_internal_timeout;
 	else
 		// use user provided timeout for external trigger
 		timeout = this->m_trig_timeout;
@@ -1265,4 +1262,14 @@ void Camera::reportException(Exception& e, std::string name)
 				 err_code, err_msg.str());
 	DEB_EVENT(*event) << DEB_VAR1(*event);
 	reportEvent(event);
+}
+
+void Camera::getInternalTimeout(int &t)
+{
+	t = this->m_internal_timeout;
+}
+
+void Camera::setInternalTimeout(int t)
+{
+	this->m_internal_timeout = t;
 }

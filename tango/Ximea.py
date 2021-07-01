@@ -383,6 +383,11 @@ class XimeaClass(PyTango.DeviceClass):
 			"Timeout for external trigger",
 			Xi.Camera.TIMEOUT_MAX
 		],
+		"internal_timeout": [
+			PyTango.DevLong,
+			"Timeout for internal trigger",
+			200
+		],
 		"startup_temp_control_mode": [
 			PyTango.DevString,
 			"Startup temperature control mode",
@@ -921,7 +926,16 @@ class XimeaClass(PyTango.DeviceClass):
 				'format': '',
 				'description': 'Ximea plugin version number',
 			}
-		]
+		],
+		"internal_timeout": [
+			[PyTango.DevLong, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'Timeout for internal trigger',
+				'memorized': 'true',
+			}
+		],
 	}
 
 	def __init__(self, name):
@@ -938,7 +952,7 @@ _XimeaInterface = None
 
 def get_control(
 	camera_id,
-	trigger_gpi_port="PORT_2", trigger_timeout=Xi.Camera.TIMEOUT_MAX,
+	trigger_gpi_port="PORT_2", trigger_timeout=Xi.Camera.TIMEOUT_MAX, internal_timeout=200,
 	startup_temp_control_mode="AUTO", startup_target_temp=25.0,
 	startup_mode="2_12_HDR_HL", **keys
 ):
@@ -952,7 +966,7 @@ def get_control(
 	if _XimeaCam is None:
 		_XimeaCam = Xi.Camera(
 			int(camera_id),
-			_GpiSelector[trigger_gpi_port.upper()], int(trigger_timeout),
+			_GpiSelector[trigger_gpi_port.upper()], int(trigger_timeout), int(internal_timeout),
 			_TempControlMode[startup_temp_control_mode.upper()], float(startup_target_temp),
 			_Mode[startup_mode.upper()]
 		)
