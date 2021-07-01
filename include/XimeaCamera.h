@@ -338,7 +338,7 @@ namespace lima
 
 			Camera(
 				int camera_id,
-				GPISelector trigger_gpi_port, unsigned int trigger_timeout,
+				GPISelector trigger_gpi_port, unsigned int trigger_timeout, unsigned int internal_timeout,
 				TempControlMode startup_temp_control_mode, double startup_target_temp,
 				Mode startup_mode
 			);
@@ -393,6 +393,10 @@ namespace lima
 			// Software trigger
 			void getSoftwareTrigger(bool &t);
 			void setSoftwareTrigger(bool t);
+
+			// Internal trigger timeout
+			void getInternalTimeout(int &t);
+			void setInternalTimeout(int t);
 
 			// GPIO setup
 			void getGpiSelector(GPISelector& s);
@@ -542,6 +546,7 @@ namespace lima
 			TriggerPolarity m_trig_polarity;
 			GPISelector m_trigger_gpi_port;
 			unsigned int m_trig_timeout;
+			unsigned int m_internal_timeout;
 
 			void _startup(void);
 			bool _check_model(std::string model);
