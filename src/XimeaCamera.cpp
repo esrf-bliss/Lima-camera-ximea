@@ -742,8 +742,13 @@ int Camera::_get_trigger_timeout(void)
 {
 	int timeout = 0;
 	if(this->m_trigger_mode == IntTrig || this->m_trigger_mode == IntTrigMult)
-		// use internal trigger timeout
-		timeout = this->m_internal_timeout;
+	{	
+		// use internal trigger timeout + expo time
+		double exp_time = 0;
+		this->getExpTime(exp_time);
+		int exp_ms = int(exp_time * TIME_HW / 1e3);	// convert to ms
+		timeout = this->m_internal_timeout + exp_ms;
+	}
 	else
 		// use user provided timeout for external trigger
 		timeout = this->m_trig_timeout;

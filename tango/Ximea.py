@@ -924,7 +924,7 @@ class XimeaClass(PyTango.DeviceClass):
 			{
 				'unit': 'ms',
 				'format': '',
-				'description': 'Timeout for internal trigger',
+				'description': 'Timeout for internal trigger on top of exposure time',
 				'memorized': 'true',
 			}
 		],
