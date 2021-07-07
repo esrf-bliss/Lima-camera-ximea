@@ -542,6 +542,7 @@ namespace lima
 			TriggerPolarity m_trig_polarity;
 			GPISelector m_trigger_gpi_port;
 			unsigned int m_trig_timeout;
+			bool m_soft_trigger_issued;
 
 			void _startup(void);
 			bool _check_model(std::string model);
@@ -561,6 +562,7 @@ namespace lima
 			void _read_image(XI_IMG* image, int timeout);
 			
 			void _generate_soft_trigger(void);
+			bool _soft_trigger_issued(void);
 			void _setup_gpio_trigger(void);
 			int _get_trigger_timeout(void);
 

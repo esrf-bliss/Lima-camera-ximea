@@ -46,6 +46,8 @@ Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger
 	  m_startup_temp_control_mode(startup_temp_control_mode),
 	  m_startup_target_temp(startup_target_temp),
 	  m_startup_mode(startup_mode)
+	  m_startup_mode(startup_mode),
+	  m_soft_trigger_issued(false)
 {
 	DEB_CONSTRUCTOR();
 	this->_startup();
@@ -728,6 +730,17 @@ void Camera::_read_image(XI_IMG* image, int timeout)
 void Camera::_generate_soft_trigger(void)
 {
 	this->_set_param_int(XI_PRM_TRG_SOFTWARE, XI_ON);
+	this->m_soft_trigger_issued = true;
+}
+
+bool Camera::_soft_trigger_issued(void)
+{
+	if(this->m_soft_trigger_issued)
+	{
+		this->m_soft_trigger_issued = false;
+		return true;
+	}
+	return false;
 }
 
 void Camera::_setup_gpio_trigger(void)
