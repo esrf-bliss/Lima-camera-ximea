@@ -45,7 +45,6 @@ Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger
 	  m_trig_timeout(trigger_timeout),
 	  m_startup_temp_control_mode(startup_temp_control_mode),
 	  m_startup_target_temp(startup_target_temp),
-	  m_startup_mode(startup_mode)
 	  m_startup_mode(startup_mode),
 	  m_soft_trigger_issued(false)
 {
