@@ -90,6 +90,7 @@ acq_status                    r    DevBoolean Acquisition status
 feature_selector              rw   DevString  Sensor additional features
 feature_value                 rw   DevLong    Selected feature value
 plugin_version                r    DevString  Plugin version number
+internal_timeout              rw   DevLong    Timeout for internal trigger on top of exposure time
 ============================= ==== ========== ================================================================
 
 
