@@ -756,7 +756,7 @@ void Camera::_setup_gpio_trigger(void)
 int Camera::_get_trigger_timeout(void)
 {
 	int timeout = 0;
-	if(this->m_trigger_mode == IntTrig || this->m_trigger_mode == IntTrigMult)
+	if(this->m_trigger_mode == IntTrig)
 	{
 		// use timeout of 2 * exposure time for internal trigger
 		double exp_time = 0;
