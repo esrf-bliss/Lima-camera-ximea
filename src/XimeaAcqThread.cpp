@@ -38,7 +38,6 @@ AcqThread::AcqThread(Camera& cam, int timeout)
 AcqThread::~AcqThread()
 {
 	this->m_quit = true;
-	join();
 }
 
 void AcqThread::threadFunction()
