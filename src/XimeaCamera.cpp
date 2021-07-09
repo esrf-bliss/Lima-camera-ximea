@@ -390,20 +390,29 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 	int x = set_roi.getTopLeft().x;
 	int y = set_roi.getTopLeft().y;
 
-	// if cannot set precise ROI, use closest divisible by increment
-	w = ceil(double(w) / w_inc) * w_inc;
-	h = ceil(double(h) / h_inc) * h_inc;
-	x = ceil(double(x) / x_inc) * x_inc;
-	y = ceil(double(y) / y_inc) * y_inc;
+	if(w == 0 && h == 0 && x == 0 && y == 0)
+	{
+		// zero means infinity in Lima language
+		w = w_max;
+		h = h_max;
+	}
+	else
+	{
+		// if cannot set precise ROI, use closest divisible by increment
+		w = ceil(double(w) / w_inc) * w_inc;
+		h = ceil(double(h) / h_inc) * h_inc;
+		x = ceil(double(x) / x_inc) * x_inc;
+		y = ceil(double(y) / y_inc) * y_inc;
 
-	// check min-max
-	// TODO: the quirk is that we should set W/H first, then read limits
-	// for X/Y  to get the correct value. However setting anything in check
-	// method seems sketchy. Some workaround is needed.
-	w = min(w_max, max(w_min, w));
-	h = min(h_max, max(h_min, h));
-	x = min(x_max, max(x_min, x));
-	y = min(y_max, max(y_min, y));
+		// check min-max
+		// TODO: the quirk is that we should set W/H first, then read limits
+		// for X/Y  to get the correct value. However setting anything in check
+		// method seems sketchy. Some workaround is needed.
+		w = min(w_max, max(w_min, w));
+		h = min(h_max, max(h_min, h));
+		x = min(x_max, max(x_min, x));
+		y = min(y_max, max(y_min, y));
+	}
 
 	Roi r(x, y, w, h);
 	hw_roi = r;
