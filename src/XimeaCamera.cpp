@@ -405,10 +405,13 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 	else
 	{
 		// if cannot set precise ROI, use closest divisible by increment
-		w = ceil(double(w) / w_inc) * w_inc;
-		h = ceil(double(h) / h_inc) * h_inc;
-		x = ceil(double(x) / x_inc) * x_inc;
-		y = ceil(double(y) / y_inc) * y_inc;
+		int nx = floor(double(x) / x_inc) * x_inc;
+		int ny = floor(double(y) / y_inc) * y_inc;
+		int nw = w + (x - nx);
+		int nh = h + (y - ny);
+
+		w = ceil(double(nw) / w_inc) * w_inc;
+		h = ceil(double(nh) / h_inc) * h_inc;
 
 		// check min-max
 		// TODO: the quirk is that we should set W/H first, then read limits
@@ -416,8 +419,8 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 		// method seems sketchy. Some workaround is needed.
 		w = min(w_max, max(w_min, w));
 		h = min(h_max, max(h_min, h));
-		x = min(x_max, max(x_min, x));
-		y = min(y_max, max(y_min, y));
+		x = min(x_max, max(x_min, nx));
+		y = min(y_max, max(y_min, ny));
 	}
 
 	Roi r(x, y, w, h);
