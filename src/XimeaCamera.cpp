@@ -98,6 +98,11 @@ bool Camera::_check_model(std::string model)
 	return (this->m_camera_model.rfind(model, 0) == 0);
 }
 
+string Camera::getPluginVersion()
+{
+	return string(XIMEA_PACKAGE_VERSION);
+}
+
 void Camera::prepareAcq()
 {
 	DEB_MEMBER_FUNCT();
