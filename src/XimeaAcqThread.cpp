@@ -55,6 +55,11 @@ void AcqThread::threadFunction()
 		this->m_buffer.bp = buffer_mgr.getFrameBufferPtr(this->m_cam.m_image_number);
 		this->m_buffer.bp_size = this->m_cam.m_buffer_size;
 
+		if(this->m_cam.m_trigger_mode == IntTrigMult)
+			// for software trigger, wait for trigger before setting camera
+			// mode to Exposure, otherwise startAcq will fail on CtControl level
+			while(!this->m_cam._soft_trigger_issued());
+		
 		this->m_cam._set_status(Camera::Exposure);
 		this->m_cam._read_image(&this->m_buffer, this->m_timeout);
 		
@@ -80,11 +85,6 @@ void AcqThread::threadFunction()
 			continue;
 		}
 		this->m_cam._set_status(Camera::Ready);
-		TrigMode tm;
-		this->m_cam.getTrigMode(tm);
-		if(tm == IntTrigMult)
-			// exit acquisition loop in order to allow for nex startAcq
-			this->m_quit = true;
 	}
 	// when leaving the thread stop acqusition no matter what
 	xiStopAcquisition(this->m_cam.xiH);
