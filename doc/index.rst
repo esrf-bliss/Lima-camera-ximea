@@ -1,19 +1,15 @@
-.. _camera-template:
+.. _camera-ximea:
 
-MyCamera
---------
+Ximea
+-------
 
-.. image:: my-camera.jpg
+.. image:: ximea.jpg
 
-Introduction
-````````````
+Intoduction
+```````````
+Ximea is a manufacturer of an extremely diversified and highly modular camera family. It offers multiple choices of combining sensors and interfaces. Together with minimal latencies and CPU load, the cameras are a perfect fit for embedded vision and multi-camera applications. Thanks to flat flex cabling, the board-level and semi-housed variants allow integration in tight spaces and close proximity between cameras.
 
-This is the official Lima camera template. It has been made to help you getting started with Lima and to test/play Lima without any hardware.
-
-Prerequisite
-````````````
-
-There is no special prerequisite, the template can be compiled and tested on both Linux and Windows platforms.
+The plugin described here aims to provide full Ximea camera functionality for Lima.
 
 Installation & Module configuration
 ````````````````````````````````````
@@ -22,129 +18,76 @@ Follow the generic instructions in :ref:`build_installation`. If using CMake dir
 
 .. code-block:: sh
 
-  -DLIMACAMERA_SIMULATOR=true
+ -DLIMACAMERA_XIMEA=true
 
 For the Tango server installation, refers to :ref:`tango_installation`.
 
 Initialisation and Capabilities
-```````````````````````````````
+````````````````````````````````
 
 Implementing a new plugin for new detector is driven by the LIMA framework but the developer has some freedoms to choose which standard and specific features will be made available. This section is supposed to give you the correct information regarding how the camera is exported within the LIMA framework.
 
 Camera initialisation
-.....................
+......................
 
-.. cpp:namespace-push:: lima::mycamera
+The camera will be initialized within the :cpp:class:`Ximea::Camera` class. Camera contructor aims to start up the camera and load default startup configuration.
 
-The camera will be initialized within the :cpp:class:`Camera` object. The :cpp:func:`Camera` constructor takes an optional mode parameter.
+There are so many hardware parameters you can set, but refer to the Ximea documentation for a good practice.
 
-The class :cpp:class:`Camera` can be parametrized with:
+Std capabilites
+................
 
- - :cpp:func:`setFrameDim()`: set a new frame dimension (max. is 1024x1024)
- - :cpp:func:`setPeaks()`: set a list of GaussPeak positions (GaussPeak struct -> x, y, fwhm, max)
- - :cpp:func:`setPeakAngles()`: set a list of GaussPeak angles
- - :cpp:func:`setFillType()`:  set the image fill type Gauss or Diffraction (default is Gauss)
- - :cpp:func:`setRotationAxis()`:  set the rotation axis policy Static, RotationX or RotationY (default is RotationY)
- - :cpp:func:`setRotationAngle()`: set a peak rotation angle in deg (default is 0)
- - :cpp:func:`setRotationSpeed()`: set a peak rotation speed ixin deg/frame (default is 0)
- - :cpp:func:`setGrowFactor()`: set a growing factor (default is 1.0)
- - :cpp:func:`setDiffractionPos()`: set the source diplacement position x and y (default is center)
- - :cpp:func:`setDiffractionSpeed()`: set the source diplacement speed sx and sy (default is 0,0)
+This plugin has been implemented in respect of the mandatory capabilites but with some limitations which are due to the camera. We only provide here extra information for a better understanding of the capabilities for Ximea cameras.
 
-.. cpp:namespace-pop
+* HwDetInfo
 
-Standard capabilities
-.....................
+  getPixelSize(): Will always return 10um x 10um pixel size for unknown cameras. (The only camera known at the moment is MX377MR which pixel size is also 10um x 10um)
 
-Described the standard capabilites offered by the camera.
+* HwSync
 
-Optional capabilities
-.....................
+  get/setTrigMode():  supported modes are IntTrig, IntTrigMult and ExtTrigMult.
 
-Described the optional capabilites offered by the camera.
+Optional capabilites
+........................
+In addition to the standard capabilities, we make the choice to implement some optional capabilities which
+are supported by this detector. A Shutter control.
 
-Configuration
-`````````````
+* HwBin
 
-Described the eventual configuration steps.
+  Supported modes: 1x1, 2x2, 4x4
 
-Getting started
-```````````````
+* HwRoi
+* HwEvent
 
-For a quick test one can use the python binding, here is a short code example:
+How to use
+````````````
+
+This is a python code example of a simple acquisition:
 
 .. code-block:: python
 
-  from Lima import Simulator
-  from lima import Core
   import time
+  from Lima import Core, Ximea
 
-  def test_mode_generator(cam, nb_frames_prefetched = 0):
-      if nb_frames_prefetched:
-          cam.setMode(Simulator.Camera.MODE_GENERATOR_PREFETCH)
-          fb = cam.getFrameGetter()
-          fb.setNbPrefetchedFrames(nb_frames_prefetched);
-      else:
-          cam.setMode(Simulator.Camera.MODE_GENERATOR)
-          fb = cam.getFrameGetter()
+  cam = Ximea.Camera(0)
+  hw = Ximea.Interface(cam)
+  ct = Core.CtControl(hw)
 
-      # Add a peak
-      p1 = Simulator.GaussPeak(10, 10, 23, 1000) # peak at 10,10 fwhm=23 and max=1000
-      fb.setPeaks([p1])
+  # configure saving
+  sav = ct.saving()
+  sav.setSavingMode(Core.CtSaving.AutoFrame)
+  sav.setFormat(Core.CtSaving.EDF)
+  sav.setPrefix('test')
+  sav.setOverwritePolicy(Core.CtSaving.Overwrite)
+  sav.setDirectory('/tmp')
 
+  # set configuration, see documentation for details
+  ct.image().setBin(Core.Bin(2, 2))
 
-  def test_mode_loader(cam, nb_frames_prefetched = 0):
-      if nb_frames_prefetched:
-          cam.setMode(Simulator.Camera.MODE_LOADER_PREFETCH)
-          fb = cam.getFrameGetter()
-          test = fb.getNbPrefetchedFrames();
-      else:
-          cam.setMode(Simulator.Camera.MODE_LOADER)
-          fb = cam.getFrameGetter()
+  ct.prepareAcq()
+  ct.startAcq()
 
-      # Set file pattern
-      fb.setFilePattern(b'input\\test_*.edf')
+  while ct.getStatus().AcquisitionStatus != Core.AcqReady:
+      time.sleep(0.1)
 
-  cam = Simulator.Camera()
-
-  # Select one of the mode to test
-  #test_mode_generator(cam)
-  #test_mode_generator(cam, 10)
-  #test_mode_loader(cam)
-  test_mode_loader(cam, 100)
-
-  # Get the hardware interface
-  hwint = Simulator.Interface(cam)
-
-  # Get the control interface
-  control = Core.CtControl(hwint)
-
-  # Get the acquisition control
-  acq = control.acquisition()
-
-  # Set new file parameters and autosaving mode
-  saving=control.saving()
-
-  pars=saving.getParameters()
-  pars.directory='/tmp/'
-  pars.prefix='testsimul_'
-  pars.suffix='.edf'
-  pars.fileFormat=Core.CtSaving.EDF
-  pars.savingMode=Core.CtSaving.AutoFrame
-  saving.setParameters(pars)
-
-  # Now ask for 2 sec. exposure and 10 frames
-  acq.setAcqExpoTime(2)
-  acq.setAcqNbFrames(10)
-
-  control.prepareAcq()
-  control.startAcq()
-
-  # Wait for last image (#9) ready
-  lastimg = control.getStatus().ImageCounters.LastImageReady
-  while lastimg !=9:
-    time.sleep(0.1)
-    lastimg = control.getStatus().ImageCounters.LastImageReady
-
-  # read the first image
-  im0 = control.ReadImage(0)
+  img = ct.ReadBaseImage(0)
