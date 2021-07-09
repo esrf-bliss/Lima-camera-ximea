@@ -75,7 +75,7 @@ void AcqThread::threadFunction()
 		if(this->m_cam.xi_status != XI_OK)
 		{
 			this->m_cam._set_status(Camera::Fault);
-			Exception e = LIMA_HW_EXC(Error, "Image read failed");
+			Exception e = LIMA_HW_EXC(Error, "Image read failed, status: " + std::to_string(this->m_cam.xi_status));
 			this->m_cam.reportException(e, "Ximea/Camera/_read_image");
 			continue;
 		}
