@@ -55,9 +55,19 @@ void AcqThread::threadFunction()
 		this->m_buffer.bp_size = this->m_cam.m_buffer_size;
 
 		if(this->m_cam.m_trigger_mode == IntTrigMult)
+		{
 			// for software trigger, wait for trigger before setting camera
 			// mode to Exposure, otherwise startAcq will fail on CtControl level
-			while(!this->m_cam._soft_trigger_issued());
+			bool do_break = false;
+			while(!this->m_cam._soft_trigger_issued())
+				if(this->m_quit)
+				{
+					do_break = true;
+					break;
+				}
+			if(do_break || this->m_quit)
+				break;
+		}
 		
 		this->m_cam._set_status(Camera::Exposure);
 		this->m_cam._read_image(&this->m_buffer, this->m_timeout);
