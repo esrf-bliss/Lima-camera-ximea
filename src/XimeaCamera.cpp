@@ -46,7 +46,8 @@ Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger
 	  m_internal_timeout(internal_timeout),
 	  m_startup_temp_control_mode(startup_temp_control_mode),
 	  m_startup_target_temp(startup_target_temp),
-	  m_startup_mode(startup_mode)
+	  m_startup_mode(startup_mode),
+	  m_soft_trigger_issued(false)
 {
 	DEB_CONSTRUCTOR();
 	this->_startup();
@@ -115,17 +116,19 @@ void Camera::startAcq()
 {
 	DEB_MEMBER_FUNCT();
 
-	if(!this->m_image_number)
-		this->m_buffer_ctrl_obj.getBuffer().setStartTimestamp(Timestamp::now());
-
 	if(this->m_trigger_mode == IntTrigMult && this->m_acq_thread->m_thread_started)
+		this->_generate_soft_trigger();
+	else
 	{
-		this->_stop_acq_thread();
-		this->m_acq_thread = new AcqThread(*this, this->_get_trigger_timeout());
+		if(!this->m_image_number)
+			this->m_buffer_ctrl_obj.getBuffer().setStartTimestamp(Timestamp::now());
+
+		xiStartAcquisition(this->xiH);
+		this->m_acq_thread->m_quit = false;
+		this->m_acq_thread->start();
+		if(this->m_trigger_mode == IntTrigMult)
+			this->_generate_soft_trigger();
 	}
-	xiStartAcquisition(this->xiH);
-	this->m_acq_thread->m_quit = false;
-	this->m_acq_thread->start();
 }
 
 void Camera::stopAcq()
@@ -271,7 +274,9 @@ void Camera::setTrigMode(TrigMode mode)
 	}
 	else if(mode == IntTrigMult)
 	{
-		this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_OFF);
+		// this has nothing to do with internal trigger !!!
+		// IntTrigMult is basically a software trigger with extra steps
+		this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_SOFTWARE);
 		this->_set_param_int(XI_PRM_TRG_SELECTOR, XI_TRG_SEL_FRAME_START);
 	}
 	else if(mode == ExtTrigSingle)
@@ -734,6 +739,17 @@ void Camera::_read_image(XI_IMG* image, int timeout)
 void Camera::_generate_soft_trigger(void)
 {
 	this->_set_param_int(XI_PRM_TRG_SOFTWARE, XI_ON);
+	this->m_soft_trigger_issued = true;
+}
+
+bool Camera::_soft_trigger_issued(void)
+{
+	if(this->m_soft_trigger_issued)
+	{
+		this->m_soft_trigger_issued = false;
+		return true;
+	}
+	return false;
 }
 
 void Camera::_setup_gpio_trigger(void)
@@ -750,8 +766,8 @@ void Camera::_setup_gpio_trigger(void)
 int Camera::_get_trigger_timeout(void)
 {
 	int timeout = 0;
-	if(this->m_trigger_mode == IntTrig || this->m_trigger_mode == IntTrigMult)
-	{	
+	if(this->m_trigger_mode == IntTrig)
+	{
 		// use internal trigger timeout + expo time
 		double exp_time = 0;
 		this->getExpTime(exp_time);
