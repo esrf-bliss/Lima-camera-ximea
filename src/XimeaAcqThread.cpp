@@ -28,7 +28,8 @@ using namespace lima::Ximea;
 AcqThread::AcqThread(Camera& cam, int timeout)
 	: m_cam(cam),
 	  m_quit(false),
-	  m_timeout(timeout)
+	  m_timeout(timeout),
+	  m_thread_started(false)
 {
 	pthread_attr_setscope(&m_thread_attr, PTHREAD_SCOPE_PROCESS);
 	memset((void*)&this->m_buffer, 0, sizeof(XI_IMG));
@@ -43,6 +44,7 @@ AcqThread::~AcqThread()
 void AcqThread::threadFunction()
 {
 	DEB_MEMBER_FUNCT();
+	this->m_thread_started = true;
 
 	StdBufferCbMgr& buffer_mgr = this->m_cam.m_buffer_ctrl_obj.getBuffer();
 
@@ -53,6 +55,21 @@ void AcqThread::threadFunction()
 		this->m_buffer.bp = buffer_mgr.getFrameBufferPtr(this->m_cam.m_image_number);
 		this->m_buffer.bp_size = this->m_cam.m_buffer_size;
 
+		if(this->m_cam.m_trigger_mode == IntTrigMult)
+		{
+			// for software trigger, wait for trigger before setting camera
+			// mode to Exposure, otherwise startAcq will fail on CtControl level
+			bool do_break = false;
+			while(!this->m_cam._soft_trigger_issued())
+				if(this->m_quit)
+				{
+					do_break = true;
+					break;
+				}
+			if(do_break || this->m_quit)
+				break;
+		}
+		
 		this->m_cam._set_status(Camera::Exposure);
 		this->m_cam._read_image(&this->m_buffer, this->m_timeout);
 		
@@ -73,7 +90,7 @@ void AcqThread::threadFunction()
 		if(this->m_cam.xi_status != XI_OK)
 		{
 			this->m_cam._set_status(Camera::Fault);
-			Exception e = LIMA_HW_EXC(Error, "Image read failed");
+			Exception e = LIMA_HW_EXC(Error, "Image read failed, status: " + std::to_string(this->m_cam.xi_status));
 			this->m_cam.reportException(e, "Ximea/Camera/_read_image");
 			continue;
 		}

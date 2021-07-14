@@ -309,7 +309,7 @@ namespace Ximea
 
 		Camera(
 			int camera_id,
-			GPISelector trigger_gpi_port, unsigned int trigger_timeout,
+			GPISelector trigger_gpi_port, unsigned int trigger_timeout, unsigned int internal_timeout,
 			TempControlMode startup_temp_control_mode, double startup_target_temp,
 			Mode startup_mode
 		);
@@ -331,6 +331,7 @@ namespace Ximea
 		void getDetectorType(std::string& type);
 		void getDetectorModel(std::string& model);
 		void getDetectorImageSize(Size& size);
+		void getPixelSize(double& x_size, double& y_size);
 
 		// SyncCtrlObj
 		void setExpTime(double exp_time);
@@ -353,6 +354,10 @@ namespace Ximea
 		// Software trigger
 		void getSoftwareTrigger(bool &t);
 		void setSoftwareTrigger(bool t);
+
+		// Internal trigger timeout
+		void getInternalTimeout(int &t);
+		void setInternalTimeout(int t);
 
 		// GPIO setup
 		void getGpiSelector(GPISelector& s);

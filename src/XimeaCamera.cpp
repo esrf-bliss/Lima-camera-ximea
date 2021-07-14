@@ -32,7 +32,7 @@ using namespace std;
 //---------------------------
 //- Ctor
 //---------------------------
-Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger_timeout, TempControlMode startup_temp_control_mode, double startup_target_temp, Mode startup_mode)
+Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger_timeout, unsigned int internal_timeout, TempControlMode startup_temp_control_mode, double startup_target_temp, Mode startup_mode)
 	: cam_id(camera_id),
 	  xiH(nullptr),
 	  xi_status(XI_OK),
@@ -43,9 +43,11 @@ Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger
 	  m_trig_polarity(Camera::TriggerPolarity_High_Rising),
 	  m_trigger_gpi_port(trigger_gpi_port),
 	  m_trig_timeout(trigger_timeout),
+	  m_internal_timeout(internal_timeout),
 	  m_startup_temp_control_mode(startup_temp_control_mode),
 	  m_startup_target_temp(startup_target_temp),
-	  m_startup_mode(startup_mode)
+	  m_startup_mode(startup_mode),
+	  m_soft_trigger_issued(false)
 {
 	DEB_CONSTRUCTOR();
 	this->_startup();
@@ -72,6 +74,8 @@ void Camera::_startup()
 	if(this->xi_status != XI_OK)
 		THROW_HW_ERROR(Error) << "Could not open camera " << this->cam_id << "; status: " << this->xi_status;
 
+	this->m_camera_model = this->_get_param_str(XI_PRM_DEVICE_NAME);
+
 	// set debug level
 	this->_set_param_int(XI_PRM_DEBUG_LEVEL, XI_DL_DISABLED);
 
@@ -96,6 +100,11 @@ void Camera::getPluginVersion(string& version)
 	version = string(XIMEA_PACKAGE_VERSION);
 }
 
+bool Camera::_check_model(std::string model)
+{
+	return (this->m_camera_model.rfind(model, 0) == 0);
+}
+
 void Camera::prepareAcq()
 {
 	DEB_MEMBER_FUNCT();
@@ -104,19 +113,7 @@ void Camera::prepareAcq()
 	this->m_image_number = 0;
 	this->m_buffer_size = this->m_buffer_ctrl_obj.getBuffer().getFrameDim().getMemSize();
 	
-	int timeout = 0;
-	if(this->m_trigger_mode == IntTrig || this->m_trigger_mode == IntTrigMult)
-	{
-		// use timeout of 2 * exposure time for internal trigger
-		double exp_time = 0;
-		this->getExpTime(exp_time);
-		timeout = int(2 * exp_time * TIME_HW / 1e3);	// convert to ms
-	}
-	else
-		// use user provided timeout for external trigger
-		timeout = this->m_trig_timeout;
-
-	this->m_acq_thread = new AcqThread(*this, timeout);
+	this->m_acq_thread = new AcqThread(*this, this->_get_trigger_timeout());
 	this->_set_status(Camera::Ready);
 }
 
@@ -124,12 +121,19 @@ void Camera::startAcq()
 {
 	DEB_MEMBER_FUNCT();
 
-	if(!this->m_image_number)
-		this->m_buffer_ctrl_obj.getBuffer().setStartTimestamp(Timestamp::now());
+	if(this->m_trigger_mode == IntTrigMult && this->m_acq_thread->m_thread_started)
+		this->_generate_soft_trigger();
+	else
+	{
+		if(!this->m_image_number)
+			this->m_buffer_ctrl_obj.getBuffer().setStartTimestamp(Timestamp::now());
 
-	xiStartAcquisition(this->xiH);
-	this->m_acq_thread->m_quit = false;
-	this->m_acq_thread->start();
+		xiStartAcquisition(this->xiH);
+		this->m_acq_thread->m_quit = false;
+		this->m_acq_thread->start();
+		if(this->m_trigger_mode == IntTrigMult)
+			this->_generate_soft_trigger();
+	}
 }
 
 void Camera::stopAcq()
@@ -235,7 +239,27 @@ void Camera::getDetectorType(std::string& type)
 
 void Camera::getDetectorModel(std::string& model)
 {
-	model = this->_get_param_str(XI_PRM_DEVICE_MODEL_ID);
+	model = this->m_camera_model;
+}
+
+void Camera::getPixelSize(double& x_size, double& y_size)
+{
+	// Return pixel size based on camera model
+	// This does not make much sense as for now, since the only "officially"
+	// supported camera happens to have the same pixel size as the default.
+	// The check is however done for demonstration purposes as well as to
+	// simplify integration of future cameras.
+	if(this->_check_model("MX377MR"))
+	{
+		x_size = 1e-5;
+		y_size = 1e-5;
+	}
+	else
+	{
+		printf("!!! Unknown pixel size for this camera model! Defaults used !!!\n");
+		x_size = 1e-5;
+		y_size = 1e-5;
+	}
 }
 
 void Camera::getDetectorImageSize(Size& size)
@@ -255,11 +279,15 @@ void Camera::setTrigMode(TrigMode mode)
 	}
 	else if(mode == IntTrigMult)
 	{
-		this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_OFF);
+		// this has nothing to do with internal trigger !!!
+		// IntTrigMult is basically a software trigger with extra steps
+		this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_SOFTWARE);
 		this->_set_param_int(XI_PRM_TRG_SELECTOR, XI_TRG_SEL_FRAME_START);
 	}
 	else if(mode == ExtTrigSingle)
 	{
+		// this trigger configuration is not supported -
+		// - lack of camera support for XI_PRM_EXPOSURE_BURST_COUNT
 		this->_setup_gpio_trigger();
 		if(this->m_trig_polarity == TriggerPolarity_Low_Falling)
 			this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_EDGE_FALLING);
@@ -280,7 +308,8 @@ void Camera::setTrigMode(TrigMode mode)
 	}
 	else if(mode == ExtGate)
 	{
-		this->_setup_gpio_trigger();
+		// this trigger configuration is not supported -
+		// - lack of camera support for XI_TRG_SEL_EXPOSURE_ACTIVE
 		if(this->m_trig_polarity == TriggerPolarity_Low_Falling)
 			this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_LEVEL_LOW);
 		else if(this->m_trig_polarity == TriggerPolarity_High_Rising)
@@ -367,20 +396,32 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 	int x = set_roi.getTopLeft().x;
 	int y = set_roi.getTopLeft().y;
 
-	// if cannot set precise ROI, use closest divisible by increment
-	w = ceil(double(w) / w_inc) * w_inc;
-	h = ceil(double(h) / h_inc) * h_inc;
-	x = ceil(double(x) / x_inc) * x_inc;
-	y = ceil(double(y) / y_inc) * y_inc;
+	if(w == 0 && h == 0 && x == 0 && y == 0)
+	{
+		// zero means infinity in Lima language
+		w = w_max;
+		h = h_max;
+	}
+	else
+	{
+		// if cannot set precise ROI, use closest divisible by increment
+		int nx = floor(double(x) / x_inc) * x_inc;
+		int ny = floor(double(y) / y_inc) * y_inc;
+		int nw = w + (x - nx);
+		int nh = h + (y - ny);
 
-	// check min-max
-	// TODO: the quirk is that we should set W/H first, then read limits
-	// for X/Y  to get the correct value. However setting anything in check
-	// method seems sketchy. Some workaround is needed.
-	w = min(w_max, max(w_min, w));
-	h = min(h_max, max(h_min, h));
-	x = min(x_max, max(x_min, x));
-	y = min(y_max, max(y_min, y));
+		w = ceil(double(nw) / w_inc) * w_inc;
+		h = ceil(double(nh) / h_inc) * h_inc;
+
+		// check min-max
+		// TODO: the quirk is that we should set W/H first, then read limits
+		// for X/Y  to get the correct value. However setting anything in check
+		// method seems sketchy. Some workaround is needed.
+		w = min(w_max, max(w_min, w));
+		h = min(h_max, max(h_min, h));
+		x = min(x_max, max(x_min, nx));
+		y = min(y_max, max(y_min, ny));
+	}
 
 	Roi r(x, y, w, h);
 	hw_roi = r;
@@ -550,24 +591,32 @@ void Camera::checkBin(Bin &aBin)
 	DEB_MEMBER_FUNCT();
 	
 	// get binning parameters info
-	int h_min = this->_get_param_min(XI_PRM_BINNING_HORIZONTAL);
 	int h_max = this->_get_param_max(XI_PRM_BINNING_HORIZONTAL);
 	int h_inc = this->_get_param_inc(XI_PRM_BINNING_HORIZONTAL);
-	int v_min = this->_get_param_min(XI_PRM_BINNING_VERTICAL);
 	int v_max = this->_get_param_max(XI_PRM_BINNING_VERTICAL);
 	int v_inc = this->_get_param_inc(XI_PRM_BINNING_VERTICAL);
 
-	// fit bin into limits
-	int h = ceil(double(aBin.getX()) / h_inc) * h_inc;
-	int v = ceil(double(aBin.getY()) / v_inc) * v_inc;
-	h = min(h_max, max(h_min, h));
-	v = min(v_max, max(v_min, v));
+	int binX, binY, expo, max_expo;
+	int requestedX = aBin.getX();
+	int requestedY = aBin.getY();
 
-	// 3x3 binning is not supported by camera, use 2x2 instead
-	if(h == 3) h = 2;
-	if(v == 3) v = 2;
+	// get binX supported by camera
+	max_expo = log2l(h_max);
+	for(expo = max_expo; expo >= 0; expo -= h_inc)
+	{
+		binX = pow(2, expo);
+		if(requestedX % binX == 0) break;
+	}
 
-	aBin = Bin(h, v);
+	// get binY supported by camera
+	max_expo = log2l(v_max);
+	for(expo = max_expo; expo >= 0; expo -= v_inc)
+	{
+		binY = pow(2, expo);
+		if(requestedY % binY == 0) break;
+	}
+
+	aBin = Bin(binX, binY);
 
 	DEB_RETURN() << DEB_VAR1(aBin);
 }
@@ -687,13 +736,28 @@ void Camera::_read_image(XI_IMG* image, int timeout)
 
 	image->size = sizeof(XI_IMG);
 	this->xi_status = xiGetImage(this->xiH, timeout, image);
-	if(this->xi_status != XI_OK)
-		THROW_HW_ERROR(Error) << "Image readout failed; xi_status: " << this->xi_status;
+	
+	// The following seems to be not necessary since AcqThread checks for
+	// xi_status anyway. And throwing exceptions here breaks Lima...
+
+	// if(this->xi_status != XI_OK)
+	// 	THROW_HW_ERROR(Error) << "Image readout failed; xi_status: " << this->xi_status;
 }
 
 void Camera::_generate_soft_trigger(void)
 {
 	this->_set_param_int(XI_PRM_TRG_SOFTWARE, XI_ON);
+	this->m_soft_trigger_issued = true;
+}
+
+bool Camera::_soft_trigger_issued(void)
+{
+	if(this->m_soft_trigger_issued)
+	{
+		this->m_soft_trigger_issued = false;
+		return true;
+	}
+	return false;
 }
 
 void Camera::_setup_gpio_trigger(void)
@@ -705,6 +769,23 @@ void Camera::_setup_gpio_trigger(void)
 	this->setGpiMode(Camera::GPIMode_Trigger);
 
 	this->setGpiSelector(selected_gpi);
+}
+
+int Camera::_get_trigger_timeout(void)
+{
+	int timeout = 0;
+	if(this->m_trigger_mode == IntTrig)
+	{
+		// use internal trigger timeout + expo time
+		double exp_time = 0;
+		this->getExpTime(exp_time);
+		int exp_ms = int(exp_time * TIME_HW / 1e3);	// convert to ms
+		timeout = this->m_internal_timeout + exp_ms;
+	}
+	else
+		// use user provided timeout for external trigger
+		timeout = this->m_trig_timeout;
+	return timeout;
 }
 
 void Camera::_stop_acq_thread()
@@ -1204,4 +1285,14 @@ void Camera::reportException(Exception& e, std::string name)
 				 err_code, err_msg.str());
 	DEB_EVENT(*event) << DEB_VAR1(*event);
 	reportEvent(event);
+}
+
+void Camera::getInternalTimeout(int &t)
+{
+	t = this->m_internal_timeout;
+}
+
+void Camera::setInternalTimeout(int t)
+{
+	this->m_internal_timeout = t;
 }

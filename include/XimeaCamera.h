@@ -341,7 +341,7 @@ namespace lima
 
 			Camera(
 				int camera_id,
-				GPISelector trigger_gpi_port, unsigned int trigger_timeout,
+				GPISelector trigger_gpi_port, unsigned int trigger_timeout, unsigned int internal_timeout,
 				TempControlMode startup_temp_control_mode, double startup_target_temp,
 				Mode startup_mode
 			);
@@ -363,6 +363,7 @@ namespace lima
 			void getDetectorType(std::string& type);
 			void getDetectorModel(std::string& model);
 			void getDetectorImageSize(Size& size);
+			void getPixelSize(double& x_size, double& y_size);
 
 			// SyncCtrlObj
 			void setTrigMode(TrigMode mode);
@@ -398,6 +399,10 @@ namespace lima
 			// Software trigger
 			void getSoftwareTrigger(bool &t);
 			void setSoftwareTrigger(bool t);
+
+			// Internal trigger timeout
+			void getInternalTimeout(int &t);
+			void setInternalTimeout(int t);
 
 			// GPIO setup
 			void getGpiSelector(GPISelector& s);
@@ -529,6 +534,7 @@ namespace lima
 			int cam_id;
 			HANDLE xiH;
 			XI_RETURN xi_status;
+			std::string m_camera_model;
 
 			TempControlMode m_startup_temp_control_mode;
 			double m_startup_target_temp;
@@ -546,8 +552,11 @@ namespace lima
 			TriggerPolarity m_trig_polarity;
 			GPISelector m_trigger_gpi_port;
 			unsigned int m_trig_timeout;
+			unsigned int m_internal_timeout;
+			bool m_soft_trigger_issued;
 
 			void _startup(void);
+			bool _check_model(std::string model);
 
 			int _get_param_int(const char* param);
 			double _get_param_dbl(const char* param);
@@ -562,9 +571,11 @@ namespace lima
 			int _get_param_inc(const char* param);
 
 			void _read_image(XI_IMG* image, int timeout);
+			
 			void _generate_soft_trigger(void);
-
+			bool _soft_trigger_issued(void);
 			void _setup_gpio_trigger(void);
+			int _get_trigger_timeout(void);
 
 			void _stop_acq_thread();
 
