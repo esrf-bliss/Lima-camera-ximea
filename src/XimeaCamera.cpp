@@ -32,7 +32,7 @@ using namespace std;
 //---------------------------
 //- Ctor
 //---------------------------
-Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger_timeout, unsigned int internal_timeout, TempControlMode startup_temp_control_mode, double startup_target_temp, Mode startup_mode)
+Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int timeout, TempControlMode startup_temp_control_mode, double startup_target_temp, Mode startup_mode)
 	: cam_id(camera_id),
 	  xiH(nullptr),
 	  xi_status(XI_OK),
@@ -42,8 +42,7 @@ Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int trigger
 	  m_acq_thread(nullptr),
 	  m_trig_polarity(Camera::TriggerPolarity_High_Rising),
 	  m_trigger_gpi_port(trigger_gpi_port),
-	  m_trig_timeout(trigger_timeout),
-	  m_internal_timeout(internal_timeout),
+	  m_timeout(timeout),
 	  m_startup_temp_control_mode(startup_temp_control_mode),
 	  m_startup_target_temp(startup_target_temp),
 	  m_startup_mode(startup_mode),
@@ -768,18 +767,11 @@ void Camera::_setup_gpio_trigger(void)
 
 int Camera::_get_trigger_timeout(void)
 {
-	int timeout = 0;
-	if(this->m_trigger_mode == IntTrig)
-	{
-		// use internal trigger timeout + expo time
-		double exp_time = 0;
-		this->getExpTime(exp_time);
-		int exp_ms = int(exp_time * TIME_HW / 1e3);	// convert to ms
-		timeout = this->m_internal_timeout + exp_ms;
-	}
-	else
-		// use user provided timeout for external trigger
-		timeout = this->m_trig_timeout;
+	// timeout + expo time
+	double exp_time = 0;
+	this->getExpTime(exp_time);
+	int exp_ms = int(exp_time * TIME_HW / 1e3);	// convert to ms
+	int timeout = this->m_timeout + exp_ms;
 	return timeout;
 }
 
@@ -1282,12 +1274,19 @@ void Camera::reportException(Exception& e, std::string name)
 	reportEvent(event);
 }
 
-void Camera::getInternalTimeout(int &t)
+void Camera::getTimeout(int &t)
 {
-	t = this->m_internal_timeout;
+	t = this->m_timeout;
 }
 
-void Camera::setInternalTimeout(int t)
+void Camera::setTimeout(int t)
 {
-	this->m_internal_timeout = t;
+	DEB_MEMBER_FUNCT();
+
+	if(t > Camera::TIMEOUT_MAX)
+	{
+		THROW_HW_ERROR(Error) << "Timeout " << t << "ms exceeds maximum allowed value of " << Camera::TIMEOUT_MAX << "ms.";
+		return;
+	}
+	this->m_timeout = t;
 }
