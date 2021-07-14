@@ -17,6 +17,7 @@ trigger_gpi_port          No         PORT_2	                                    
 timeout                   No         200                                        Timeout for internal loop (on top of exposure time)
 startup_temp_control_mode No         AUTO                                       Startup temperature control mode
 startup_target_temp	      No         25.0                                       Startup target temperature
+startup_mode              No         2_12_HDR_HL                                Startup camera mode
 ========================= ========== ========================================== ====================================================
 
 
