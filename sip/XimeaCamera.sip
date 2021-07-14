@@ -322,7 +322,7 @@ namespace Ximea
 		void reset();
 
 		// Version info
-		std::string getPluginVersion();
+		void getPluginVersion(std::string& version /Out/);
 
 		// DetInfoCtrlObj
 		void getImageType(ImageType& type);

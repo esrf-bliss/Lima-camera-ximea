@@ -91,9 +91,9 @@ void Camera::_startup()
 	this->_set_param_int(XI_PRM_USER_SET_DEFAULT, this->m_startup_mode);
 }
 
-string Camera::getPluginVersion()
+void Camera::getPluginVersion(string& version)
 {
-	return string(XIMEA_PACKAGE_VERSION);
+	version = string(XIMEA_PACKAGE_VERSION);
 }
 
 void Camera::prepareAcq()

@@ -354,7 +354,7 @@ namespace lima
 			void reset();
 
 			// Version info
-			std::string getPluginVersion();
+			void getPluginVersion(std::string& version);
 
 			// DetInfoCtrlObj
 			void getImageType(ImageType& type);
