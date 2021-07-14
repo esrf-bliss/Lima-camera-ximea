@@ -926,7 +926,7 @@ class XimeaClass(PyTango.DeviceClass):
 				'format': '',
 				'description': 'Ximea plugin version number',
 			}
-		]
+		],
 		"internal_timeout": [
 			[PyTango.DevLong, PyTango.SCALAR, PyTango.READ_WRITE],
 			{
