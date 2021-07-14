@@ -9,15 +9,15 @@ You can also find some useful information about the camera models/prerequisite/i
 Properties
 ----------
 
-========================= ========== ========================================== ===========================================
+========================= ========== ========================================== ====================================================
 Property name             Mandatory  Default value                              Description
-========================= ========== ========================================== ===========================================
+========================= ========== ========================================== ====================================================
 camera_id                 Yes        N/A                                        Camera ID
 trigger_gpi_port          No         PORT_2	                                    GPI port used by default for trigger input
-trigger_timeout           No         `std::numeric_limits<unsigned int>::max()` Timeout for external trigger
+timeout                   No         200                                        Timeout for internal loop (on top of exposure time)
 startup_temp_control_mode No         AUTO                                       Startup temperature control mode
 startup_target_temp	      No         25.0                                       Startup target temperature
-========================= ========== ========================================== ===========================================
+========================= ========== ========================================== ====================================================
 
 
 Attributes
@@ -90,7 +90,7 @@ acq_status                    r    DevBoolean Acquisition status
 feature_selector              rw   DevString  Sensor additional features
 feature_value                 rw   DevLong    Selected feature value
 plugin_version                r    DevString  Plugin version number
-internal_timeout              rw   DevLong    Timeout for internal trigger on top of exposure time
+timeout                       rw   DevLong    Timeout for internal loop (on top of exposure time)
 ============================= ==== ========== ================================================================
 
 
