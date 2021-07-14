@@ -325,164 +325,164 @@ namespace Ximea
 		void getPluginVersion(std::string& version /Out/);
 
 		// DetInfoCtrlObj
-		void getImageType(ImageType& type);
+		void getImageType(ImageType& type /Out/);
 		void setImageType(ImageType type);
 
-		void getDetectorType(std::string& type);
-		void getDetectorModel(std::string& model);
-		void getDetectorImageSize(Size& size);
-		void getPixelSize(double& x_size, double& y_size);
+		void getDetectorType(std::string& type /Out/);
+		void getDetectorModel(std::string& model /Out/);
+		void getDetectorImageSize(Size& size /Out/);
+		void getPixelSize(double& x_size /Out/, double& y_size /Out/);
 
 		// SyncCtrlObj
 		void setExpTime(double exp_time);
-		void getExpTime(double& exp_time);
+		void getExpTime(double& exp_time /Out/);
 
 		void setNbFrames(int nb_frames);
-		void getNbFrames(int& nb_frames);
+		void getNbFrames(int& nb_frames /Out/);
 
-		void getNbHwAcquiredFrames(int& nb_acq_frames);
+		void getNbHwAcquiredFrames(int& nb_acq_frames /Out/);
 
-		void getStatus(Camera::Status& status);
+		void getStatus(Camera::Status& status /Out/);
 
 		// Buffer control object
 		HwBufferCtrlObj* getBufferCtrlObj();
 
 		// Trigger polarity
-		void getTriggerPolarity(TriggerPolarity& p);
+		void getTriggerPolarity(TriggerPolarity& p /Out/);
 		void setTriggerPolarity(TriggerPolarity p);
 
 		// Software trigger
-		void getSoftwareTrigger(bool &t);
+		void getSoftwareTrigger(bool &t /Out/);
 		void setSoftwareTrigger(bool t);
 
 		// Internal trigger timeout
-		void getInternalTimeout(int &t);
+		void getInternalTimeout(int &t /Out/);
 		void setInternalTimeout(int t);
 
 		// GPIO setup
-		void getGpiSelector(GPISelector& s);
+		void getGpiSelector(GPISelector& s /Out/);
 		void setGpiSelector(GPISelector s);
-		void getGpiMode(GPIMode& m);
+		void getGpiMode(GPIMode& m /Out/);
 		void setGpiMode(GPIMode m);
-		void getGpiLevel(int& s);
+		void getGpiLevel(int& s /Out/);
 		void setGpiLevel(int s);
-		void getGpiLevelAtExpStart(int& s);
+		void getGpiLevelAtExpStart(int& s /Out/);
 		void setGpiLevelAtExpStart(int s);
-		void getGpiLevelAtExpEnd(int& s);
+		void getGpiLevelAtExpEnd(int& s /Out/);
 		void setGpiLevelAtExpEnd(int s);
-		void getGpiDebounce(bool& e);
+		void getGpiDebounce(bool& e /Out/);
 		void setGpiDebounce(bool e);
-		void getGpoSelector(GPOSelector& s);
+		void getGpoSelector(GPOSelector& s /Out/);
 		void setGpoSelector(GPOSelector s);
-		void getGpoMode(GPOMode& m);
+		void getGpoMode(GPOMode& m /Out/);
 		void setGpoMode(GPOMode m);
-		void getLedSelector(LEDSelector& s);
+		void getLedSelector(LEDSelector& s /Out/);
 		void setLedSelector(LEDSelector s);
-		void getLedMode(LEDMode& m);
+		void getLedMode(LEDMode& m /Out/);
 		void setLedMode(LEDMode m);
 
 
 		// ========== Extra attributes ==========
 
 		// Modes
-		void getMode(Mode& p);
+		void getMode(Mode& p /Out/);
 		void setMode(Mode p);
 
 		// Gain
-		void getGainSelector(GainSelector& s);
+		void getGainSelector(GainSelector& s /Out/);
 		void setGainSelector(GainSelector s);
-		void getGain(int& g);
+		void getGain(int& g /Out/);
 		void setGain(int g);
 
 		// Temperature
-		void getIsCooled(bool& c);
-		void getTempControlMode(TempControlMode& m);
+		void getIsCooled(bool& c /Out/);
+		void getTempControlMode(TempControlMode& m /Out/);
 		void setTempControlMode(TempControlMode m);
-		void getTempTarget(double& t);
+		void getTempTarget(double& t /Out/);
 		void setTempTarget(double t);
-		void getThermometer(Thermometer& t);
+		void getThermometer(Thermometer& t /Out/);
 		void setThermometer(Thermometer t);
-		void getTemperature(double& t);
-		void getTempChip(double& t);
-		void getTempHousing(double& t);
-		void getTempBack(double& t);
-		void getTempSensor(double& t);
-		void getThermalElement(ThermalElement& e);
+		void getTemperature(double& t /Out/);
+		void getTempChip(double& t /Out/);
+		void getTempHousing(double& t /Out/);
+		void getTempBack(double& t /Out/);
+		void getTempSensor(double& t /Out/);
+		void getThermalElement(ThermalElement& e /Out/);
 		void setThermalElement(ThermalElement e);
-		void getThermalElementValue(double& v);
+		void getThermalElementValue(double& v /Out/);
 		void setThermalElementValue(double v);
 
 		// Other parameters
-		void getExposureSelector(ExposureSelector& s);
+		void getExposureSelector(ExposureSelector& s /Out/);
 		void setExposureSelector(ExposureSelector s);
-		void getBurstCount(int& c);
+		void getBurstCount(int& c /Out/);
 		void setBurstCount(int c);
-		void getDownsampling(Downsampling& d);
+		void getDownsampling(Downsampling& d /Out/);
 		void setDownsampling(Downsampling d);
-		void getDownsamplingType(DownsamplingType& t);
+		void getDownsamplingType(DownsamplingType& t /Out/);
 		void setDownsamplingType(DownsamplingType t);
-		void getTestPatternGenerator(TestPatternGenerator& g);
+		void getTestPatternGenerator(TestPatternGenerator& g /Out/);
 		void setTestPatternGenerator(TestPatternGenerator g);
-		void getTestPattern(TestPattern& p);
+		void getTestPattern(TestPattern& p /Out/);
 		void setTestPattern(TestPattern p);
-		void getImageFormat(ImageFormat& f);
+		void getImageFormat(ImageFormat& f /Out/);
 		void setImageFormat(ImageFormat f);
-		void getShutter(Shutter& s);
+		void getShutter(Shutter& s /Out/);
 		void setShutter(Shutter s);
-		void getTaps(Taps& t);
+		void getTaps(Taps& t /Out/);
 		void setTaps(Taps t);
-		void getAutoExposureGain(bool& a);
+		void getAutoExposureGain(bool& a /Out/);
 		void setAutoExposureGain(bool a);
-		void getAutoWhiteBalance(bool& a);
+		void getAutoWhiteBalance(bool& a /Out/);
 		void setAutoWhiteBalance(bool a);
-		void getHorizontalFlip(bool& f);
+		void getHorizontalFlip(bool& f /Out/);
 		void setHorizontalFlip(bool f);
-		void getVerticalFlip(bool& f);
+		void getVerticalFlip(bool& f /Out/);
 		void setVerticalFlip(bool f);
-		void getInterlineExpMode(InterlineExpMode& m);
+		void getInterlineExpMode(InterlineExpMode& m /Out/);
 		void setInterlineExpMode(InterlineExpMode m);
-		void getBinningEngine(BinningEngine& e);
+		void getBinningEngine(BinningEngine& e /Out/);
 		void setBinningEngine(BinningEngine e);
-		void getHorizontalBinningPattern(BinningPattern& p);
+		void getHorizontalBinningPattern(BinningPattern& p /Out/);
 		void setHorizontalBinningPattern(BinningPattern p);
-		void getVerticalBinningPattern(BinningPattern& p);
+		void getVerticalBinningPattern(BinningPattern& p /Out/);
 		void setVerticalBinningPattern(BinningPattern p);
-		void getDecimationEngine(DecimationEngine& e);
+		void getDecimationEngine(DecimationEngine& e /Out/);
 		void setDecimationEngine(DecimationEngine e);
-		void getHorizontalDecimation(int& d);
+		void getHorizontalDecimation(int& d /Out/);
 		void setHorizontalDecimation(int d);
-		void getVerticalDecimation(int& d);
+		void getVerticalDecimation(int& d /Out/);
 		void setVerticalDecimation(int d);
-		void getHorizontalDecimationPattern(DecimationPattern& p);
+		void getHorizontalDecimationPattern(DecimationPattern& p /Out/);
 		void setHorizontalDecimationPattern(DecimationPattern p);
-		void getVerticalDecimationPattern(DecimationPattern& p);
+		void getVerticalDecimationPattern(DecimationPattern& p /Out/);
 		void setVerticalDecimationPattern(DecimationPattern p);
-		void getExposurePriority(double& p);
+		void getExposurePriority(double& p /Out/);
 		void setExposurePriority(double p);
-		void getAutoGainLimit(int& l);
+		void getAutoGainLimit(int& l /Out/);
 		void setAutoGainLimit(int l);
-		void getAutoExposureLimit(int& l);
+		void getAutoExposureLimit(int& l /Out/);
 		void setAutoExposureLimit(int l);
-		void getAutoIntensityLevel(int& l);
+		void getAutoIntensityLevel(int& l /Out/);
 		void setAutoIntensityLevel(int l);
-		void getBandwidthLimit(double& l);
+		void getBandwidthLimit(double& l /Out/);
 		void setBandwidthLimit(double l);
-		void getBandwidthLimitEnabled(bool& e);
+		void getBandwidthLimitEnabled(bool& e /Out/);
 		void setBandwidthLimitEnabled(bool e);
-		void getAvailableBandwidth(double& b);
-		void getFrameRate(double& r);
+		void getAvailableBandwidth(double& b /Out/);
+		void getFrameRate(double& r /Out/);
 		void setFrameRate(double r);
-		void getCounterSelector(CounterSelector& s);
+		void getCounterSelector(CounterSelector& s /Out/);
 		void setCounterSelector(CounterSelector s);
-		void getCounterValue(int& v);
-		void getAcqTimingMode(AcqTimingMode& m);
+		void getCounterValue(int& v /Out/);
+		void getAcqTimingMode(AcqTimingMode& m /Out/);
 		void setAcqTimingMode(AcqTimingMode m);
-		void getTriggerDelay(int& d);
+		void getTriggerDelay(int& d /Out/);
 		void setTriggerDelay(int d);
-		void getAcqStatus(bool& s);
-		void getFeatureSelector(FeatureSelector& s);
+		void getAcqStatus(bool& s /Out/);
+		void getFeatureSelector(FeatureSelector& s /Out/);
 		void setFeatureSelector(FeatureSelector s);
-		void getFeatureValue(int& v);
+		void getFeatureValue(int& v /Out/);
 		void setFeatureValue(int v);
 
 	private:
