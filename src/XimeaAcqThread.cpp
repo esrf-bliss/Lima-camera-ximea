@@ -38,7 +38,6 @@ AcqThread::AcqThread(Camera& cam, int timeout)
 AcqThread::~AcqThread()
 {
 	this->m_quit = true;
-	join();
 }
 
 void AcqThread::threadFunction()
@@ -55,11 +54,12 @@ void AcqThread::threadFunction()
 		this->m_buffer.bp = buffer_mgr.getFrameBufferPtr(this->m_cam.m_image_number);
 		this->m_buffer.bp_size = this->m_cam.m_buffer_size;
 
+		bool do_break = false;
+
 		if(this->m_cam.m_trigger_mode == IntTrigMult)
 		{
 			// for software trigger, wait for trigger before setting camera
 			// mode to Exposure, otherwise startAcq will fail on CtControl level
-			bool do_break = false;
 			while(!this->m_cam._soft_trigger_issued())
 				if(this->m_quit)
 				{
@@ -71,7 +71,18 @@ void AcqThread::threadFunction()
 		}
 		
 		this->m_cam._set_status(Camera::Exposure);
-		this->m_cam._read_image(&this->m_buffer, this->m_timeout);
+		do
+		{
+			this->m_cam._read_image(&this->m_buffer, this->m_timeout);
+			if(this->m_quit)
+			{
+				do_break = true;
+				break;
+			}
+		}
+		while(this->m_cam.xi_status == XI_TIMEOUT);
+		if(do_break || this->m_quit)
+			break;
 		
 		this->m_cam._set_status(Camera::Readout);
 		HwFrameInfoType frame_info;
