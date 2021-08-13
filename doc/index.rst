@@ -22,6 +22,35 @@ Follow the generic instructions in :ref:`build_installation`. If using CMake dir
 
 For the Tango server installation, refers to :ref:`tango_installation`.
 
+Prerequisites
+``````````````
+
+In order to use the Ximea plugin, Ximea Linux Software Package needs to be installed on the target machine. The package can be downloaded from the Ximea website (https://www.ximea.com/support/documents/4).
+The installation process is pretty straightforward:
+
+.. code-block:: sh
+
+ tar xvzf XIMEA_Linux_SP.tgz
+ cd package
+ ./install -pcie
+
+Use the ``-pcie`` option to install with support for PCI Express cameras, if this is not needed you can just run ``./install``.
+
+**Important notes**:
+
+- Software Package versions ``4.21.24``, ``4.21.26`` and ``4.21.30`` have compability problems when running on Ubuntu 20.04. It is however advised to always use the newest version of the Software Package, which at the time of writing is ``4.23.02``.
+- The XIMEA kernel module is not DKMS-enabled, which means it needs to be recompiled if a new kernel is installed. In general, running the ``./install`` command again should be sufficient. In case of problems, try to recompile the module manually (example for PCIe cameras):
+
+.. code-block:: sh
+ 
+ cd /opt/XIMEA/src/ximea_cam_pcie
+ make clean
+ make PWD=$(pwd)
+ make install PWD=$(pwd)
+ insmod ximea_cam_pcie.ko
+
+If further clarification is needed please refer to the Software Package's ``README`` file.
+
 Initialisation and Capabilities
 ````````````````````````````````
 
