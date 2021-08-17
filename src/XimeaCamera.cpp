@@ -376,6 +376,8 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 	DEB_MEMBER_FUNCT();
 	DEB_PARAM() << DEB_VAR1(set_roi);
 
+	DEB_TRACE() << "checkRoi. setting roi to: " << DEB_VAR1(set_roi);
+
 	// get ROI parameters info
 	int w_min = this->_get_param_min(XI_PRM_WIDTH);
 	int w_max = this->_get_param_max(XI_PRM_WIDTH);
@@ -425,6 +427,7 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 	Roi r(x, y, w, h);
 	hw_roi = r;
 
+	DEB_TRACE() << "    using roi : " << DEB_VAR1(hw_roi);
 	DEB_RETURN() << DEB_VAR1(hw_roi);
 }
 
