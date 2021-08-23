@@ -401,6 +401,11 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 		w = w_max;
 		h = h_max;
 	}
+	else if(w < 32 || h < 32)
+	{
+		// ROI cannot be too small for correct nb_buffers calculation
+		THROW_HW_ERROR(Error) << "ROI must be at least 32x32";
+	}
 	else
 	{
 		// if cannot set precise ROI, use closest divisible by increment
