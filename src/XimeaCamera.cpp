@@ -263,7 +263,17 @@ void Camera::getPixelSize(double& x_size, double& y_size)
 
 void Camera::getDetectorMaxImageSize(Size& size)
 {
+	// save current ROI
+	Roi current_roi;
+	this->getRoi(current_roi);
+	// reset offsets
+	this->_set_param_int(XI_PRM_OFFSET_X, 0);
+	this->_set_param_int(XI_PRM_OFFSET_Y, 0);
+
 	size = Size(this->_get_param_max(XI_PRM_WIDTH), this->_get_param_max(XI_PRM_HEIGHT));
+
+	// restore ROI
+	this->setRoi(current_roi);
 }
 
 void Camera::getDetectorImageSize(Size& size)
