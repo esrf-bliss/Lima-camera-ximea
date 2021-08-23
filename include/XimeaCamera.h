@@ -362,6 +362,7 @@ namespace lima
 
 			void getDetectorType(std::string& type);
 			void getDetectorModel(std::string& model);
+			void getDetectorMaxImageSize(Size& size);
 			void getDetectorImageSize(Size& size);
 			void getPixelSize(double& x_size, double& y_size);
 

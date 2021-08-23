@@ -330,6 +330,7 @@ namespace Ximea
 
 		void getDetectorType(std::string& type /Out/);
 		void getDetectorModel(std::string& model /Out/);
+		void getDetectorMaxImageSize(Size& size /Out/);
 		void getDetectorImageSize(Size& size /Out/);
 		void getPixelSize(double& x_size /Out/, double& y_size /Out/);
 

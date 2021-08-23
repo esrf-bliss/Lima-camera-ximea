@@ -261,6 +261,11 @@ void Camera::getPixelSize(double& x_size, double& y_size)
 	}
 }
 
+void Camera::getDetectorMaxImageSize(Size& size)
+{
+	size = Size(this->_get_param_max(XI_PRM_WIDTH), this->_get_param_max(XI_PRM_HEIGHT));
+}
+
 void Camera::getDetectorImageSize(Size& size)
 {
 	size = Size(this->_get_param_int(XI_PRM_WIDTH), this->_get_param_int(XI_PRM_HEIGHT));
