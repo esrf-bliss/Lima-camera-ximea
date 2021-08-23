@@ -381,18 +381,28 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 	DEB_MEMBER_FUNCT();
 	DEB_PARAM() << DEB_VAR1(set_roi);
 
-	// get ROI parameters info
+	// save current ROI
+	Roi current_roi;
+	this->getRoi(current_roi);
+
+	// set offsets to zero
+	this->_set_param_int(XI_PRM_OFFSET_X, 0);
+	this->_set_param_int(XI_PRM_OFFSET_Y, 0);
+
+	// get W/H parameters info
 	int w_min = this->_get_param_min(XI_PRM_WIDTH);
 	int w_max = this->_get_param_max(XI_PRM_WIDTH);
 	int w_inc = this->_get_param_inc(XI_PRM_WIDTH);
 	int h_min = this->_get_param_min(XI_PRM_HEIGHT);
 	int h_max = this->_get_param_max(XI_PRM_HEIGHT);
 	int h_inc = this->_get_param_inc(XI_PRM_HEIGHT);
-	int x_min = this->_get_param_min(XI_PRM_OFFSET_X);
-	int x_max = this->_get_param_max(XI_PRM_OFFSET_X);
+
+	// set W/H to max values
+	this->_set_param_int(XI_PRM_WIDTH, w_max);
+	this->_set_param_int(XI_PRM_HEIGHT, h_max);
+	
+	// get offset increment as it should not change with W/H
 	int x_inc = this->_get_param_inc(XI_PRM_OFFSET_X);
-	int y_min = this->_get_param_min(XI_PRM_OFFSET_Y);
-	int y_max = this->_get_param_max(XI_PRM_OFFSET_Y);
 	int y_inc = this->_get_param_inc(XI_PRM_OFFSET_Y);
 
 	int w = set_roi.getSize().getWidth();
@@ -422,15 +432,27 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 		w = ceil(double(nw) / w_inc) * w_inc;
 		h = ceil(double(nh) / h_inc) * h_inc;
 
-		// check min-max
-		// TODO: the quirk is that we should set W/H first, then read limits
-		// for X/Y  to get the correct value. However setting anything in check
-		// method seems sketchy. Some workaround is needed.
+		// check W/H min-max
 		w = min(w_max, max(w_min, w));
 		h = min(h_max, max(h_min, h));
+
+		// set calculated W/H
+		this->_set_param_int(XI_PRM_HEIGHT, h);
+		this->_set_param_int(XI_PRM_WIDTH, w);
+
+		// get offset limits for given W/H
+		int x_min = this->_get_param_min(XI_PRM_OFFSET_X);
+		int x_max = this->_get_param_max(XI_PRM_OFFSET_X);
+		int y_min = this->_get_param_min(XI_PRM_OFFSET_Y);
+		int y_max = this->_get_param_max(XI_PRM_OFFSET_Y);
+
+		// check offset min-max
 		x = min(x_max, max(x_min, nx));
 		y = min(y_max, max(y_min, ny));
 	}
+
+	// restore previous ROI
+	this->setRoi(current_roi);
 
 	Roi r(x, y, w, h);
 	hw_roi = r;
@@ -450,6 +472,10 @@ void Camera::setRoi(const Roi& ask_roi)
 
 	if(ask_roi.isActive())
 	{
+		// reset offsets
+		this->_set_param_int(XI_PRM_OFFSET_X, 0);
+		this->_set_param_int(XI_PRM_OFFSET_Y, 0);
+
 		// then set the new ROI
 		// order is important, first we need to set w/h and only then the offsets
 		this->_set_param_int(XI_PRM_WIDTH, ask_roi.getSize().getWidth());
