@@ -548,6 +548,8 @@ namespace lima
 			AcqThread* m_acq_thread;
 			SoftBufferCtrlObj m_buffer_ctrl_obj;
 			TrigMode m_trigger_mode;
+			int m_max_height;
+			int m_max_width;
 			
 			// internal
 			TriggerPolarity m_trig_polarity;

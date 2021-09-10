@@ -46,7 +46,9 @@ Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int timeout
 	  m_startup_temp_control_mode(startup_temp_control_mode),
 	  m_startup_target_temp(startup_target_temp),
 	  m_startup_mode(startup_mode),
-	  m_soft_trigger_issued(false)
+	  m_soft_trigger_issued(false),
+	  m_max_height(0),
+	  m_max_width(0)
 {
 	DEB_CONSTRUCTOR();
 	this->_startup();
@@ -92,6 +94,10 @@ void Camera::_startup()
 	// set startup and default mode
 	this->setMode(this->m_startup_mode);
 	this->_set_param_int(XI_PRM_USER_SET_DEFAULT, this->m_startup_mode);
+
+	// read max frame size
+	this->m_max_width = this->_get_param_max(XI_PRM_WIDTH);
+	this->m_max_height = this->_get_param_max(XI_PRM_HEIGHT);
 }
 
 void Camera::getPluginVersion(string& version)
@@ -263,17 +269,7 @@ void Camera::getPixelSize(double& x_size, double& y_size)
 
 void Camera::getDetectorMaxImageSize(Size& size)
 {
-	// save current ROI
-	Roi current_roi;
-	this->getRoi(current_roi);
-	// reset offsets
-	this->_set_param_int(XI_PRM_OFFSET_X, 0);
-	this->_set_param_int(XI_PRM_OFFSET_Y, 0);
-
-	size = Size(this->_get_param_max(XI_PRM_WIDTH), this->_get_param_max(XI_PRM_HEIGHT));
-
-	// restore ROI
-	this->setRoi(current_roi);
+	size = Size(this->m_max_width, this->m_max_height);
 }
 
 void Camera::getDetectorImageSize(Size& size)
@@ -396,15 +392,15 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 	this->getRoi(current_roi);
 
 	// set offsets to zero
-	this->_set_param_int(XI_PRM_OFFSET_X, 0);
-	this->_set_param_int(XI_PRM_OFFSET_Y, 0);
+	// this->_set_param_int(XI_PRM_OFFSET_X, 0);
+	// this->_set_param_int(XI_PRM_OFFSET_Y, 0);
 
 	// get W/H parameters info
 	int w_min = this->_get_param_min(XI_PRM_WIDTH);
-	int w_max = this->_get_param_max(XI_PRM_WIDTH);
+	int w_max = this->m_max_width;
 	int w_inc = this->_get_param_inc(XI_PRM_WIDTH);
 	int h_min = this->_get_param_min(XI_PRM_HEIGHT);
-	int h_max = this->_get_param_max(XI_PRM_HEIGHT);
+	int h_max = this->m_max_height;
 	int h_inc = this->_get_param_inc(XI_PRM_HEIGHT);
 
 	// set W/H to max values
