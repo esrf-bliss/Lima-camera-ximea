@@ -362,6 +362,7 @@ namespace lima
 
 			void getDetectorType(std::string& type);
 			void getDetectorModel(std::string& model);
+			void getDetectorMaxImageSize(Size& size);
 			void getDetectorImageSize(Size& size);
 			void getPixelSize(double& x_size, double& y_size);
 
@@ -547,6 +548,8 @@ namespace lima
 			AcqThread* m_acq_thread;
 			SoftBufferCtrlObj m_buffer_ctrl_obj;
 			TrigMode m_trigger_mode;
+			int m_max_height;
+			int m_max_width;
 			
 			// internal
 			TriggerPolarity m_trig_polarity;
