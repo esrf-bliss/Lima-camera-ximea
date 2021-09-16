@@ -29,6 +29,7 @@
 #include <string>
 #include <cmath>
 #include <sstream>
+#include <unistd.h>
 
 #include "lima/Debug.h"
 #include "lima/Exceptions.h"
