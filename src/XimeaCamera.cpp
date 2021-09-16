@@ -48,7 +48,8 @@ Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int timeout
 	  m_startup_mode(startup_mode),
 	  m_soft_trigger_issued(false),
 	  m_max_height(0),
-	  m_max_width(0)
+	  m_max_width(0),
+	  m_latency_time(0)
 {
 	DEB_CONSTRUCTOR();
 	this->_startup();
@@ -352,6 +353,16 @@ void Camera::getExpTime(double& exp_time)
 	int r = this->_get_param_int(XI_PRM_EXPOSURE);
 	// convert exposure from us to s
 	exp_time = (double)(r / TIME_HW);
+}
+
+void Camera::setLatTime(double lat_time)
+{
+	this->m_latency_time = lat_time;
+}
+
+void Camera::getLatTime(double& lat_time)
+{
+	lat_time = this->m_latency_time;
 }
 
 void Camera::setNbFrames(int nb_frames)

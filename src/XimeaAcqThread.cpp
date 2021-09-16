@@ -91,6 +91,12 @@ void AcqThread::threadFunction()
 		DEB_TRACE() << DEB_VAR1(continueAcq);
 		++this->m_cam.m_image_number;
 
+		if(this->m_cam.m_latency_time > 0)
+		{
+			this->m_cam._set_status(Camera::Latency);
+			usleep(long(this->m_cam.m_latency_time * 1e6));
+		}
+
 		if(!continueAcq)
 		{
 			this->m_cam._set_status(Camera::Fault);
