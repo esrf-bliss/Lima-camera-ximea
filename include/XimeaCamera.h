@@ -373,6 +373,9 @@ namespace lima
 			void setExpTime(double exp_time);
 			void getExpTime(double& exp_time);
 
+			void setLatTime(double lat_time);
+			void getLatTime(double& lat_time);
+
 			void setNbFrames(int nb_frames);
 			void getNbFrames(int& nb_frames);
 
@@ -550,6 +553,7 @@ namespace lima
 			TrigMode m_trigger_mode;
 			int m_max_height;
 			int m_max_width;
+			double m_latency_time;
 			
 			// internal
 			TriggerPolarity m_trig_polarity;
