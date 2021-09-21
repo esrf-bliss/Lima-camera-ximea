@@ -467,6 +467,7 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 	Roi r(x, y, w, h);
 	hw_roi = r;
 
+	DEB_TRACE() << "    using roi : " << DEB_VAR1(hw_roi);
 	DEB_RETURN() << DEB_VAR1(hw_roi);
 }
 

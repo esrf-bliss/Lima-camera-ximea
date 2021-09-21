@@ -1,0 +1,8 @@
+
+To run the tests in this directory simply run 
+
+   pytest --device <devname> 
+
+in the main project directory (above the tests/ directory)
+
+
