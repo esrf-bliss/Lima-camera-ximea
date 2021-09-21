@@ -485,7 +485,10 @@ void Camera::setRoi(const Roi& ask_roi)
 	// check if new ROI is the same as currently set one
 	Roi r;
 	this->getRoi(r);
+
 	if(r == ask_roi) return;
+
+	DEB_TRACE() << "    programming roi : " << DEB_VAR1(ask_roi);
 
 	if(ask_roi.isActive())
 	{
@@ -495,11 +498,13 @@ void Camera::setRoi(const Roi& ask_roi)
 
 		// then set the new ROI
 		// order is important, first we need to set w/h and only then the offsets
+	        DEB_TRACE() << "     roi setting width to " << ask_roi.getSize().getWidth();
 		this->_set_param_int(XI_PRM_WIDTH, ask_roi.getSize().getWidth());
 		this->_set_param_int(XI_PRM_HEIGHT, ask_roi.getSize().getHeight());
 		this->_set_param_int(XI_PRM_OFFSET_X, ask_roi.getTopLeft().x);
 		this->_set_param_int(XI_PRM_OFFSET_Y, ask_roi.getTopLeft().y);
 	}
+	DEB_TRACE() << "    programming roi done";
 }
 
 void Camera::getRoi(Roi& hw_roi)
