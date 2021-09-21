@@ -333,6 +333,7 @@ namespace Ximea
 		void getDetectorMaxImageSize(Size& size /Out/);
 		void getDetectorImageSize(Size& size /Out/);
 		void getPixelSize(double& x_size /Out/, double& y_size /Out/);
+		void getCameraSerialNumber(std::string& sn /Out/);
 
 		// SyncCtrlObj
 		void setExpTime(double exp_time);

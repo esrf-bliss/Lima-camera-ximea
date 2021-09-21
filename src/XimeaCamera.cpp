@@ -77,6 +77,7 @@ void Camera::_startup()
 		THROW_HW_ERROR(Error) << "Could not open camera " << this->cam_id << "; status: " << this->xi_status;
 
 	this->m_camera_model = this->_get_param_str(XI_PRM_DEVICE_NAME);
+	this->m_camera_sn = this->_get_param_str(XI_PRM_DEVICE_SN);
 
 	// set debug level
 	this->_set_param_int(XI_PRM_DEBUG_LEVEL, XI_DL_DISABLED);
@@ -246,6 +247,11 @@ void Camera::getDetectorType(std::string& type)
 void Camera::getDetectorModel(std::string& model)
 {
 	model = this->m_camera_model;
+}
+
+void Camera::getCameraSerialNumber(std::string& sn)
+{
+	sn = this->m_camera_sn;
 }
 
 void Camera::getPixelSize(double& x_size, double& y_size)
