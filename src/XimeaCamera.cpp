@@ -404,7 +404,11 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 	DEB_MEMBER_FUNCT();
 	DEB_PARAM() << DEB_VAR1(set_roi);
 
-	// get ROI parameters info
+	// set offsets to zero
+	// this->_set_param_int(XI_PRM_OFFSET_X, 0);
+	// this->_set_param_int(XI_PRM_OFFSET_Y, 0);
+
+	// get W/H parameters info
 	int w_min = this->_get_param_min(XI_PRM_WIDTH);
 	int w_max = this->m_max_width;
 	int w_inc = this->_get_param_inc(XI_PRM_WIDTH);
