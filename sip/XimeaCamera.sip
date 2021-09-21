@@ -330,6 +330,7 @@ namespace Ximea
 
 		void getDetectorType(std::string& type /Out/);
 		void getDetectorModel(std::string& model /Out/);
+		void getDetectorMaxImageSize(Size& size /Out/);
 		void getDetectorImageSize(Size& size /Out/);
 		void getPixelSize(double& x_size /Out/, double& y_size /Out/);
 
@@ -339,6 +340,9 @@ namespace Ximea
 
 		void setNbFrames(int nb_frames);
 		void getNbFrames(int& nb_frames /Out/);
+
+		void setLatTime(double lat_time);
+		void getLatTime(double& lat_time /Out/);
 
 		void getNbHwAcquiredFrames(int& nb_acq_frames /Out/);
 
