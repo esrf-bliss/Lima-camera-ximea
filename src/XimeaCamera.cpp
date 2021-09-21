@@ -398,10 +398,6 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 	DEB_MEMBER_FUNCT();
 	DEB_PARAM() << DEB_VAR1(set_roi);
 
-	// save current ROI
-	Roi current_roi;
-	this->getRoi(current_roi);
-
 	// set offsets to zero
 	// this->_set_param_int(XI_PRM_OFFSET_X, 0);
 	// this->_set_param_int(XI_PRM_OFFSET_Y, 0);
@@ -467,9 +463,6 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 		x = min(x_max, max(x_min, nx));
 		y = min(y_max, max(y_min, ny));
 	}
-
-	// restore previous ROI
-	this->setRoi(current_roi);
 
 	Roi r(x, y, w, h);
 	hw_roi = r;
