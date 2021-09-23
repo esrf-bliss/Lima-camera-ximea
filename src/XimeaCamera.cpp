@@ -51,7 +51,8 @@ Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int timeout
 	  m_max_width(0),
 	  m_latency_time(0),
 	  m_last_ts(0),
-	  m_readout_time(0)
+	  m_readout_time(0),
+	  m_readout_time_last_frame(0)
 {
 	DEB_CONSTRUCTOR();
 	this->_startup();
@@ -1354,4 +1355,9 @@ void Camera::setTimeout(int t)
 void Camera::getReadoutTime(double &t)
 {
 	t = this->m_readout_time;
+}
+
+void Camera::getReadoutTimeLastFrame(double &t)
+{
+	t = this->m_readout_time_last_frame;
 }

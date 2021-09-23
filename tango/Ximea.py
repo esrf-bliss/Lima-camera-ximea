@@ -936,9 +936,17 @@ class XimeaClass(PyTango.DeviceClass):
 			{
 				'unit': 's',
 				'format': '',
-				'description': 'Readout time',
+				'description': 'Mean readout time',
 			}
 		],
+		"readout_time_last_frame": [
+			[PyTango.DevDouble, PyTango.SCALAR, PyTango.READ],
+			{
+				'unit': 's',
+				'format': '',
+				'description': 'Last frame readout time',
+			}
+		]
 	}
 
 	def __init__(self, name):

@@ -409,7 +409,9 @@ namespace lima
 			void getTimeout(int &t);
 			void setTimeout(int t);
 
+			// Readout time
 			void getReadoutTime(double &t);
+			void getReadoutTimeLastFrame(double &t);
 
 			// GPIO setup
 			void getGpiSelector(GPISelector& s);
@@ -567,6 +569,7 @@ namespace lima
 			// readout time
 			double m_last_ts;
 			double m_readout_time;
+			double m_readout_time_last_frame;
 
 			void _startup(void);
 			bool _check_model(std::string model);

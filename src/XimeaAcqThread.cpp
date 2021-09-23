@@ -96,6 +96,7 @@ void AcqThread::threadFunction()
 		if(this->m_cam.m_last_ts != 0)
 		{
 			double dt = ts - this->m_cam.m_last_ts;
+			this->m_cam.m_readout_time_last_frame = dt;
 			this->m_cam.m_readout_time = (this->m_cam.m_readout_time + dt) / 2;
 		}
 		this->m_cam.m_last_ts = ts;
