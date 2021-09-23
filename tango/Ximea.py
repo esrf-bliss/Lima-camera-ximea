@@ -931,6 +931,13 @@ class XimeaClass(PyTango.DeviceClass):
 				'memorized': 'true',
 			}
 		],
+		'camera_serial_number': [
+			[PyTango.DevString, PyTango.SCALAR, PyTango.READ],
+			{
+				'format': '',
+				'description': 'Camera serial number',
+			}
+		],
 	}
 
 	def __init__(self, name):

@@ -77,6 +77,7 @@ void Camera::_startup()
 		THROW_HW_ERROR(Error) << "Could not open camera " << this->cam_id << "; status: " << this->xi_status;
 
 	this->m_camera_model = this->_get_param_str(XI_PRM_DEVICE_NAME);
+	this->m_camera_sn = this->_get_param_str(XI_PRM_DEVICE_SN);
 
 	// set debug level
 	this->_set_param_int(XI_PRM_DEBUG_LEVEL, XI_DL_DISABLED);
@@ -248,6 +249,11 @@ void Camera::getDetectorModel(std::string& model)
 	model = this->m_camera_model;
 }
 
+void Camera::getCameraSerialNumber(std::string& sn)
+{
+	sn = this->m_camera_sn;
+}
+
 void Camera::getPixelSize(double& x_size, double& y_size)
 {
 	// Return pixel size based on camera model
@@ -398,26 +404,17 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 	DEB_MEMBER_FUNCT();
 	DEB_PARAM() << DEB_VAR1(set_roi);
 
-	// save current ROI
-	Roi current_roi;
-	this->getRoi(current_roi);
-
-	// set offsets to zero
-	// this->_set_param_int(XI_PRM_OFFSET_X, 0);
-	// this->_set_param_int(XI_PRM_OFFSET_Y, 0);
+	DEB_TRACE() << "    checking for roi : " << DEB_VAR1(set_roi);
 
 	// get W/H parameters info
 	int w_min = this->_get_param_min(XI_PRM_WIDTH);
-	int w_max = this->m_max_width;
 	int w_inc = this->_get_param_inc(XI_PRM_WIDTH);
-	int h_min = this->_get_param_min(XI_PRM_HEIGHT);
-	int h_max = this->m_max_height;
-	int h_inc = this->_get_param_inc(XI_PRM_HEIGHT);
+	int w_max = this->m_max_width;
 
-	// set W/H to max values
-	this->_set_param_int(XI_PRM_WIDTH, w_max);
-	this->_set_param_int(XI_PRM_HEIGHT, h_max);
-	
+	int h_min = this->_get_param_min(XI_PRM_HEIGHT);
+	int h_inc = this->_get_param_inc(XI_PRM_HEIGHT);
+	int h_max = this->m_max_height;
+
 	// get offset increment as it should not change with W/H
 	int x_inc = this->_get_param_inc(XI_PRM_OFFSET_X);
 	int y_inc = this->_get_param_inc(XI_PRM_OFFSET_Y);
@@ -431,7 +428,7 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 	{
 		// zero means infinity in Lima language
 		w = w_max;
-		h = h_max;
+		h = h_max; 
 	}
 	else if(w < 32 || h < 32)
 	{
@@ -453,27 +450,14 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 		w = min(w_max, max(w_min, w));
 		h = min(h_max, max(h_min, h));
 
-		// set calculated W/H
-		this->_set_param_int(XI_PRM_HEIGHT, h);
-		this->_set_param_int(XI_PRM_WIDTH, w);
-
-		// get offset limits for given W/H
-		int x_min = this->_get_param_min(XI_PRM_OFFSET_X);
-		int x_max = this->_get_param_max(XI_PRM_OFFSET_X);
-		int y_min = this->_get_param_min(XI_PRM_OFFSET_Y);
-		int y_max = this->_get_param_max(XI_PRM_OFFSET_Y);
-
-		// check offset min-max
-		x = min(x_max, max(x_min, nx));
-		y = min(y_max, max(y_min, ny));
+		x = nx;
+		y = ny;
 	}
-
-	// restore previous ROI
-	this->setRoi(current_roi);
 
 	Roi r(x, y, w, h);
 	hw_roi = r;
 
+	DEB_TRACE() << "    using hw roi -  " << DEB_VAR1(hw_roi);
 	DEB_RETURN() << DEB_VAR1(hw_roi);
 }
 
@@ -483,9 +467,14 @@ void Camera::setRoi(const Roi& ask_roi)
 	DEB_PARAM() << DEB_VAR1(ask_roi);
 
 	// check if new ROI is the same as currently set one
+        int x,y,w,h;
+
 	Roi r;
 	this->getRoi(r);
+
 	if(r == ask_roi) return;
+
+	DEB_TRACE() << "    programming hw roi to - " << DEB_VAR1(ask_roi);
 
 	if(ask_roi.isActive())
 	{
@@ -500,6 +489,7 @@ void Camera::setRoi(const Roi& ask_roi)
 		this->_set_param_int(XI_PRM_OFFSET_X, ask_roi.getTopLeft().x);
 		this->_set_param_int(XI_PRM_OFFSET_Y, ask_roi.getTopLeft().y);
 	}
+	DEB_TRACE() << "    programming roi done";
 }
 
 void Camera::getRoi(Roi& hw_roi)
