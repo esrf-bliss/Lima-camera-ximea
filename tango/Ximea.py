@@ -931,6 +931,14 @@ class XimeaClass(PyTango.DeviceClass):
 				'memorized': 'true',
 			}
 		],
+		"readout_time": [
+			[PyTango.DevDouble, PyTango.SCALAR, PyTango.READ],
+			{
+				'unit': 's',
+				'format': '',
+				'description': 'Readout time',
+			}
+		],
 	}
 
 	def __init__(self, name):

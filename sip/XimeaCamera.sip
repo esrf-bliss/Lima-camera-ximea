@@ -363,6 +363,8 @@ namespace Ximea
 		void getTimeout(int &t /Out/);
 		void setTimeout(int t);
 
+		void getReadoutTime(double &t);
+
 		// GPIO setup
 		void getGpiSelector(GPISelector& s /Out/);
 		void setGpiSelector(GPISelector s);

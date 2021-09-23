@@ -409,6 +409,8 @@ namespace lima
 			void getTimeout(int &t);
 			void setTimeout(int t);
 
+			void getReadoutTime(double &t);
+
 			// GPIO setup
 			void getGpiSelector(GPISelector& s);
 			void setGpiSelector(GPISelector s);

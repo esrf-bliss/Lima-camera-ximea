@@ -1348,3 +1348,7 @@ void Camera::setTimeout(int t)
 	}
 	this->m_timeout = t;
 }
+
+void Camera::getReadoutTime(double &t)
+{
+}
