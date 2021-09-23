@@ -91,6 +91,15 @@ void AcqThread::threadFunction()
 		DEB_TRACE() << DEB_VAR1(continueAcq);
 		++this->m_cam.m_image_number;
 
+		// readout time calculation
+		double ts = this->m_buffer.tsSec + this->m_buffer.tsUSec / 1e6;
+		if(this->m_cam.m_last_ts != 0)
+		{
+			double dt = ts - this->m_cam.m_last_ts;
+			this->m_cam.m_readout_time = (this->m_cam.m_readout_time + dt) / 2;
+		}
+		this->m_cam.m_last_ts = ts;
+
 		if(this->m_cam.m_latency_time > 0)
 		{
 			this->m_cam._set_status(Camera::Latency);

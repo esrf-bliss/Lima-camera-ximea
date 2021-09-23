@@ -564,6 +564,10 @@ namespace lima
 			unsigned int m_timeout;
 			bool m_soft_trigger_issued;
 
+			// readout time
+			double m_last_ts;
+			double m_readout_time;
+
 			void _startup(void);
 			bool _check_model(std::string model);
 
