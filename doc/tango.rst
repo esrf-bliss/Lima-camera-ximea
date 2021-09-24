@@ -92,6 +92,9 @@ feature_selector              rw   DevString  Sensor additional features
 feature_value                 rw   DevLong    Selected feature value
 plugin_version                r    DevString  Plugin version number
 timeout                       rw   DevLong    Timeout for internal loop (on top of exposure time)
+camera_serial_number          r    DevString  Camera serial number
+readout_time                  r    DevDouble  Mean readout time in seconds
+readout_time_last_frame       r    DevDouble  Readout time of last frame in seconds
 ============================= ==== ========== ================================================================
 
 
