@@ -128,19 +128,23 @@ void Camera::startAcq()
 {
 	DEB_MEMBER_FUNCT();
 
-	if(this->m_trigger_mode == IntTrigMult && this->m_acq_thread->m_thread_started)
+        if (this->m_acq_thread->m_thread_started)
+	    if(this->m_trigger_mode == IntTrigMult || this->m_trigger_mode == IntTrig )  {
 		this->_generate_soft_trigger();
-	else
-	{
-		if(!this->m_image_number)
+                return;
+            }
+      
+	// else - no thread started and IntTrig or IntTrigMulti
+	// {
+        if(!this->m_image_number)
 			this->m_buffer_ctrl_obj.getBuffer().setStartTimestamp(Timestamp::now());
 
-		xiStartAcquisition(this->xiH);
-		this->m_acq_thread->m_quit = false;
-		this->m_acq_thread->start();
-		if(this->m_trigger_mode == IntTrigMult)
-			this->_generate_soft_trigger();
-	}
+        xiStartAcquisition(this->xiH);
+        this->m_acq_thread->m_quit = false;
+	this->m_acq_thread->start();
+	if(this->m_trigger_mode == IntTrigMult || this->m_trigger_mode == IntTrig)
+	   this->_generate_soft_trigger();
+	// }
 }
 
 void Camera::stopAcq()
@@ -291,8 +295,10 @@ void Camera::setTrigMode(TrigMode mode)
 
 	if(mode == IntTrig)
 	{
-		this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_OFF);
-		this->_set_param_int(XI_PRM_TRG_SELECTOR, XI_TRG_SEL_FRAME_BURST_START);
+		// this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_OFF);
+		// this->_set_param_int(XI_PRM_TRG_SELECTOR, XI_TRG_SEL_FRAME_BURST_START);
+		this->_set_param_int(XI_PRM_TRG_SOURCE, XI_TRG_SOFTWARE);
+		this->_set_param_int(XI_PRM_TRG_SELECTOR, XI_TRG_SEL_FRAME_START);
 	}
 	else if(mode == IntTrigMult)
 	{
