@@ -103,7 +103,7 @@ void SyncCtrlObj::getValidRanges(ValidRangesType& valid_ranges)
 
 	// TODO: fill these example values with real ones
 	valid_ranges.min_exp_time = 0;
-	valid_ranges.max_exp_time = 10;
+	valid_ranges.max_exp_time = 1000;
 }
 
 bool SyncCtrlObj::checkAutoExposureMode(HwSyncCtrlObj::AutoExposureMode mode) const

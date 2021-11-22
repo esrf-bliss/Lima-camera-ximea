@@ -56,7 +56,7 @@ void AcqThread::threadFunction()
 
 		bool do_break = false;
 
-		if(this->m_cam.m_trigger_mode == IntTrigMult || this->m_cam.m_trigger_mode == IntTrig)
+		if(this->m_cam.m_trigger_mode == IntTrigMult) 
 		{
 			// for software trigger, wait for trigger before setting camera
 			// mode to Exposure, otherwise startAcq will fail on CtControl level
