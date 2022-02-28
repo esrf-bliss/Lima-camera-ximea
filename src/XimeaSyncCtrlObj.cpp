@@ -42,7 +42,7 @@ bool SyncCtrlObj::checkTrigMode(TrigMode trig_mode)
 	{
 		case IntTrig:
 		case IntTrigMult:
-		// case ExtTrigSingle:
+		case ExtTrigSingle:
 		// not supoorted - lack of camera support for XI_PRM_EXPOSURE_BURST_COUNT
 		case ExtTrigMult:
 		// case ExtGate:
