@@ -346,8 +346,11 @@ namespace Ximea
 		void setNbFrames(int nb_frames);
 		void getNbFrames(int& nb_frames /Out/);
 
-		void setLatTime(double lat_time);
-		void getLatTime(double& lat_time /Out/);
+		// void setLatTime(double lat_time);
+		// void getLatTime(double& lat_time /Out/);
+
+		void setReadoutTime(double lat_time);
+		void getReadoutTime(double& lat_time /Out/);
 
 		void getNbHwAcquiredFrames(int& nb_acq_frames /Out/);
 

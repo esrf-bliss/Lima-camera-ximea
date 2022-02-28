@@ -99,9 +99,10 @@ void AcqThread::threadFunction()
 		if(do_break || this->m_quit)
 			break;
 		
-
-		if(this->m_cam.m_latency_time > 0)
+		if((this->m_cam.m_latency_time > 0) && (this->m_cam.m_trigger_mode == IntTrigMult))
+		// if(this->m_cam.m_latency_time > 0) 
 		{
+                        // apply latency artificially only in IntTrigMulti
 			this->m_cam._set_status(Camera::Latency);
 			usleep(long(this->m_cam.m_latency_time * 1e6));
 		}
@@ -113,6 +114,7 @@ void AcqThread::threadFunction()
 			this->m_cam.reportException(e, "Ximea/AcqThread/newFrameReady");
 			break;
 		}
+
 		if(this->m_cam.xi_status != XI_OK)
 		{
 			this->m_cam._set_status(Camera::Fault);
