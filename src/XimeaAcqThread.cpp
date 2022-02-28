@@ -32,7 +32,6 @@ AcqThread::AcqThread(Camera& cam, int timeout)
 	  m_thread_started(false)
 {
 	pthread_attr_setscope(&m_thread_attr, PTHREAD_SCOPE_PROCESS);
-	memset((void*)&this->m_buffer, 0, sizeof(XI_IMG));
 }
 
 AcqThread::~AcqThread()
@@ -44,6 +43,8 @@ void AcqThread::threadFunction()
 {
 	DEB_MEMBER_FUNCT();
 	this->m_thread_started = true;
+        XI_IMG img_buffer;
+	memset((void*)&img_buffer, 0, sizeof(XI_IMG));
 
 	StdBufferCbMgr& buffer_mgr = this->m_cam.m_buffer_ctrl_obj.getBuffer();
 
@@ -51,8 +52,8 @@ void AcqThread::threadFunction()
 	while(!this->m_quit && (this->m_cam.m_nb_frames == 0 || this->m_cam.m_image_number < this->m_cam.m_nb_frames))
 	{
 		// set up acq buffers
-		this->m_buffer.bp = buffer_mgr.getFrameBufferPtr(this->m_cam.m_image_number);
-		this->m_buffer.bp_size = this->m_cam.m_buffer_size;
+		img_buffer.bp = buffer_mgr.getFrameBufferPtr(this->m_cam.m_image_number);
+		img_buffer.bp_size = this->m_cam.m_buffer_size;
 
 		bool do_break = false;
 
@@ -73,7 +74,7 @@ void AcqThread::threadFunction()
 		this->m_cam._set_status(Camera::Exposure);
 		do
 		{
-			this->m_cam._read_image(&this->m_buffer, this->m_timeout);
+			this->m_cam._read_image(&img_buffer, this->m_timeout);
 			if(this->m_quit)
 			{
 				do_break = true;
@@ -82,15 +83,22 @@ void AcqThread::threadFunction()
 		}
 		while(this->m_cam.xi_status == XI_TIMEOUT);
 
+		if(this->m_cam.xi_status == XI_OK) {
+                    DEB_TRACE() << "    new image obtained - code is OK - imgno is " << DEB_VAR1(this->m_cam.m_image_number);
+		   this->m_cam._set_status(Camera::Readout);
+		   HwFrameInfoType frame_info;
+		   frame_info.acq_frame_nb = this->m_cam.m_image_number;
+		   continueAcq = buffer_mgr.newFrameReady(frame_info);
+		   ++this->m_cam.m_image_number;
+		   // DEB_TRACE() << DEB_VAR1(continueAcq);
+                } else {
+                    DEB_TRACE() << "    new image obtained - code is NOT OK. CODE is " << DEB_VAR1(this->m_cam.xi_status);
+                }
+
+
 		if(do_break || this->m_quit)
 			break;
 		
-		this->m_cam._set_status(Camera::Readout);
-		HwFrameInfoType frame_info;
-		frame_info.acq_frame_nb = this->m_cam.m_image_number;
-		continueAcq = buffer_mgr.newFrameReady(frame_info);
-		DEB_TRACE() << DEB_VAR1(continueAcq);
-		++this->m_cam.m_image_number;
 
 		if(this->m_cam.m_latency_time > 0)
 		{

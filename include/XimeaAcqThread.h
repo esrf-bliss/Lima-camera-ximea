@@ -50,7 +50,6 @@ namespace lima
 				Camera& m_cam;
 
 				bool m_quit;
-				XI_IMG m_buffer;
 				int m_timeout;
 				bool m_thread_started;
 		};

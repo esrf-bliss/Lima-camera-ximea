@@ -868,7 +868,8 @@ int Camera::_get_trigger_timeout(void)
 	this->getExpTime(exp_time);
 	int exp_ms = int(exp_time * TIME_HW / 1e3);	// convert to ms
 	int timeout = this->m_timeout + exp_ms;
-	return timeout;
+        return 10;
+	// return timeout;
 }
 
 void Camera::_stop_acq_thread()
