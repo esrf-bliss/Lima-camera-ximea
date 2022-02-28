@@ -55,6 +55,7 @@ namespace lima
 			virtual void stopAcq();
 			virtual void getStatus(StatusType& status);
 			virtual int	getNbHwAcquiredFrames();
+			virtual void setReadoutTime(double& readout_time);
 
 			Camera& getCamera() { return this->m_cam; }
 			const Camera& getCamera() const { return this->m_cam; }

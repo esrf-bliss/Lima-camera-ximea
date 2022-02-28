@@ -122,3 +122,10 @@ int Interface::getNbHwAcquiredFrames()
 	this->m_cam.getNbHwAcquiredFrames(acq_frames);
 	return acq_frames;
 }
+
+void Interface::setReadoutTime(double& readout_time)
+{
+	DEB_MEMBER_FUNCT();
+
+	this->m_sync->setReadoutTime(readout_time); 
+}
