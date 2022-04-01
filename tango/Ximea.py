@@ -73,6 +73,43 @@ _GpiSelector = {
 	"PORT_12": Xi.Camera.GPISelector_Port_12,
 }
 
+_GpoSelector = {
+	"PORT_1": Xi.Camera.GPOSelector_Port_1,
+	"PORT_2": Xi.Camera.GPOSelector_Port_2,
+	"PORT_3": Xi.Camera.GPOSelector_Port_3,
+	"PORT_4": Xi.Camera.GPOSelector_Port_4,
+	"PORT_5": Xi.Camera.GPOSelector_Port_5,
+	"PORT_6": Xi.Camera.GPOSelector_Port_6,
+	"PORT_7": Xi.Camera.GPOSelector_Port_7,
+	"PORT_8": Xi.Camera.GPOSelector_Port_8,
+	"PORT_9": Xi.Camera.GPOSelector_Port_9,
+	"PORT_10": Xi.Camera.GPOSelector_Port_10,
+	"PORT_11": Xi.Camera.GPOSelector_Port_11,
+	"PORT_12": Xi.Camera.GPOSelector_Port_12,
+}
+
+_GpoMode = {
+	"OFF": Xi.Camera.GPOMode_Off,
+	"ON": Xi.Camera.GPOMode_On,
+	"FRAME_ACTIVE": Xi.Camera.GPOMode_Frame_Active,
+	"NEG_FRAME_ACTIVE": Xi.Camera.GPOMode_Neg_Frame_Active,
+	"EXPOSURE_ACTIVE": Xi.Camera.GPOMode_Exposure_Active,
+	"NEG_EXPOSURE_ACTIVE": Xi.Camera.GPOMode_Neg_Exposure_Active,
+	"FRAME_TRIGGER_WAIT": Xi.Camera.GPOMode_Frame_Trigger_Wait,
+	"NEG_FRAME_TRIGGER_WAIT": Xi.Camera.GPOMode_Neg_Frame_Trigger_Wait,
+	"EXPOSURE_PULSE": Xi.Camera.GPOMode_Exposure_Pulse,
+	"NEG_EXPOSURE_PULSE": Xi.Camera.GPOMode_Neg_Exposure_Pulse,
+	"BUSY": Xi.Camera.GPOMode_Busy,
+	"NEG_BUSY": Xi.Camera.GPOMode_Neg_Busy,
+	"HIGH_IMPEDANCE": Xi.Camera.GPOMode_High_Impedance,
+	"FRAME_BUFFER_OVERFLOW": Xi.Camera.GPOMode_Frame_Buffer_Overflow,
+	"EXPOSURE_ACTIVE_FIRST_ROW": Xi.Camera.GPOMode_Exposure_Active_First_Row,
+	"NEG_EXPOSURE_ACTIVE_FIRST_ROW": Xi.Camera.GPOMode_Neg_Exposure_Active_First_Row,
+	"EXPOSURE_ACTIVE_ALL_ROWS": Xi.Camera.GPOMode_Exposure_Active_All_Rows,
+	"NEG_EXPOSURE_ACTIVE_ALL_ROWS": Xi.Camera.GPOMode_Neg_Exposure_Active_All_Rows,
+}
+
+
 _TempControlMode = {
 	"OFF": Xi.Camera.TempControlMode_Off,
 	"AUTO": Xi.Camera.TempControlMode_Auto,
@@ -264,41 +301,9 @@ class Ximea(PyTango.Device_4Impl):
 			"EXT_EVENT": Xi.Camera.GPIMode_Ext_Event,
 		}
 
-		self.__GpoSelector = {
-			"PORT_1": Xi.Camera.GPOSelector_Port_1,
-			"PORT_2": Xi.Camera.GPOSelector_Port_2,
-			"PORT_3": Xi.Camera.GPOSelector_Port_3,
-			"PORT_4": Xi.Camera.GPOSelector_Port_4,
-			"PORT_5": Xi.Camera.GPOSelector_Port_5,
-			"PORT_6": Xi.Camera.GPOSelector_Port_6,
-			"PORT_7": Xi.Camera.GPOSelector_Port_7,
-			"PORT_8": Xi.Camera.GPOSelector_Port_8,
-			"PORT_9": Xi.Camera.GPOSelector_Port_9,
-			"PORT_10": Xi.Camera.GPOSelector_Port_10,
-			"PORT_11": Xi.Camera.GPOSelector_Port_11,
-			"PORT_12": Xi.Camera.GPOSelector_Port_12,
-		}
+		self.__GpoSelector = _GpoSelector
 
-		self.__GpoMode = {
-			"OFF": Xi.Camera.GPOMode_Off,
-			"ON": Xi.Camera.GPOMode_On,
-			"FRAME_ACTIVE": Xi.Camera.GPOMode_Frame_Active,
-			"NEG_FRAME_ACTIVE": Xi.Camera.GPOMode_Neg_Frame_Active,
-			"EXPOSURE_ACTIVE": Xi.Camera.GPOMode_Exposure_Active,
-			"NEG_EXPOSURE_ACTIVE": Xi.Camera.GPOMode_Neg_Exposure_Active,
-			"FRAME_TRIGGER_WAIT": Xi.Camera.GPOMode_Frame_Trigger_Wait,
-			"NEG_FRAME_TRIGGER_WAIT": Xi.Camera.GPOMode_Neg_Frame_Trigger_Wait,
-			"EXPOSURE_PULSE": Xi.Camera.GPOMode_Exposure_Pulse,
-			"NEG_EXPOSURE_PULSE": Xi.Camera.GPOMode_Neg_Exposure_Pulse,
-			"BUSY": Xi.Camera.GPOMode_Busy,
-			"NEG_BUSY": Xi.Camera.GPOMode_Neg_Busy,
-			"HIGH_IMPEDANCE": Xi.Camera.GPOMode_High_Impedance,
-			"FRAME_BUFFER_OVERFLOW": Xi.Camera.GPOMode_Frame_Buffer_Overflow,
-			"EXPOSURE_ACTIVE_FIRST_ROW": Xi.Camera.GPOMode_Exposure_Active_First_Row,
-			"NEG_EXPOSURE_ACTIVE_FIRST_ROW": Xi.Camera.GPOMode_Neg_Exposure_Active_First_Row,
-			"EXPOSURE_ACTIVE_ALL_ROWS": Xi.Camera.GPOMode_Exposure_Active_All_Rows,
-			"NEG_EXPOSURE_ACTIVE_ALL_ROWS": Xi.Camera.GPOMode_Neg_Exposure_Active_All_Rows,
-		}
+		self.__GpoMode = _GpoMode
 
 		self.__LedSelector = {
 			"LED_1": Xi.Camera.LEDSelector_1,
@@ -378,6 +383,16 @@ class XimeaClass(PyTango.DeviceClass):
 			"GPI port used by default for trigger input",
 			"PORT_2"
 		],
+		"gpo_port": [
+			PyTango.DevString,
+			"GPO port used to trigger from camera ",
+			"PORT_3"
+		],
+		"gpo_mode": [
+			PyTango.DevString,
+			"GPO mode used to trigger from camera ",
+			"FRAME_ACTIVE"
+		],
 		"timeout": [
 			PyTango.DevLong,
 			"Timeout for internal loop (on top of exposure time)",
@@ -397,7 +412,7 @@ class XimeaClass(PyTango.DeviceClass):
 			PyTango.DevString,
 			"Startup camera mode",
 			"2_12_HDR_HL"
-		]
+		],
 	}
 
 	cmd_list = {
@@ -954,8 +969,12 @@ _XimeaInterface = None
 
 def get_control(
 	camera_id,
-	trigger_gpi_port="PORT_2", timeout=200,
-	startup_temp_control_mode="AUTO", startup_target_temp=25.0,
+	trigger_gpi_port="PORT_2",
+        gpo_port="PORT_2",
+        gpo_mode="FRAME_ACTIVE",
+        timeout=200,
+	startup_temp_control_mode="AUTO",
+        startup_target_temp=25.0,
 	startup_mode="2_12_HDR_HL", **keys
 ):
 	global _XimeaCam
@@ -966,13 +985,22 @@ def get_control(
 	# all properties are passed as string from LimaCCDs device get_control helper
 	# so need to be converted to correct type
 	if _XimeaCam is None:
-		_XimeaCam = Xi.Camera(
-			int(camera_id),
-			_GpiSelector[trigger_gpi_port.upper()], int(timeout),
-			_TempControlMode[startup_temp_control_mode.upper()], float(startup_target_temp),
-			_Mode[startup_mode.upper()]
-		)
-		_XimeaInterface = Xi.Interface(_XimeaCam)
+                try:
+                    _XimeaCam = Xi.Camera(
+                         int(camera_id),
+                        _GpiSelector[trigger_gpi_port.upper()],
+                        _GpoSelector[gpo_port.upper()],
+                        _GpoMode[gpo_mode.upper()],
+                        int(timeout),
+                        _TempControlMode[startup_temp_control_mode.upper()],
+                        float(startup_target_temp),
+                        _Mode[startup_mode.upper()]
+                      )
+                except Exception as e:
+                    import traceback
+                    traceback.print_exc()
+                    raise e
+                _XimeaInterface = Xi.Interface(_XimeaCam)
 	return Core.CtControl(_XimeaInterface)
 
 

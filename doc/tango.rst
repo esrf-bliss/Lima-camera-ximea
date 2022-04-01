@@ -13,10 +13,12 @@ Properties
 Property name             Mandatory  Default value                              Description
 ========================= ========== ========================================== ====================================================
 camera_id                 Yes        N/A                                        Camera ID
-trigger_gpi_port          No         PORT_2	                                    GPI port used by default for trigger input
+trigger_gpi_port          No         PORT_2	                                GPI port used by default for trigger input
+gpo_port                  No         PORT_2	                                GPO port used for output when camera active
+gpo_mode                  No         FRAME_ACTIVE	                        GPO port used for output when camera active
 timeout                   No         200                                        Timeout for internal loop (on top of exposure time)
 startup_temp_control_mode No         AUTO                                       Startup temperature control mode
-startup_target_temp	      No         25.0                                       Startup target temperature
+startup_target_temp	  No         25.0                                       Startup target temperature
 startup_mode              No         2_12_HDR_HL                                Startup camera mode
 ========================= ========== ========================================== ====================================================
 

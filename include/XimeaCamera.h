@@ -342,8 +342,12 @@ namespace lima
 
 			Camera(
 				int camera_id,
-				GPISelector trigger_gpi_port, unsigned int timeout,
-				TempControlMode startup_temp_control_mode, double startup_target_temp,
+				GPISelector trigger_gpi_port,
+                                GPOSelector gpo_port,
+                                GPOMode gpo_mode,
+                                unsigned int timeout,
+				TempControlMode startup_temp_control_mode,
+                                double startup_target_temp,
 				Mode startup_mode
 			);
 			~Camera();
@@ -561,6 +565,8 @@ namespace lima
 			// internal
 			TriggerPolarity m_trig_polarity;
 			GPISelector m_trigger_gpi_port;
+			GPOSelector m_gpo_port;
+			GPOMode m_gpo_mode;
 			unsigned int m_timeout;
 			bool m_soft_trigger_issued;
 

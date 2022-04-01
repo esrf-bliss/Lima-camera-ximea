@@ -32,7 +32,13 @@ using namespace std;
 //---------------------------
 //- Ctor
 //---------------------------
-Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int timeout, TempControlMode startup_temp_control_mode, double startup_target_temp, Mode startup_mode)
+Camera::Camera(int camera_id, 
+              GPISelector trigger_gpi_port, 
+              GPOSelector gpo_port, 
+              GPOMode gpo_mode, 
+              unsigned int timeout, 
+              TempControlMode startup_temp_control_mode, 
+              double startup_target_temp, Mode startup_mode)
 	: cam_id(camera_id),
 	  xiH(nullptr),
 	  xi_status(XI_OK),
@@ -42,6 +48,8 @@ Camera::Camera(int camera_id, GPISelector trigger_gpi_port, unsigned int timeout
 	  m_acq_thread(nullptr),
 	  m_trig_polarity(Camera::TriggerPolarity_High_Rising),
 	  m_trigger_gpi_port(trigger_gpi_port),
+	  m_gpo_port(gpo_port),
+	  m_gpo_mode(gpo_mode),
 	  m_timeout(timeout),
 	  m_startup_temp_control_mode(startup_temp_control_mode),
 	  m_startup_target_temp(startup_target_temp),
@@ -100,6 +108,10 @@ void Camera::_startup()
 	// read max frame size
 	this->m_max_width = this->_get_param_max(XI_PRM_WIDTH);
 	this->m_max_height = this->_get_param_max(XI_PRM_HEIGHT);
+
+	// set gpo mode 
+	this->setGpoSelector(this->m_gpo_port);
+	this->setGpoMode(this->m_gpo_mode);
 }
 
 void Camera::getPluginVersion(string& version)
@@ -128,18 +140,20 @@ void Camera::startAcq()
 {
 	DEB_MEMBER_FUNCT();
 
-	if(this->m_trigger_mode == IntTrigMult && this->m_acq_thread->m_thread_started)
+	if(this->m_trigger_mode == IntTrigMult && this->m_acq_thread->m_thread_started) {
 		this->_generate_soft_trigger();
-	else
+                return;
+        }
+	else 
 	{
-		if(!this->m_image_number)
+           if(!this->m_image_number)
 			this->m_buffer_ctrl_obj.getBuffer().setStartTimestamp(Timestamp::now());
 
-		xiStartAcquisition(this->xiH);
-		this->m_acq_thread->m_quit = false;
-		this->m_acq_thread->start();
-		if(this->m_trigger_mode == IntTrigMult)
-			this->_generate_soft_trigger();
+           xiStartAcquisition(this->xiH);
+           this->m_acq_thread->m_quit = false;
+	   this->m_acq_thread->start();
+	   if(this->m_trigger_mode == IntTrigMult)
+	       this->_generate_soft_trigger();
 	}
 }
 
@@ -277,6 +291,7 @@ void Camera::getPixelSize(double& x_size, double& y_size)
 void Camera::getDetectorMaxImageSize(Size& size)
 {
 	size = Size(this->m_max_width, this->m_max_height);
+	// size = Size(this->_get_param_int(XI_PRM_WIDTH), this->_get_param_int(XI_PRM_HEIGHT));
 }
 
 void Camera::getDetectorImageSize(Size& size)
@@ -404,20 +419,29 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 	DEB_MEMBER_FUNCT();
 	DEB_PARAM() << DEB_VAR1(set_roi);
 
+        Roi myroi;
+
 	DEB_TRACE() << "    checking for roi : " << DEB_VAR1(set_roi);
 
 	// get W/H parameters info
 	int w_min = this->_get_param_min(XI_PRM_WIDTH);
 	int w_inc = this->_get_param_inc(XI_PRM_WIDTH);
 	int w_max = this->m_max_width;
+	// int w_max = this->_get_param_max(XI_PRM_WIDTH);
 
 	int h_min = this->_get_param_min(XI_PRM_HEIGHT);
 	int h_inc = this->_get_param_inc(XI_PRM_HEIGHT);
 	int h_max = this->m_max_height;
+	// int h_max = this->_get_param_max(XI_PRM_HEIGHT);
 
 	// get offset increment as it should not change with W/H
 	int x_inc = this->_get_param_inc(XI_PRM_OFFSET_X);
 	int y_inc = this->_get_param_inc(XI_PRM_OFFSET_Y);
+
+	DEB_TRACE() << "  x_inc: " << x_inc;         
+	DEB_TRACE() << "  y_inc: " << y_inc;         
+	DEB_TRACE() << "  w_inc: " << w_inc;         
+	DEB_TRACE() << "  h_inc: " << h_inc;         
 
 	int w = set_roi.getSize().getWidth();
 	int h = set_roi.getSize().getHeight();
@@ -443,12 +467,16 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 		int nw = w + (x - nx);
 		int nh = h + (y - ny);
 
+                myroi = Roi(nx,ny,nw,nh);
+
+	        DEB_TRACE() << "            nx roi : " << DEB_VAR1(myroi);
+
 		w = ceil(double(nw) / w_inc) * w_inc;
 		h = ceil(double(nh) / h_inc) * h_inc;
 
 		// check W/H min-max
-		w = min(w_max, max(w_min, w));
-		h = min(h_max, max(h_min, h));
+		// w = min(w_max, max(w_min, w));
+		// h = min(h_max, max(h_min, h));
 
 		x = nx;
 		y = ny;
@@ -476,6 +504,11 @@ void Camera::setRoi(const Roi& ask_roi)
 
 	DEB_TRACE() << "    programming hw roi to - " << DEB_VAR1(ask_roi);
 
+        w = ask_roi.getSize().getWidth();
+        h = ask_roi.getSize().getWidth();
+
+	DEB_TRACE() << "       - programming new width: " << DEB_VAR1(w) << " height: " << DEB_VAR1(h);
+
 	if(ask_roi.isActive())
 	{
 		// reset offsets
@@ -484,6 +517,7 @@ void Camera::setRoi(const Roi& ask_roi)
 
 		// then set the new ROI
 		// order is important, first we need to set w/h and only then the offsets
+          
 		this->_set_param_int(XI_PRM_WIDTH, ask_roi.getSize().getWidth());
 		this->_set_param_int(XI_PRM_HEIGHT, ask_roi.getSize().getHeight());
 		this->_set_param_int(XI_PRM_OFFSET_X, ask_roi.getTopLeft().x);
@@ -665,7 +699,12 @@ void Camera::checkBin(Bin &aBin)
 
 void Camera::setBin(const Bin &aBin)
 {
+	Size c_size;
+	Size m_size;
+
 	DEB_MEMBER_FUNCT();
+
+	DEB_TRACE() << "    programming hw bin to - " << DEB_VAR1(aBin);
 
 	// only sum mode is supported by Lima
 	this->_set_param_int(XI_PRM_BINNING_HORIZONTAL_MODE, XI_BIN_MODE_SUM);
@@ -673,6 +712,14 @@ void Camera::setBin(const Bin &aBin)
 
 	this->_set_param_int(XI_PRM_BINNING_HORIZONTAL, aBin.getX());
 	this->_set_param_int(XI_PRM_BINNING_VERTICAL, aBin.getY());
+
+	c_size = Size(this->_get_param_int(XI_PRM_WIDTH), this->_get_param_int(XI_PRM_HEIGHT));
+	m_size = Size(this->_get_param_max(XI_PRM_WIDTH), this->_get_param_max(XI_PRM_HEIGHT));
+
+	DEB_TRACE() << "    after programming hw bin current size is - " << DEB_VAR1(c_size);
+	DEB_TRACE() << "    after programming hw bin max size is - " << DEB_VAR1(m_size);
+	this->m_max_width = this->_get_param_max(XI_PRM_WIDTH);
+	this->m_max_height = this->_get_param_max(XI_PRM_HEIGHT);
 
 	DEB_RETURN() << DEB_VAR1(aBin);
 }
@@ -805,6 +852,7 @@ bool Camera::_soft_trigger_issued(void)
 void Camera::_setup_gpio_trigger(void)
 {
 	GPISelector selected_gpi;
+
 	this->getGpiSelector(selected_gpi);
 
 	this->setGpiSelector(this->m_trigger_gpi_port);
