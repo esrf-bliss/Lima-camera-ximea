@@ -289,8 +289,8 @@ class Ximea(PyTango.Device_4Impl):
 		}
 
 		self.__TriggerPolarity = {
-			"LOW / FALLING": Xi.Camera.TriggerPolarity_Low_Falling,
-			"HIGH / RISING": Xi.Camera.TriggerPolarity_High_Rising
+			"LOW_FALLING": Xi.Camera.TriggerPolarity_Low_Falling,
+			"HIGH_RISING": Xi.Camera.TriggerPolarity_High_Rising
 		}
 
 		self.__GpiSelector = _GpiSelector
