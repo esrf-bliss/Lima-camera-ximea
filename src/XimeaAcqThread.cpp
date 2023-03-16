@@ -44,6 +44,14 @@ void AcqThread::threadFunction()
 	DEB_MEMBER_FUNCT();
 	this->m_thread_started = true;
         XI_IMG img_buffer;
+
+        long acq_nframe;
+        long acq_nframe_last=0;
+
+        long acq_ts;
+	long acq_ts0=-1;
+        long acq_uts;
+
 	memset((void*)&img_buffer, 0, sizeof(XI_IMG));
 
 	StdBufferCbMgr& buffer_mgr = this->m_cam.m_buffer_ctrl_obj.getBuffer();
@@ -84,15 +92,30 @@ void AcqThread::threadFunction()
 		while(this->m_cam.xi_status == XI_TIMEOUT);
 
 		if(this->m_cam.xi_status == XI_OK) {
-                    DEB_TRACE() << "    new image obtained - code is OK - imgno is " << DEB_VAR1(this->m_cam.m_image_number);
-		   this->m_cam._set_status(Camera::Readout);
-		   HwFrameInfoType frame_info;
-		   frame_info.acq_frame_nb = this->m_cam.m_image_number;
-		   continueAcq = buffer_mgr.newFrameReady(frame_info);
-		   ++this->m_cam.m_image_number;
-		   // DEB_TRACE() << DEB_VAR1(continueAcq);
+                   acq_nframe = img_buffer.acq_nframe;
+                   if (acq_ts0 == -1) {
+                       acq_ts0 = img_buffer.tsSec;
+                   }
+                   acq_ts = img_buffer.tsSec - acq_ts0;
+                   acq_uts = img_buffer.tsUSec;
+                   if (acq_nframe != acq_nframe_last) {
+                       if ((acq_nframe - acq_nframe_last) > 1) {
+                            DEB_TRACE() << "    n_frame:" << acq_nframe << " n_frame_prev:" << acq_nframe_last;
+                            DEB_TRACE() << "    FRAME LOST???"; 
+                       }
+                       acq_nframe_last = acq_nframe;
+                       DEB_TRACE() << "    new image obtained - OK - " << DEB_VAR1(this->m_cam.m_image_number)
+                                    << " " << DEB_VAR1(acq_nframe) << " " << DEB_VAR1(acq_ts) << " " << DEB_VAR1(acq_uts);
+		       this->m_cam._set_status(Camera::Readout);
+		       HwFrameInfoType frame_info;
+		       frame_info.acq_frame_nb = this->m_cam.m_image_number;
+		       continueAcq = buffer_mgr.newFrameReady(frame_info);
+		       ++this->m_cam.m_image_number;
+                    } else {
+                       DEB_TRACE() << "    repeated frame ignored " << DEB_VAR1(acq_nframe);
+                    }
                 } else {
-                    DEB_TRACE() << "    new image obtained - code is NOT OK. CODE is " << DEB_VAR1(this->m_cam.xi_status);
+                    DEB_TRACE() << "    new image obtained - NOT OK. CODE is " << DEB_VAR1(this->m_cam.xi_status);
                 }
 
 

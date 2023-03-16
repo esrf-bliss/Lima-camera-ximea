@@ -442,8 +442,6 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 
         Roi myroi;
 
-	DEB_TRACE() << "    checking for roi : " << DEB_VAR1(set_roi);
-
 	// get W/H parameters info
 	int w_min = this->_get_param_min(XI_PRM_WIDTH);
 	int w_inc = this->_get_param_inc(XI_PRM_WIDTH);
@@ -458,11 +456,6 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 	// get offset increment as it should not change with W/H
 	int x_inc = this->_get_param_inc(XI_PRM_OFFSET_X);
 	int y_inc = this->_get_param_inc(XI_PRM_OFFSET_Y);
-
-	DEB_TRACE() << "  x_inc: " << x_inc;         
-	DEB_TRACE() << "  y_inc: " << y_inc;         
-	DEB_TRACE() << "  w_inc: " << w_inc;         
-	DEB_TRACE() << "  h_inc: " << h_inc;         
 
 	int w = set_roi.getSize().getWidth();
 	int h = set_roi.getSize().getHeight();
@@ -490,8 +483,6 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 
                 myroi = Roi(nx,ny,nw,nh);
 
-	        DEB_TRACE() << "            nx roi : " << DEB_VAR1(myroi);
-
 		w = ceil(double(nw) / w_inc) * w_inc;
 		h = ceil(double(nh) / h_inc) * h_inc;
 
@@ -506,7 +497,6 @@ void Camera::checkRoi(const Roi& set_roi, Roi& hw_roi)
 	Roi r(x, y, w, h);
 	hw_roi = r;
 
-	DEB_TRACE() << "    using hw roi -  " << DEB_VAR1(hw_roi);
 	DEB_RETURN() << DEB_VAR1(hw_roi);
 }
 
@@ -523,12 +513,8 @@ void Camera::setRoi(const Roi& ask_roi)
 
 	if(r == ask_roi) return;
 
-	DEB_TRACE() << "    programming hw roi to - " << DEB_VAR1(ask_roi);
-
         w = ask_roi.getSize().getWidth();
         h = ask_roi.getSize().getWidth();
-
-	DEB_TRACE() << "       - programming new width: " << DEB_VAR1(w) << " height: " << DEB_VAR1(h);
 
 	if(ask_roi.isActive())
 	{
@@ -544,7 +530,6 @@ void Camera::setRoi(const Roi& ask_roi)
 		this->_set_param_int(XI_PRM_OFFSET_X, ask_roi.getTopLeft().x);
 		this->_set_param_int(XI_PRM_OFFSET_Y, ask_roi.getTopLeft().y);
 	}
-	DEB_TRACE() << "    programming roi done";
 }
 
 void Camera::getRoi(Roi& hw_roi)
@@ -738,8 +723,6 @@ void Camera::setBin(const Bin &aBin)
 
 	DEB_MEMBER_FUNCT();
 
-	DEB_TRACE() << "    programming hw bin to - " << DEB_VAR1(aBin);
-
 	// only sum mode is supported by Lima
 	this->_set_param_int(XI_PRM_BINNING_HORIZONTAL_MODE, XI_BIN_MODE_SUM);
 	this->_set_param_int(XI_PRM_BINNING_VERTICAL_MODE, XI_BIN_MODE_SUM);
@@ -750,8 +733,6 @@ void Camera::setBin(const Bin &aBin)
 	c_size = Size(this->_get_param_int(XI_PRM_WIDTH), this->_get_param_int(XI_PRM_HEIGHT));
 	m_size = Size(this->_get_param_max(XI_PRM_WIDTH), this->_get_param_max(XI_PRM_HEIGHT));
 
-	DEB_TRACE() << "    after programming hw bin current size is - " << DEB_VAR1(c_size);
-	DEB_TRACE() << "    after programming hw bin max size is - " << DEB_VAR1(m_size);
 	this->m_max_width = this->_get_param_max(XI_PRM_WIDTH);
 	this->m_max_height = this->_get_param_max(XI_PRM_HEIGHT);
 
@@ -898,11 +879,11 @@ void Camera::_setup_gpio_trigger(void)
 int Camera::_get_trigger_timeout(void)
 {
 	// timeout + expo time
+        return 2000;
 	double exp_time = 0;
 	this->getExpTime(exp_time);
 	int exp_ms = int(exp_time * TIME_HW / 1e3);	// convert to ms
 	int timeout = this->m_timeout + exp_ms;
-        return 10;
 	// return timeout;
 }
 
