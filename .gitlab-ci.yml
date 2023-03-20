@@ -26,7 +26,7 @@ build-noarch:
   dependencies:
     - build-linux
   tags:
-    - cos7
+    - linux
 
 deploy-devel:
   stage: deploy
