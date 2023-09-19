@@ -32,7 +32,6 @@ AcqThread::AcqThread(Camera& cam, int timeout)
 	  m_thread_started(false)
 {
 	pthread_attr_setscope(&m_thread_attr, PTHREAD_SCOPE_PROCESS);
-	memset((void*)&this->m_buffer, 0, sizeof(XI_IMG));
 }
 
 AcqThread::~AcqThread()
@@ -44,6 +43,16 @@ void AcqThread::threadFunction()
 {
 	DEB_MEMBER_FUNCT();
 	this->m_thread_started = true;
+        XI_IMG img_buffer;
+
+        long acq_nframe;
+        long acq_nframe_last=0;
+
+        long acq_ts;
+	long acq_ts0=-1;
+        long acq_uts;
+
+	memset((void*)&img_buffer, 0, sizeof(XI_IMG));
 
 	StdBufferCbMgr& buffer_mgr = this->m_cam.m_buffer_ctrl_obj.getBuffer();
 
@@ -51,8 +60,8 @@ void AcqThread::threadFunction()
 	while(!this->m_quit && (this->m_cam.m_nb_frames == 0 || this->m_cam.m_image_number < this->m_cam.m_nb_frames))
 	{
 		// set up acq buffers
-		this->m_buffer.bp = buffer_mgr.getFrameBufferPtr(this->m_cam.m_image_number);
-		this->m_buffer.bp_size = this->m_cam.m_buffer_size;
+		img_buffer.bp = buffer_mgr.getFrameBufferPtr(this->m_cam.m_image_number);
+		img_buffer.bp_size = this->m_cam.m_buffer_size;
 
 		bool do_break = false;
 
@@ -73,7 +82,7 @@ void AcqThread::threadFunction()
 		this->m_cam._set_status(Camera::Exposure);
 		do
 		{
-			this->m_cam._read_image(&this->m_buffer, this->m_timeout);
+			this->m_cam._read_image(&img_buffer, this->m_timeout);
 			if(this->m_quit)
 			{
 				do_break = true;
@@ -82,18 +91,41 @@ void AcqThread::threadFunction()
 		}
 		while(this->m_cam.xi_status == XI_TIMEOUT);
 
+		if(this->m_cam.xi_status == XI_OK) {
+                   acq_nframe = img_buffer.acq_nframe;
+                   if (acq_ts0 == -1) {
+                       acq_ts0 = img_buffer.tsSec;
+                   }
+                   acq_ts = img_buffer.tsSec - acq_ts0;
+                   acq_uts = img_buffer.tsUSec;
+                   if (acq_nframe != acq_nframe_last) {
+                       if ((acq_nframe - acq_nframe_last) > 1) {
+                            DEB_TRACE() << "    n_frame:" << acq_nframe << " n_frame_prev:" << acq_nframe_last;
+                            DEB_TRACE() << "    FRAME LOST???"; 
+                       }
+                       acq_nframe_last = acq_nframe;
+                       DEB_TRACE() << "    new image obtained - OK - " << DEB_VAR1(this->m_cam.m_image_number)
+                                    << " " << DEB_VAR1(acq_nframe) << " " << DEB_VAR1(acq_ts) << " " << DEB_VAR1(acq_uts);
+		       this->m_cam._set_status(Camera::Readout);
+		       HwFrameInfoType frame_info;
+		       frame_info.acq_frame_nb = this->m_cam.m_image_number;
+		       continueAcq = buffer_mgr.newFrameReady(frame_info);
+		       ++this->m_cam.m_image_number;
+                    } else {
+                       DEB_TRACE() << "    repeated frame ignored " << DEB_VAR1(acq_nframe);
+                    }
+                } else {
+                    DEB_TRACE() << "    new image obtained - NOT OK. CODE is " << DEB_VAR1(this->m_cam.xi_status);
+                }
+
+
 		if(do_break || this->m_quit)
 			break;
 		
-		this->m_cam._set_status(Camera::Readout);
-		HwFrameInfoType frame_info;
-		frame_info.acq_frame_nb = this->m_cam.m_image_number;
-		continueAcq = buffer_mgr.newFrameReady(frame_info);
-		DEB_TRACE() << DEB_VAR1(continueAcq);
-		++this->m_cam.m_image_number;
-
-		if(this->m_cam.m_latency_time > 0)
+		if((this->m_cam.m_latency_time > 0) && (this->m_cam.m_trigger_mode == IntTrigMult))
+		// if(this->m_cam.m_latency_time > 0) 
 		{
+                        // apply latency artificially only in IntTrigMulti
 			this->m_cam._set_status(Camera::Latency);
 			usleep(long(this->m_cam.m_latency_time * 1e6));
 		}
@@ -105,6 +137,7 @@ void AcqThread::threadFunction()
 			this->m_cam.reportException(e, "Ximea/AcqThread/newFrameReady");
 			break;
 		}
+
 		if(this->m_cam.xi_status != XI_OK)
 		{
 			this->m_cam._set_status(Camera::Fault);

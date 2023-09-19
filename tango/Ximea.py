@@ -289,8 +289,8 @@ class Ximea(PyTango.Device_4Impl):
 		}
 
 		self.__TriggerPolarity = {
-			"LOW / FALLING": Xi.Camera.TriggerPolarity_Low_Falling,
-			"HIGH / RISING": Xi.Camera.TriggerPolarity_High_Rising
+			"LOW_FALLING": Xi.Camera.TriggerPolarity_Low_Falling,
+			"HIGH_RISING": Xi.Camera.TriggerPolarity_High_Rising
 		}
 
 		self.__GpiSelector = _GpiSelector
@@ -353,6 +353,19 @@ class Ximea(PyTango.Device_4Impl):
 		# use AttrHelper
 		return AttrHelper.get_attr_string_value_list(self, attr_name)
 
+	def read_readout_time(self,attr):
+	    try:
+	        self.info_stream("reading readout time")
+	        value = _XimeaCam.getReadoutTime()
+	        return attr.set_value(value)
+	    except BaseException as e:
+	        print("error reading readout_time: %s" % str(e))
+
+	def write_readout_time(self, attr):
+	    value = attr.get_write_value()
+	    self.info_stream("setting readout time to %s" % value)
+	    _XimeaCam.setReadoutTime(value)
+
 	# ------------------------------------------------------------------
 	#
 	#    Ximea read/write attribute methods
@@ -382,6 +395,11 @@ class XimeaClass(PyTango.DeviceClass):
 			PyTango.DevString,
 			"GPI port used by default for trigger input",
 			"PORT_2"
+		],
+		"readout_time": [
+			PyTango.DevDouble,
+			"camera readout time",
+			0.0
 		],
 		"gpo_port": [
 			PyTango.DevString,
@@ -549,6 +567,15 @@ class XimeaClass(PyTango.DeviceClass):
 				'unit': 'N/A',
 				'format': '',
 				'description': 'Is the camera cooled',
+			}
+		],
+		"readout_time": [
+			[PyTango.DevDouble, PyTango.SCALAR, PyTango.READ_WRITE],
+			{
+				'unit': 'N/A',
+				'format': '',
+				'description': 'camera hw readout time',
+				'memorized': 'true',
 			}
 		],
 		"temp_control_mode": [
@@ -964,6 +991,7 @@ class XimeaClass(PyTango.DeviceClass):
 # Plugins
 # ----------------------------------------------------------------------------
 _XimeaCam = None
+_XimeaSync = None
 _XimeaInterface = None
 
 
@@ -1001,6 +1029,7 @@ def get_control(
                     traceback.print_exc()
                     raise e
                 _XimeaInterface = Xi.Interface(_XimeaCam)
+                _XimeaSync = _XimeaInterface.getHwCtrlObj(Core.HwCap.Sync)
 	return Core.CtControl(_XimeaInterface)
 
 

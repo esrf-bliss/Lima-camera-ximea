@@ -382,6 +382,9 @@ namespace lima
 			void setLatTime(double lat_time);
 			void getLatTime(double& lat_time);
 
+			void getReadoutTime(double &t);
+			void setReadoutTime(double t);
+
 			void setNbFrames(int nb_frames);
 			void getNbFrames(int& nb_frames);
 
@@ -561,6 +564,7 @@ namespace lima
 			int m_max_height;
 			int m_max_width;
 			double m_latency_time;
+			double m_readout_time;
 			
 			// internal
 			TriggerPolarity m_trig_polarity;

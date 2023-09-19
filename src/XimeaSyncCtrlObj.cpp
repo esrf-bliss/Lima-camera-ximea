@@ -42,7 +42,7 @@ bool SyncCtrlObj::checkTrigMode(TrigMode trig_mode)
 	{
 		case IntTrig:
 		case IntTrigMult:
-		// case ExtTrigSingle:
+		case ExtTrigSingle:
 		// not supoorted - lack of camera support for XI_PRM_EXPOSURE_BURST_COUNT
 		case ExtTrigMult:
 		// case ExtGate:
@@ -79,12 +79,35 @@ void SyncCtrlObj::getExpTime(double& exp_time)
 
 void SyncCtrlObj::setLatTime(double lat_time)
 {
+	DEB_MEMBER_FUNCT();
+	DEB_TRACE() << DEB_VAR1(lat_time);
+
 	this->m_cam.setLatTime(lat_time);
 }
 
 void SyncCtrlObj::getLatTime(double& lat_time)
 {
+        ValidRangesType valid_ranges;
+        getValidRanges(valid_ranges);
+        validRangesChanged(valid_ranges);
+
 	this->m_cam.getLatTime(lat_time);
+}
+
+void SyncCtrlObj::setReadoutTime(double readout_time)
+{
+	DEB_MEMBER_FUNCT();
+
+	this->m_cam.setReadoutTime(readout_time);
+
+        ValidRangesType valid_ranges;
+        getValidRanges(valid_ranges);
+        validRangesChanged(valid_ranges);
+}
+
+void SyncCtrlObj::getReadoutTime(double& readout_time)
+{
+	this->m_cam.getReadoutTime(readout_time);
 }
 
 void SyncCtrlObj::setNbHwFrames(int nb_frames)
@@ -101,9 +124,15 @@ void SyncCtrlObj::getValidRanges(ValidRangesType& valid_ranges)
 {
 	DEB_MEMBER_FUNCT();
 
+        double readout_time;
+
+        this->m_cam.getReadoutTime(readout_time);
+
 	// TODO: fill these example values with real ones
 	valid_ranges.min_exp_time = 0;
 	valid_ranges.max_exp_time = 1000;
+        valid_ranges.min_lat_time = 0.065;
+        valid_ranges.max_lat_time = 1000;
 }
 
 bool SyncCtrlObj::checkAutoExposureMode(HwSyncCtrlObj::AutoExposureMode mode) const

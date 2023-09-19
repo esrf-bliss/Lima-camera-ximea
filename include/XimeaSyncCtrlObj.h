@@ -55,6 +55,9 @@ namespace lima
 			virtual void setLatTime(double  lat_time);
 			virtual void getLatTime(double& lat_time);
 
+			virtual void setReadoutTime(double  readout_time);
+			virtual void getReadoutTime(double& readout_time);
+
 			virtual void setNbHwFrames(int  nb_frames);
 			virtual void getNbHwFrames(int& nb_frames);
 
