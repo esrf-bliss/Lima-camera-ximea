@@ -117,14 +117,14 @@ _TempControlMode = {
 }
 
 
-class Ximea(PyTango.Device_4Impl):
+class Ximea(PyTango.LatestDeviceImpl):
 	Core.DEB_CLASS(Core.DebModApplication, 'LimaCCDs')
 
 	# ------------------------------------------------------------------
 	#    Device constructor
 	# ------------------------------------------------------------------
 	def __init__(self, *args):
-		PyTango.Device_4Impl.__init__(self, *args)
+		PyTango.LatestDeviceImpl.__init__(self, *args)
 
 		self.__Mode = _Mode
 
